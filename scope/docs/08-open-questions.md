@@ -45,10 +45,16 @@ Resolved-this-session items are noted so the record is complete.
    And **do you have access to local legal review** for the CO content (gates
    M5 per Risk R11)? If not, who reviews it?
 
-4. **Hosting choice.** Recommendation: **Cloudflare Pages** for the app
-   (+ Worker for the optional proxy). Confirm, or prefer GitHub Pages / Netlify
-   / Vercel. (Note: Vercel is fine technically, but keep this project's
-   analytics off — unlike the portfolio.)
+4. **Hosting choice. — DECIDED: Vercel.** Chosen for familiarity and ship speed.
+   Hard guardrails come with it: **(a)** `@vercel/analytics` and
+   `@vercel/speed-insights` stay **off and CI-blocklisted by name** — they're the
+   exact phone-home packages we left the portfolio repo to avoid; **(b)** keep
+   the **static export** so the app stays host-agnostic/self-hostable (Vercel is
+   the deploy target, not a lock-in); **(c)** Vercel's platform request/edge logs
+   (incl. IP) are the R9 residual — minimize retention, add no first-party
+   logging, lean on offline/PWA. The optional **self-hosted** breach proxy can be
+   a Vercel Edge Function. See [03](03-architecture.md) Hosting and
+   [06](06-risk-register.md) R6/R9.
 
 5. **Commercial-alternative links.** Should we honestly link to paid services
    (DeleteMe/Optery) as the "pay someone" path? **No affiliate links** either

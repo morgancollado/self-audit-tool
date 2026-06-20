@@ -14,7 +14,7 @@ Prioritization across both phases. **Must** = required for a credible, safe v1.
 
 | Priority | Feature | Notes |
 |----------|---------|-------|
-| **Must** | No analytics / trackers / phone-home scripts | Enforced via CSP + a dependency audit; a build check that fails on known tracker packages |
+| **Must** | No analytics / trackers / phone-home scripts | Enforced via CSP + a dependency audit; a build check that fails on known tracker packages — **incl. `@vercel/analytics` + `@vercel/speed-insights` blocklisted by name** (we host on Vercel; these must never be added) |
 | **Must** | All state client-side (`localStorage`/`IndexedDB`) | See [04](04-data-model.md) |
 | **Must** | **Panic-delete** (one obvious control, instant full wipe) | Wipes storage + in-memory state; visible on every screen |
 | **Must** | **Ephemeral / session-only mode** | Nothing persisted; clear banner; default-suggested on shared devices |

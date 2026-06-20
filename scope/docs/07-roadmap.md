@@ -10,7 +10,8 @@ exist before any user touches it.
 - **Community co-design first:** validate the threat model and tone *with* trans
   users (ideally including the workshop lineage we credit) before building. For a
   trauma-informed tool this is M0, not an afterthought.
-- New repo; Next.js static export; CI (lint, typecheck, axe, **no-tracker
+- New repo; Next.js **static export**; deploy on **Vercel** (analytics/
+  speed-insights OFF and CI-blocklisted); CI (lint, typecheck, axe, **no-tracker
   audit**); strict CSP; MIT/Apache for code.
 - Storage adapter with **persistent / ephemeral** modes; `storage.persist()`
   + honest durability note (R18).

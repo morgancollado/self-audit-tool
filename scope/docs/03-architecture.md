@@ -310,21 +310,45 @@ presses send."
 
 ## Hosting
 
-- **Static app:** any static host — **GitHub Pages, Cloudflare Pages, Netlify,
-  or Vercel.** No secrets required. Recommend **Cloudflare Pages** (fast,
-  generous free tier, and Pages Functions/Workers can host the proxy nearby if
-  desired). The app must remain host-agnostic.
-- **Proxy (optional):** a **Cloudflare Worker** (or any serverless function),
-  deployed separately with the HIBP key as a secret. Its URL is injected into
-  the app at build time as a public config value; absent → deep-link fallback.
+**Decided: deploy on Vercel.** Chosen for developer familiarity and ship speed.
+The app still builds as a **static export** so it stays **host-agnostic and
+self-hostable** — Vercel is the deploy *target*, not a dependency; a self-hoster
+can drop the same artifact on any static host. Vercel-specific guardrails
+(non-negotiable):
+
+- **Vercel Web Analytics and Speed Insights stay OFF.** Do **not** add
+  `@vercel/analytics` or `@vercel/speed-insights` — these are exactly the
+  phone-home packages the portfolio repo bundles and the reason Errata lives in
+  its **own** repo. The CI no-tracker audit **explicitly blocklists** both
+  packages so they can never be reintroduced (see the pipeline below and
+  [02](02-features-moscow.md), [06](06-risk-register.md) R6).
+- **Platform request/edge logs (incl. IP) are outside our control** — the R9
+  residual. Same as any host; mitigated by the static export being
+  self-hostable and by the PWA/offline track (run with the network off). Set log
+  retention/observability to the minimum Vercel allows; we add **no** first-party
+  logging on top.
+- **No Vercel-injected scripts:** a static export ships nothing Vercel-injected
+  unless analytics is enabled (which it won't be). Keep the strict CSP; verify
+  the deployed HTML carries no added script tags.
+
+- **Proxy (optional, self-host only in v1):** since the privacy route dropped the
+  project-operated shared proxy, the only proxy in v1 is a **self-hosted** one
+  for users who want integrated email checks. It can be a **Vercel Serverless/
+  Edge Function** (natural for a Vercel-centric self-hoster) or any serverless
+  function (Cloudflare Worker, etc.), deployed **separately** with the HIBP key
+  as a secret. Its URL is injected into the app as a public config value; absent
+  → deep-link fallback.
 
 ## Build / deploy / maintenance pipeline
 
 - **CI:** lint + typecheck + **axe accessibility check** + a **"no tracker"
   dependency/CSP audit** that fails the build if a known phone-home dependency
-  or script appears. Optionally validate every content JSON against its schema.
-- **Deploy:** push to `main` → static build → static host. Reproducible builds
-  (no network at build time by default).
+  or script appears — with **`@vercel/analytics` and `@vercel/speed-insights`
+  on the blocklist by name** (the most likely accidental reintroduction on this
+  host). Optionally validate every content JSON against its schema.
+- **Deploy:** push to `main` → static build → **Vercel** (static export).
+  Reproducible builds (no network at build time by default). The artifact stays
+  portable to any static host for self-hosters.
 - **Content updates:** edit `/content/**.json` → PR → merge → redeploy. The
   "last updated / verify" date per record is part of the data (Decision 1 + 6).
 - **Proxy deploy:** independent; changes rarely.
