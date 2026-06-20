@@ -1,9 +1,11 @@
-// Minimal root layout (M0 seed). Its job here is to demonstrate correct nonce
-// wiring; the real shell (safety intro, panic-delete, ephemeral toggle) lands
-// in M0 proper per scope/docs/07-roadmap.md.
+// Root layout. Demonstrates correct nonce wiring (dynamic build) and mounts the
+// safety shell: the storage provider plus the always-visible panic control.
 
 import type { ReactNode } from 'react';
 import { headers } from 'next/headers';
+import './globals.css';
+import { StorageProvider } from '@/lib/storage/StorageProvider';
+import { PanicButton } from '@/components/PanicButton';
 
 export const metadata = {
   title: 'Errata',
@@ -11,18 +13,27 @@ export const metadata = {
 };
 
 export default async function RootLayout({ children }: { children: ReactNode }) {
-  // In the dynamic build, middleware sets x-nonce. In the static build there is
-  // no nonce (hashes are used instead) and this is simply undefined.
-  const nonce = (await headers()).get('x-nonce') ?? undefined;
+  // Dynamic build: middleware sets x-nonce, read here. Static build: we must NOT
+  // call headers() (it forces dynamic rendering, which is incompatible with
+  // output:'export') — CSP comes from build-time hashes instead.
+  const nonce =
+    process.env.STATIC_EXPORT === '1' ? undefined : ((await headers()).get('x-nonce') ?? undefined);
 
   return (
     <html lang="en">
       <body>
-        {children}
-        {/*
-          Any inline <script> we ever add MUST carry nonce={nonce} so it is
-          allowed by the CSP. Prefer external modules over inline scripts.
-        */}
+        <a className="skip-link" href="#main">
+          Skip to content
+        </a>
+        <StorageProvider>
+          <header className="app-bar">
+            <span className="wordmark">errata</span>
+            {/* Always reachable, every screen. */}
+            <PanicButton />
+          </header>
+          <main id="main">{children}</main>
+        </StorageProvider>
+        {nonce ? <span data-nonce={nonce} hidden /> : null}
       </body>
     </html>
   );

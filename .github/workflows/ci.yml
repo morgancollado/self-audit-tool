@@ -1,0 +1,34 @@
+name: CI
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+
+      # Safety/quality gates (scope/docs/12-app-foundations.md)
+      - name: No trackers (blocks @vercel/analytics & friends)
+        run: npm run audit:no-tracker
+      - name: Content schema + no-dead-end rule
+        run: npm run validate:content
+      - name: Unit tests (storage, panic-delete, report URL)
+        run: npm test
+
+      # Build both delivery modes; the static build also exercises CSP hashing.
+      # (Dynamic build runs first so it generates next-env.d.ts for typecheck.)
+      - name: Build (dynamic)
+        run: npm run build
+      - name: Typecheck
+        run: npm run typecheck
+      - name: Build (static export + CSP hashes)
+        run: npm run build:static

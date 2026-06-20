@@ -73,6 +73,36 @@ warns the user not to include personal info. *(Verified by unit tests.)*
 **Files:** `lib/report/issue-url.ts` · `lib/report/issue-url.test.ts` ·
 `components/ReportBroken.tsx`.
 
+## 4. The safety shell (storage, modes, panic-delete)
+
+The non-negotiable core (scope/docs/04-data-model.md), built backend-agnostic so
+the same logic runs in every mode and is testable in Node.
+
+- **Storage backends** (`lib/storage/`): a `KeyValueBackend` interface with a
+  `MemoryBackend` (ephemeral + test double), `IndexedDbBackend` (persistent
+  audit state), and `LocalStorageBackend` (namespaced prefs). Browser backends
+  are guarded by availability checks and **fail safe to memory/ephemeral**.
+- **`AuditStore`** loads/mutates/persists the single audit document; `migrate.ts`
+  runs ordered migrations and **refuses a newer-than-supported backup** rather
+  than corrupting it.
+- **`StorageManager`** owns the three modes and the **panic path**:
+  - *ephemeral* writes nothing to disk — **proven by test** (`persistentAudit`
+    stays empty while data lands only in the ephemeral backend);
+  - `wipeAll()` clears **every** backend (active and inactive) **plus** a
+    platform-level hard wipe (deletes the IndexedDB database, clears namespaced
+    localStorage) — **proven by test**;
+  - switching persistent → ephemeral can wipe what was already saved.
+- **React shell**: `StorageProvider` (loads state, requests
+  `storage.persist()` against iOS eviction — R18), `PanicButton` (always-visible,
+  instant, unconfirmed by design), `SafetyIntro` (first-run shared-device
+  warning + ephemeral offer), `StorageModeToggle`. Minimal AA-contrast styling
+  in `app/globals.css` using the Errata palette.
+
+**Verified:** `npm run build` (dynamic, nonce middleware) and
+`npm run build:static` (export + 15 inline-script hashes, no
+`unsafe-inline`/`unsafe-eval`) both pass; `npm test` is 14/14 green;
+`tsc --noEmit` clean.
+
 ## CI wiring (M0)
 
 `package.json` scripts, all runnable today:
