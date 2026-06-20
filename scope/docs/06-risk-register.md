@@ -18,15 +18,32 @@ risk get extended treatment because they are the load-bearing ones.
 | R10 | **Re-traumatization from discovery content** | Med × Med | Content warnings before discovery steps; calm copy; user-paced; crisis resources (Trans Lifeline, Access Now) in footer | Inherent to the task; minimized |
 | R11 | **Colombia/LatAm content wrong because authored without local expertise** | Med × High | Treat `es-CO` as needing local review before release; ship behind a clear "beta/region" label until reviewed; community contribution | Until reviewed, risk is real — gate the milestone |
 | R12 | **Accessibility regressions exclude disabled users in distress** | Med × Med | axe in CI; manual screen-reader pass per release; keyboard-first design | Continuous vigilance |
+| R13 | **Opt-out paradox: remediation deepens the very linkage it targets** | High × High | Per-broker `optOutExposesLinkage`/`requiresId` flags; "sometimes leave it" path as a first-class outcome; redaction guidance; informed-choice UI, not blind submission | User must still judge each case |
+| R14 | **Plaintext export honeypot on the user's own disk / cloud-synced Downloads** | Med × High | **Encrypted-by-default export** (WebCrypto); plaintext only as a warned opt-out; warn that Downloads often auto-syncs to iCloud/Drive | User can still mishandle the passphrase/file |
+| R15 | **Dual-use: the Discover flow is also a doxxing recipe against a third party** | High × Med/High | Conscious framing; decline to spell out the most operational targeting steps; the techniques are already public; position strictly as self-audit; no "search someone else" affordances | Cannot prevent misuse of public knowledge |
+| R16 | **Adversary is a state actor (records demand, hostile AG), not just a doxxer** | Med × High | Privacy-route defaults (no project infra in the path by default, see R2); nothing to compel (R8); ephemeral mode; honest "this won't shield you from legal process" framing; route to expert help (Access Now, legal aid) | The legal/political climate is outside our control |
+| R17 | **Solo-dev bus factor on safety-critical, fast-rotting content** | Med × High | `lastVerified` flagging; community PR culture; **a continuity plan** — co-maintainers / an org home / an explicit "this may be stale" honesty banner if maintenance lapses; everything self-hostable so a fork can carry on | A single maintainer is a real fragility |
+| R18 | **iOS/storage eviction silently drops "resume later" progress** | Med × Low/Med | `navigator.storage.persist()`; honest per-platform durability note; nudge an encrypted export as the durable backup | Browser storage policies outside our control |
 
 ## Extended: the breach-check egress decision (R2) and its resolution
 
-**Decision:** ship the client-side **password** check unconditionally; provide
-**email** breach checks through a **thin stateless serverless proxy**, which is
-the one consciously accepted relaxation of "no backend." For best experience the
-project **operates a shared, OHTTP-fronted instance as the default** path, with
-self-hosted-proxy and deep-link fallbacks — accepting the operator-trust cost
-because OHTTP removes the IP↔query correlation that made it dangerous.
+**Decision (revised — privacy route):** ship the client-side **password** check
+unconditionally; provide **email** breach checks through a **thin stateless
+serverless proxy**, the one consciously accepted relaxation of "no backend."
+**The default is the path that routes the user through *no* project
+infrastructure — the deep-link.** Self-hosted proxy and the project's shared
+OHTTP-fronted instance are **explicit opt-ins**, each behind an honest
+explanation. We reversed the earlier "shared proxy as default" call: for a
+population whose premise is "the architecture is the safety feature," and whose
+adversary may have subpoena power (R16), routing users through project-operated
+infrastructure by default is the wrong instinct. The convenience is one opt-in
+click away; nobody is defaulted into it.
+
+> **OHTTP caveat (if the shared rung is offered at all):** the "no single party
+> sees IP + prefix" guarantee holds **only if the relay and gateway are run by
+> separate, non-colluding parties.** If the project runs both, it collapses to
+> "trust me not to log." Name an independent relay operator or don't claim the
+> structural guarantee. Open: [08](08-open-questions.md) Q2.
 
 **What the proxy MUST guarantee (acceptance criteria):**
 - Receives **only** the first 6 hex chars of `SHA-1(normalized email)` — never

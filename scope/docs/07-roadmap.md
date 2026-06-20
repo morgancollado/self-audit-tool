@@ -7,15 +7,20 @@ relative sizing, not commitments.
 ## M0 — Skeleton & safety shell  *(small)*
 Foundations that everything else depends on, and the non-negotiables that must
 exist before any user touches it.
+- **Community co-design first:** validate the threat model and tone *with* trans
+  users (ideally including the workshop lineage we credit) before building. For a
+  trauma-informed tool this is M0, not an afterthought.
 - New repo; Next.js static export; CI (lint, typecheck, axe, **no-tracker
   audit**); strict CSP; MIT/Apache for code.
-- Storage adapter with **persistent / ephemeral** modes.
-- **Panic-delete** + ephemeral toggle + first-run **safety/shared-device
-  intro**.
-- i18n + jurisdiction plumbing (`next-intl`; jurisdiction as a stored pref).
-- Content-as-data loader + JSON schema + schema-validation in CI.
+- Storage adapter with **persistent / ephemeral** modes; `storage.persist()`
+  + honest durability note (R18).
+- **Panic-delete** (with honestly-scoped copy — it can't wipe browser history /
+  exported files) + ephemeral toggle + first-run **safety/shared-device intro**.
+- **Hierarchical (state-aware) jurisdiction** plumbing + i18n (`next-intl`).
+- Content-as-data loader + JSON schema + schema-validation in CI, including the
+  **no-dead-end check** (every record has an action or a monitor-only marker).
 - **Exit criteria:** an empty-but-safe app you could hand to a user without
-  risk; no analytics anywhere; panic-delete works.
+  risk; no analytics anywhere; panic-delete works; co-design feedback logged.
 
 ## M1 — Phase 1: Discover (US)  *(medium)*
 The differentiator's first half: find your exposure, deadname-aware.
@@ -27,24 +32,33 @@ The differentiator's first half: find your exposure, deadname-aware.
   prioritized findings log — all local.
 
 ## M2 — Phase 2: Opt-out generation + platform hardening (US)  *(large)*
-The remediation core; the bulk of the value.
+The remediation core; the bulk of the value. Everything here is **prepared
+in-memory; the user presses send** (95% rule), and **every finding carries an
+action** (no dead-ends).
 - Per-broker opt-out generator: text / `mailto:` / printable letter / web-form
-  steps; `requiresId` handling.
-- CCPA/CPRA + authorized-agent + **CA DROP** framing with disclaimers.
+  steps; `requiresId` + **opt-out-paradox (`optOutExposesLinkage`)** handling
+  with a first-class "leave it" outcome.
+- **California DROP as the hero removal feature**, gated on the user's state;
+  CCPA/CPRA + authorized-agent **packet** generation with disclaimers.
+- **State-aware rights surfacing** (don't imply CCPA rights to non-CA users).
 - Platform hardening + **deadname-removal flows** (Google, Meta/IG, X,
   LinkedIn, TikTok, Reddit) + escalation paths.
+- **Legal name-change / court-record flow** (incl. sealed-petition routes) +
+  **archive/cache removal** actions.
 - Consolidated **deadname-removal playbook** cross-linking the above.
-- Remediation tracker (sent/confirmed/re-check).
-- **Export/import** JSON backup.
-- **Exit criteria:** a complete US Discover → Remediate loop, fully static.
-  **This is the credible public v1.**
+- Remediation tracker (sent/confirmed/re-check; re-surfaces re-listings).
+- **Encrypted-by-default export/import** backup.
+- **Exit criteria:** a complete US Discover → Remediate loop, fully static, with
+  no dead-end findings anywhere. **This is the credible public v1.**
 
-## M3 — Breach checks  *(small–medium)*
+## M3 — Breach checks (privacy-route default)  *(small–medium)*
 - Client-side **password** k-anonymity check (no proxy).
-- Stateless **HIBP proxy** (Cloudflare Worker) + email k-anonymity flow with
-  **deep-link fallback** when proxy absent.
-- **Exit criteria:** both breach checks work; app still fully functional with
-  the proxy turned off. → **v1.1**
+- Email check: **deep-link is the default** (no project infra in the path).
+  Self-hosted **stateless proxy** (Cloudflare Worker) as an opt-in; project
+  shared OHTTP proxy only if the independent-relay question (Q2) is resolved.
+- Every breach hit carries a **rotate action** (no dead-ends).
+- **Exit criteria:** breach checks work; default path touches no project
+  infrastructure; app fully functional with every proxy turned off. → **v1.1**
 
 ## M4 — Spanish for US (`es-US`)  *(medium)*
 - Complete `es` UI catalog; translate US prose/templates; Spanish content
@@ -59,6 +73,19 @@ The remediation core; the bulk of the value.
 - **Exit criteria:** a Colombia user gets jurisdiction-correct guidance,
   reviewed. (Broader LatAm only on explicit request, per country.)
 
+## M6 — On-device browser-extension automation  *(large, post-v1, gated)*
+The "on your behalf" upgrade that preserves the no-custody guarantee: an
+extension fills forms and drives opt-out flows **as the user, in their own
+session, with all PII on-device — no server ever sees it** (see
+[09](09-removal-feasibility.md), Rung 3).
+- Shares the same content-as-data (broker/platform JSON) as the static app, so
+  flows are maintained once.
+- Falls back to a Rung-1 prepared action where CAPTCHAs / email-verification
+  loops block automation.
+- **Exit criteria:** a user completes real broker opt-outs with the extension
+  acting locally; verified that no PII leaves the device; static app unchanged
+  and still the primary product.
+
 ## Cross-cutting track — PWA / offline  *(medium, anytime after M2)*
 - Service worker caching app shell + bundled content; optional network-first
   CDN refresh; visible "content version" indicator.
@@ -69,9 +96,10 @@ The remediation core; the bulk of the value.
 
 ```
 M0 → M1 → M2  (public v1)
-        → M3  (v1.1: breach checks)
+        → M3  (v1.1: breach checks, privacy-route default)
         → M4  (es-US)
         → M5  (Colombia, gated on review)
+        → M6  (browser-extension automation, gated, post-v1)
    PWA/offline slots in any time after M2
 ```
 
@@ -79,3 +107,6 @@ M0 → M1 → M2  (public v1)
 - Monthly content spot-checks + community PR merges; quarterly BADBOL sync and
   law review (see [05](05-content-sourcing.md)).
 - Accessibility regression checks every release.
+- **Continuity / bus-factor (R17):** actively recruit co-maintainers or an org
+  home; if maintenance lapses, show an honest "content may be stale" banner
+  rather than letting a safety tool rot silently.

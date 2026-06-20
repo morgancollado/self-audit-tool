@@ -78,14 +78,23 @@ hardcoded in components. The defining constraint from the multi-jurisdiction
 decision: **language ≠ jurisdiction.**
 
 - **Locale** (`en`, `es`) selects UI strings and translated prose.
-- **Jurisdiction** (`us`, `co`) selects *which brokers and which legal
-  framework apply.*
+- **Jurisdiction** selects *which brokers and which legal framework apply.* It is
+  **hierarchical, not a flat country code**, because in the US, deletion rights
+  are **sub-national**: a California resident has CCPA/CPRA/DROP; a Texas
+  resident has almost nothing. Model it as `country` + optional `region`
+  (`us` / `us-CA` / `us-TX` … / `co`). Treating "us" as one jurisdiction would
+  either over-promise rights to non-CA users or bury the patchwork — and
+  retrofitting a sub-jurisdiction axis later is a data-model migration. Build it
+  in from day one; v1 fills a few states and is honest about the rest.
 
-A user can be `(locale=es, jurisdiction=us)` — a US-based Spanish speaker — or
-`(locale=es, jurisdiction=co)` — Colombia. These are independent axes. Content
-loaders in `/lib/content` resolve `(locale × jurisdiction)`, falling back to a
-base locale for missing translations but **never** falling back across
-jurisdictions (showing US law to a CO user would be wrong/dangerous).
+A user can be `(locale=es, jurisdiction=us-CA)` — a California Spanish speaker —
+or `(locale=es, jurisdiction=co)` — Colombia. These are independent axes.
+Content loaders in `/lib/content` resolve `(locale × jurisdiction)`, falling
+back to a base locale for missing translations and from a region to its country
+base for *rights that genuinely apply nationally*, but **never** falling back
+across countries (showing US law to a CO user would be wrong/dangerous) and
+**never inventing state rights that don't exist** (a `us-TX` user must not see
+CCPA framing).
 
 See [05](05-content-sourcing.md) for full schemas and worked examples.
 
@@ -116,11 +125,21 @@ CDN/GitHub raw as a later enhancement.**
   for one person).
 
 ### Decision 2 — Breach-check egress (the big one)
-**Recommendation (confirmed with requester): a thin, stateless, log-free
-serverless proxy for email breach checks, isolated from the static app;
-password checks stay client-side. To offer the best experience, the project
-operates a *shared, OHTTP-fronted* instance as the default email path, with
-self-hosted-proxy and deep-link fallbacks (see the tiered access model below).**
+**Decision (revised — privacy route): password checks stay client-side; email
+breach checks use a thin, stateless, log-free serverless proxy isolated from the
+static app. The *default* is the privacy-maximizing path — the
+**deep-link**, with **self-hosted proxy** as the integrated option for those who
+want it. The project's **shared OHTTP-fronted proxy is an explicit, clearly-
+explained opt-in, never the out-of-box default.** The full ladder still ships;
+the default is conservative.**
+
+> **Why the default reversed.** The earlier draft made the project-operated
+> shared proxy the default for best UX. For a population whose entire premise is
+> "the architecture is the safety feature" — and whose adversary may have
+> subpoena power (R16) — defaulting users into *project-operated infrastructure*
+> is the wrong instinct. The convenient path is still one opt-in click away, with
+> an honest explanation of what it touches; nobody is routed through project
+> infrastructure without choosing it.
 
 - **Client-side, always:** Pwned Passwords range API — no key, no rate limit,
   k-anonymity (5-char SHA-1 prefix). Ships in the static app.
@@ -162,27 +181,36 @@ The key constraint is HIBP's, not ours: you **cannot** have *both*
 fully-integrated email results *and* zero project-operated infrastructure for an
 arbitrary user — something must hold the key, and (per above) it cannot be the
 browser. So the only lever is *where the keyed component lives and who is
-trusted.* **Decision: ship the full ladder and make rung 4 the default** so the
-integrated experience works with zero setup; the lower rungs are graceful
-fallbacks.
+trusted.* **Decision (privacy route): ship the full ladder but make the
+*default* the path that routes the user through no project infrastructure —
+the deep-link (rung 2).** The integrated rungs (3, 4) are opt-in, each behind an
+honest explanation of what it touches. Rungs ordered from most to least private:
 
 1. **Password check** — client-side Pwned Passwords (keyless, k-anonymous).
    Integrated, zero infrastructure. Always on.
-2. **Email fallback** — **deep-link** to haveibeenpwned.com when no proxy is
-   reachable (or the user opts for zero trust). Zero infrastructure; the cost is
-   a context switch, no capture of the result into the findings log, and the
-   user's *full* email reaching HIBP + its CDN.
-3. **Self-host tier — point the app at your own proxy URL.** Fully-integrated,
-   in-flow email results that feed the remediation tracker, with the (small)
-   attack surface on the user's own infra — operator == user, collapsing the
-   operator-trust residual (see R2). For self-hosters who want the integrated
-   flow on zero third-party trust.
-4. **Default — the project's shared, OHTTP-fronted proxy.** Integrated results
-   out of the box, no setup. The **OHTTP / Oblivious HTTP relay** means the
-   relay sees the IP but not the prefix and the gateway sees the prefix but not
-   the IP, so no single party can correlate IP↔query — turning "trust me not to
-   log" into a structural guarantee (see R2 residual). Accepted cost: the
-   project funds the HIBP subscription and is the nominal operator.
+2. **Email default — deep-link** to haveibeenpwned.com. **This is the default
+   email path.** Zero project infrastructure; nothing of the user's touches us.
+   The cost is a context switch, no capture of the result into the findings log,
+   and the user's *full* email reaching HIBP + its CDN (disclosed at the link).
+3. **Opt-in: self-host tier — point the app at your own proxy URL.**
+   Fully-integrated, in-flow email results that feed the remediation tracker,
+   with the (small) attack surface on the user's own infra — operator == user,
+   collapsing the operator-trust residual (see R2). For self-hosters who want the
+   integrated flow on zero third-party trust.
+4. **Opt-in: the project's shared, OHTTP-fronted proxy.** Integrated results with
+   no self-hosting — **available only when the user explicitly turns it on**, not
+   the default. The **OHTTP / Oblivious HTTP relay** means the relay sees the IP
+   but not the prefix and the gateway sees the prefix but not the IP, so no
+   single party can correlate IP↔query — turning "trust me not to log" into a
+   structural guarantee (see R2 residual). Accepted cost: the project funds the
+   HIBP subscription and is the nominal operator.
+   - **Load-bearing assumption — state it or the guarantee collapses:** OHTTP's
+     privacy holds *only if the relay and the gateway are operated by separate,
+     non-colluding parties.* If the project runs both (or contracts a single
+     vendor for both), it degrades back to "trust me not to log." If we offer
+     this rung at all, the design **must** name an independent relay operator
+     distinct from the gateway, or not claim the structural guarantee. See
+     [08](08-open-questions.md) Q2.
 
 - **Rejected:** embedding the key client-side (leaks it); keyless email k-anon
   (doesn't exist — even range mode needs the key); **calling HIBP directly from
@@ -252,6 +280,36 @@ network-first-with-cache-fallback.**
   v1.
 
 ---
+
+## Future architecture — the browser extension (M6)
+
+The static app's automation ceiling is **Rung 1** of
+[09](09-removal-feasibility.md): prepared-in-memory actions the user sends with
+one keystroke. The next rung *without breaking the no-custody guarantee* is a
+**client-side browser extension**, because an extension can act — fill forms,
+drive opt-out flows, click through — **as the user, in the user's own session,
+with all PII staying on the user's machine. No server ever sees it** (same trust
+model as a password manager).
+
+- **Why not a server doing this:** a server filling forms must hold the PII =
+  the honeypot. The extension keeps custody on-device, which is the whole point.
+- **Honest limits:** per-broker brittleness; CAPTCHAs and email-verification
+  loops stop full automation, at which point the extension hands the task back
+  to the user as a Rung-1 prepared action.
+- **Boundary:** the extension shares the same content-as-data (broker/platform
+  JSON) as the static app, so flows are maintained once. It is a *separate
+  deliverable* gated behind the static MVP — the static site remains the
+  product; the extension is the automation upgrade.
+
+## Generation is in-memory by default (the 95% rule, enforced in code)
+
+All opt-out artifacts (`mailto:`, form text, letters) are rendered from the
+**transient** identity input at generation time and are **not written back**
+unless the user opted into name retention ([04](04-data-model.md)). The final
+send is always a user action (clicking a `mailto:`, pasting into a form,
+printing a letter) — there is no code path where identity leaves the device
+automatically. This is the architectural expression of "we do ~95%, the user
+presses send."
 
 ## Hosting
 
