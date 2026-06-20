@@ -45,17 +45,28 @@ export function StorageProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     let cancelled = false;
     (async () => {
-      const { manager: mgr, durable: dur, preferences: prefs } = await createDefaultStorage();
-      if (cancelled) return;
-      setManager(mgr);
-      setDurable(dur);
-      setModeState(mgr.mode);
-      setPreferences(prefs);
-      if (mgr.mode === 'persistent') {
-        await requestPersistentStorage(); // best-effort against silent eviction (R18)
-        setState((await mgr.audit.load()) ?? null);
+      try {
+        const { manager: mgr, durable: dur, preferences: prefs } = await createDefaultStorage();
+        if (cancelled) return;
+        setManager(mgr);
+        setDurable(dur);
+        setModeState(mgr.mode);
+        setPreferences(prefs);
+        if (mgr.mode === 'persistent') {
+          // Best-effort against silent eviction (R18) — deliberately NOT awaited,
+          // so a slow or blocked persist() can never wedge the app on "Loading…".
+          void requestPersistentStorage();
+          try {
+            setState((await mgr.audit.load()) ?? null);
+          } catch {
+            // A corrupted or newer-than-supported stored doc must not brick the
+            // app; degrade to an empty state instead of an endless "Loading…".
+            setState(null);
+          }
+        }
+      } finally {
+        if (!cancelled) setReady(true);
       }
-      setReady(true);
     })();
     return () => {
       cancelled = true;
@@ -67,7 +78,18 @@ export function StorageProvider({ children }: { children: ReactNode }) {
       await manager.setMode(next, opts);
       setModeState(manager.mode);
       setPreferences(await manager.loadPreferences());
-      setState(next === 'persistent' ? (await manager.audit.load()) ?? null : null);
+      if (next === 'persistent') {
+        // The user just chose to save on this device — the appropriate moment to
+        // ask the browser to keep the data from being silently evicted (R18).
+        void requestPersistentStorage();
+        try {
+          setState((await manager.audit.load()) ?? null);
+        } catch {
+          setState(null);
+        }
+      } else {
+        setState(null);
+      }
     },
     [manager],
   );

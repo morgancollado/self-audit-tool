@@ -34,15 +34,25 @@ export async function createDefaultStorage(): Promise<DefaultStorage> {
   const durable = isIndexedDbAvailable() && isLocalStorageAvailable();
   const backends = durable ? realBackends() : memoryBackends();
 
-  // Read any previously chosen mode from durable prefs (only persistent mode
-  // ever wrote one). Absent => start persistent unless storage isn't durable.
-  let startMode: StorageMode = durable ? 'persistent' : 'ephemeral';
+  // Read previously saved prefs. This is a localStorage READ only — it never
+  // opens IndexedDB and writes nothing, so a first-time visitor on a shared or
+  // monitored device leaves no trace here. (Constructing the backends is lazy;
+  // IndexedDB is not opened until something actually reads/writes audit state.)
   let preferences: Preferences = { ...DEFAULT_PREFERENCES };
   if (durable) {
     const probe = StorageManager.create(backends, 'persistent');
     preferences = await probe.loadPreferences();
-    if (preferences.storageMode) startMode = preferences.storageMode;
   }
+
+  // The pre-consent default is ALWAYS ephemeral. We must not open IndexedDB or
+  // request persistent storage until the user has seen the safety intro and
+  // explicitly chosen to save on this device — otherwise we'd create the named
+  // `errata` database (and possibly a persist grant) before they've had the
+  // chance to pick session-only mode. Only a returning user who already
+  // consented and chose to save starts persistent (their data already exists).
+  const consentedPersistent =
+    durable && preferences.safetyIntroAcknowledged && preferences.storageMode === 'persistent';
+  const startMode: StorageMode = consentedPersistent ? 'persistent' : 'ephemeral';
 
   const manager = StorageManager.create(backends, startMode);
   return { manager, durable, preferences };
