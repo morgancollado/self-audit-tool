@@ -23,7 +23,10 @@ risk get extended treatment because they are the load-bearing ones.
 
 **Decision:** ship the client-side **password** check unconditionally; provide
 **email** breach checks through a **thin stateless serverless proxy**, which is
-the one consciously accepted relaxation of "no backend."
+the one consciously accepted relaxation of "no backend." For best experience the
+project **operates a shared, OHTTP-fronted instance as the default** path, with
+self-hosted-proxy and deep-link fallbacks — accepting the operator-trust cost
+because OHTTP removes the IP↔query correlation that made it dangerous.
 
 **What the proxy MUST guarantee (acceptance criteria):**
 - Receives **only** the first 6 hex chars of `SHA-1(normalized email)` — never

@@ -117,8 +117,10 @@ CDN/GitHub raw as a later enhancement.**
 
 ### Decision 2 — Breach-check egress (the big one)
 **Recommendation (confirmed with requester): a thin, stateless, log-free
-serverless proxy for email breach checks, isolated from the static app and
-fully optional; password checks stay client-side.**
+serverless proxy for email breach checks, isolated from the static app;
+password checks stay client-side. To offer the best experience, the project
+operates a *shared, OHTTP-fronted* instance as the default email path, with
+self-hosted-proxy and deep-link fallbacks (see the tiered access model below).**
 
 - **Client-side, always:** Pwned Passwords range API — no key, no rate limit,
   k-anonymity (5-char SHA-1 prefix). Ships in the static app.
@@ -160,22 +162,27 @@ The key constraint is HIBP's, not ours: you **cannot** have *both*
 fully-integrated email results *and* zero project-operated infrastructure for an
 arbitrary user — something must hold the key, and (per above) it cannot be the
 browser. So the only lever is *where the keyed component lives and who is
-trusted.* The tool offers a ladder that degrades safely at each rung:
+trusted.* **Decision: ship the full ladder and make rung 4 the default** so the
+integrated experience works with zero setup; the lower rungs are graceful
+fallbacks.
 
 1. **Password check** — client-side Pwned Passwords (keyless, k-anonymous).
    Integrated, zero infrastructure. Always on.
-2. **Email out of the box** — **deep-link** to haveibeenpwned.com. Zero
-   infrastructure; the cost is a context switch, no capture of the result into
-   the findings log, and the user's *full* email reaching HIBP + its CDN.
-3. **Power tier — point the app at a proxy URL** (the project's optional shared
-   proxy, or one the **user self-hosts**). Unlocks fully-integrated, in-flow
-   email results that feed the remediation tracker. A self-hosted proxy moves
-   the (small) attack surface onto the user, who is then their own trusted
-   operator — collapsing the operator-trust residual (see R2).
-4. **Shared instance, if ever operated** — front it with an **OHTTP / Oblivious
-   HTTP relay**: the relay sees the IP but not the prefix, the gateway sees the
-   prefix but not the IP, so no single party can correlate IP↔query. This turns
-   "trust me not to log" into a structural guarantee (see R2 residual).
+2. **Email fallback** — **deep-link** to haveibeenpwned.com when no proxy is
+   reachable (or the user opts for zero trust). Zero infrastructure; the cost is
+   a context switch, no capture of the result into the findings log, and the
+   user's *full* email reaching HIBP + its CDN.
+3. **Self-host tier — point the app at your own proxy URL.** Fully-integrated,
+   in-flow email results that feed the remediation tracker, with the (small)
+   attack surface on the user's own infra — operator == user, collapsing the
+   operator-trust residual (see R2). For self-hosters who want the integrated
+   flow on zero third-party trust.
+4. **Default — the project's shared, OHTTP-fronted proxy.** Integrated results
+   out of the box, no setup. The **OHTTP / Oblivious HTTP relay** means the
+   relay sees the IP but not the prefix and the gateway sees the prefix but not
+   the IP, so no single party can correlate IP↔query — turning "trust me not to
+   log" into a structural guarantee (see R2 residual). Accepted cost: the
+   project funds the HIBP subscription and is the nominal operator.
 
 - **Rejected:** embedding the key client-side (leaks it); keyless email k-anon
   (doesn't exist — even range mode needs the key); **calling HIBP directly from

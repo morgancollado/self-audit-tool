@@ -9,6 +9,11 @@ Resolved-this-session items are noted so the record is complete.
   `morgancollado/morgan-collado` under `/scope/` for now — extract later.)
 - **Breach check:** **stateless serverless proxy** for email checks; password
   check stays client-side.
+- **Proxy operation (decided):** to offer the **best out-of-box experience**,
+  the project **operates a shared, OHTTP-fronted proxy** as the *default* email
+  path — integrated, in-flow results with no setup. Self-hosted proxy and
+  deep-link remain as fallbacks (and for zero-trust users). Resolves Q2 below;
+  remaining dependency is funding the HIBP subscription (see Q8).
 - **i18n/jurisdiction:** **US *and* Colombia** are in scope; language is
   decoupled from jurisdiction (`es-US` ≠ `es-CO`).
 
@@ -18,17 +23,17 @@ Resolved-this-session items are noted so the record is complete.
    **public** (open-source/self-hostable is a non-negotiable). Confirm name and
    that public is intended from day one (vs. private until M2).
 
-2. **Who runs the HIBP proxy, and on whose key?** Options: (a) the project
-   operates one shared proxy on a maintainer's HIBP subscription (cost +
-   you're the trusted operator); (b) ship the proxy code and have each
-   self-hoster bring their own key; (c) default to deep-link, proxy strictly
-   opt-in/self-hosted. **Recommendation: (c) + (b)** — no shared key to fund or
-   trust; deep-link works out of the box.
-   *Update:* a fourth option — BYO-key called directly from the browser — is
+2. **Who runs the HIBP proxy, and on whose key?** **DECIDED — (a) for best
+   experience:** the **project operates one shared, OHTTP-fronted proxy** on a
+   maintainer's HIBP subscription, as the default email path. (b) self-hosted
+   proxy and (c) deep-link remain as fallbacks and for zero-trust users.
+   Accepted tradeoffs: the project funds the subscription (see Q8) and is a
+   trusted/compellable operator — mitigated by OHTTP (no party sees IP + prefix
+   together), no logging, open-sourcing the proxy, and the self-host/deep-link
+   alternatives. A fourth option — BYO-key called directly from the browser — is
    **not viable** (HIBP CORS + `User-Agent` constraint, verified); BYO-key still
    needs a proxy. See the tiered access model in [03](03-architecture.md)
-   (Decision 2) and R2 in [06](06-risk-register.md). If a shared instance is
-   ever run, front it with OHTTP.
+   (Decision 2) and R2 in [06](06-risk-register.md).
 
 3. **Colombia scope depth.** Colombia-only, or is broader LatAm expected later?
    And **do you have access to local legal review** for the CO content (gates
