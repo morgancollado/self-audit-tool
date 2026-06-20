@@ -31,19 +31,20 @@ risk get extended treatment because they are the load-bearing ones.
 unconditionally; provide **email** breach checks through a **thin stateless
 serverless proxy**, the one consciously accepted relaxation of "no backend."
 **The default is the path that routes the user through *no* project
-infrastructure — the deep-link.** Self-hosted proxy and the project's shared
-OHTTP-fronted instance are **explicit opt-ins**, each behind an honest
-explanation. We reversed the earlier "shared proxy as default" call: for a
-population whose premise is "the architecture is the safety feature," and whose
-adversary may have subpoena power (R16), routing users through project-operated
-infrastructure by default is the wrong instinct. The convenience is one opt-in
-click away; nobody is defaulted into it.
+infrastructure — the deep-link.** The self-hosted proxy is the integrated
+opt-in. The project's shared OHTTP-fronted instance is **not shipped in v1.** We
+reversed the earlier "shared proxy as default" call: for a population whose
+premise is "the architecture is the safety feature," and whose adversary may
+have subpoena power (R16), routing users through project-operated infrastructure
+is the wrong instinct. The integrated experience is available to anyone who
+self-hosts; no one is routed through project infrastructure at all.
 
-> **OHTTP caveat (if the shared rung is offered at all):** the "no single party
-> sees IP + prefix" guarantee holds **only if the relay and gateway are run by
-> separate, non-colluding parties.** If the project runs both, it collapses to
-> "trust me not to log." Name an independent relay operator or don't claim the
-> structural guarantee. Open: [08](08-open-questions.md) Q2.
+> **OHTTP caveat (why the shared rung is deferred, not just demoted):** the
+> "no single party sees IP + prefix" guarantee holds **only if the relay and
+> gateway are run by separate, non-colluding parties.** With no independent
+> relay partner, the project would run both and it collapses to "trust me not to
+> log" — so the shared rung is dropped for v1 and revisited only if such a
+> partner appears. See [08](08-open-questions.md) Q2.
 
 **What the proxy MUST guarantee (acceptance criteria):**
 - Receives **only** the first 6 hex chars of `SHA-1(normalized email)` — never

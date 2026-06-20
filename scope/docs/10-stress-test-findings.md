@@ -22,7 +22,7 @@ traceability record, not a parking lot.
 | 3 | **Dual-use** — Discover is also a doxxing recipe | Conscious framing; no "look someone else up" affordance; documented residual | R15 in [06](06-risk-register.md); [02](02-features-moscow.md) |
 | 4 | **"US" jurisdiction too coarse** — rights are sub-national | **Hierarchical `country`+`region`** jurisdiction; never imply CCPA rights where they don't exist | [03](03-architecture.md), [04](04-data-model.md), [05](05-content-sourcing.md); Q9 in [08](08-open-questions.md) |
 | 5 | **State-actor adversary**, not just doxxers | Privacy-route defaults; "won't shield you from legal process" honesty; route to expert help | R16 in [06](06-risk-register.md) |
-| 6 | **Shared OHTTP proxy as default** was wrong for this population; OHTTP non-collusion unstated | **Reversed to privacy route** — deep-link default, shared proxy opt-in; relay/gateway independence made an explicit requirement | [03](03-architecture.md) Decision 2; R2 in [06](06-risk-register.md); Q2 in [08](08-open-questions.md); [07](07-roadmap.md) M3 |
+| 6 | **Shared OHTTP proxy as default** was wrong for this population; OHTTP non-collusion unstated | **Reversed to privacy route** — deep-link default, self-host opt-in, **shared project proxy dropped for v1** (revisit only with an independent relay partner) | [03](03-architecture.md) Decision 2; R2 in [06](06-risk-register.md); Q2 in [08](08-open-questions.md); [07](07-roadmap.md) M3 |
 | 7 | **Finding-without-fixing** re-traumatization | Folded into the no-dead-end rule; breaches/archives/caches all get attached actions | [09](09-removal-feasibility.md); [02](02-features-moscow.md) |
 | 8 | **Plaintext export honeypot** (cloud-synced Downloads) | **Encrypted-by-default export** (was a `Could`, now Must) | R14 in [06](06-risk-register.md); [04](04-data-model.md); [02](02-features-moscow.md) |
 | 9 | **iOS/storage eviction** silently drops "resume later" | `storage.persist()`; honest durability note; nudge encrypted export | R18 in [06](06-risk-register.md); [04](04-data-model.md) |
@@ -38,13 +38,21 @@ defining the four rungs (static list → prepared in-memory actions → DROP →
 on-device extension → ✗ server custody) and committing v1 to Rung 1, DROP as a
 hero feature, and the browser extension as roadmap **M6**.
 
-## Decisions reversed this session
+## Decisions reversed / made this session
 - **Breach-check default:** shared OHTTP proxy → **deep-link (privacy route)**;
-  integrated rungs are opt-in. (User-directed.)
+  **the shared project proxy is dropped for v1** (self-host is the integrated
+  opt-in; revisit only with an independent OHTTP relay partner). (User-directed.)
+- **US jurisdiction:** coarse "US" → **full state coverage target (all 50 + DC)**,
+  CA-first, honest about thin-rights states. (User-directed.)
 - **Encrypted export:** `Could` → **Must (default)**.
-- **Legal name-change / archive-cache removal:** `Should`/implicit → **Must**.
+- **Legal name-change / archive-cache removal:** `Should`/implicit → **Must**;
+  **research + flow scaffolding start now**, content release gated on legal
+  review. (User-directed.)
+- **Browser extension (M6):** confirmed post-v1, Chromium + Firefox. (User-directed.)
+- **Dual-use residual (R15):** accepted with mitigations. (User-directed.)
 
-## Still open (carried to [08](08-open-questions.md))
-Q2 (proxy operator / OHTTP relay independence), Q9 (which states first),
-Q10 (extension appetite + target browsers), Q11 (name-change legal review),
-Q12 (dual-use stance), Q13 (encrypted-export UX cost).
+## Open questions — all resolved this round
+Q2, Q9, Q10, Q11, Q12, Q13 are **decided** (see [08](08-open-questions.md)).
+The remaining standing items are the original Q1, Q3–Q8 (repo name/visibility,
+Colombia depth & review, hosting, commercial links, encrypted-export already
+decided, name-retention default, funding).

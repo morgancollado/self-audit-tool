@@ -89,10 +89,10 @@ isolated. See [`docs/06-risk-register.md`](docs/06-risk-register.md).
 > impossible to do client-side without leaking an API key, so an *optional* thin
 > **stateless, log-free** serverless proxy exists for it, physically isolated
 > from the static app. **By default the email check is a deep-link that routes
-> the user through no project infrastructure at all** (privacy route); the
-> self-hosted proxy and a shared OHTTP-fronted proxy are **opt-ins**, not the
-> default. The password (k-anonymity) breach check stays client-side. Rationale
-> and guarantees: see the architecture and risk docs.
+> the user through no project infrastructure at all** (privacy route); a
+> **self-hosted** proxy is the integrated opt-in. A project-operated shared proxy
+> is **not shipped in v1.** The password (k-anonymity) breach check stays
+> client-side. Rationale and guarantees: see the architecture and risk docs.
 
 ## Where this should live (repository recommendation)
 

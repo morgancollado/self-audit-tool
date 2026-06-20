@@ -44,7 +44,10 @@ action** (no dead-ends).
 - Platform hardening + **deadname-removal flows** (Google, Meta/IG, X,
   LinkedIn, TikTok, Reddit) + escalation paths.
 - **Legal name-change / court-record flow** (incl. sealed-petition routes) +
-  **archive/cache removal** actions.
+  **archive/cache removal** actions. **Research + flow scaffolding start now**
+  (don't wait on review to build); **general release of the content is gated on
+  legal review** and ships behind a "verify locally" banner until reviewed
+  ([08](08-open-questions.md) Q11, R4/R11).
 - Consolidated **deadname-removal playbook** cross-linking the above.
 - Remediation tracker (sent/confirmed/re-check; re-surfaces re-listings).
 - **Encrypted-by-default export/import** backup.
@@ -54,8 +57,9 @@ action** (no dead-ends).
 ## M3 — Breach checks (privacy-route default)  *(small–medium)*
 - Client-side **password** k-anonymity check (no proxy).
 - Email check: **deep-link is the default** (no project infra in the path).
-  Self-hosted **stateless proxy** (Cloudflare Worker) as an opt-in; project
-  shared OHTTP proxy only if the independent-relay question (Q2) is resolved.
+  Self-hosted **stateless proxy** (Cloudflare Worker) as the integrated opt-in.
+  **No project-operated shared proxy in v1** (deferred pending an independent
+  OHTTP relay partner — Q2).
 - Every breach hit carries a **rotate action** (no dead-ends).
 - **Exit criteria:** breach checks work; default path touches no project
   infrastructure; app fully functional with every proxy turned off. → **v1.1**
@@ -110,3 +114,8 @@ M0 → M1 → M2  (public v1)
 - **Continuity / bus-factor (R17):** actively recruit co-maintainers or an org
   home; if maintenance lapses, show an honest "content may be stale" banner
   rather than letting a safety tool rot silently.
+- **US state coverage build-out (Q9):** author remaining states toward full
+  coverage (all 50 + DC) after the v1 priority subset — data authoring against
+  the existing `country`+`region` model, prioritized by population and by
+  strength of rights; thin-rights states get honest "limited rights here"
+  content rather than silence.

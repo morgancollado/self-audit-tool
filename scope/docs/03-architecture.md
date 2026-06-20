@@ -85,7 +85,10 @@ decision: **language ≠ jurisdiction.**
   (`us` / `us-CA` / `us-TX` … / `co`). Treating "us" as one jurisdiction would
   either over-promise rights to non-CA users or bury the patchwork — and
   retrofitting a sub-jurisdiction axis later is a data-model migration. Build it
-  in from day one; v1 fills a few states and is honest about the rest.
+  in from day one. **Target: full US coverage (all 50 + DC)**, authored CA-first
+  then comprehensive-law/high-population states; v1 ships a priority subset and
+  is honest about thin-rights states. Expansion is pure content authoring against
+  this model, not a rewrite ([08](08-open-questions.md) Q9).
 
 A user can be `(locale=es, jurisdiction=us-CA)` — a California Spanish speaker —
 or `(locale=es, jurisdiction=co)` — Colombia. These are independent axes.
@@ -125,21 +128,21 @@ CDN/GitHub raw as a later enhancement.**
   for one person).
 
 ### Decision 2 — Breach-check egress (the big one)
-**Decision (revised — privacy route): password checks stay client-side; email
-breach checks use a thin, stateless, log-free serverless proxy isolated from the
-static app. The *default* is the privacy-maximizing path — the
-**deep-link**, with **self-hosted proxy** as the integrated option for those who
-want it. The project's **shared OHTTP-fronted proxy is an explicit, clearly-
-explained opt-in, never the out-of-box default.** The full ladder still ships;
-the default is conservative.**
+**Decision (privacy route): password checks stay client-side; email breach checks
+use a thin, stateless, log-free serverless proxy isolated from the static app.
+The *default* is the privacy-maximizing path — the **deep-link** (no project
+infrastructure in the path) — with a **self-hosted proxy** as the integrated
+opt-in for those who want it. The project's **shared OHTTP-fronted proxy is NOT
+shipped in v1** (revisit only with an independent relay partner). The default is
+conservative by design.**
 
 > **Why the default reversed.** The earlier draft made the project-operated
 > shared proxy the default for best UX. For a population whose entire premise is
 > "the architecture is the safety feature" — and whose adversary may have
-> subpoena power (R16) — defaulting users into *project-operated infrastructure*
-> is the wrong instinct. The convenient path is still one opt-in click away, with
-> an honest explanation of what it touches; nobody is routed through project
-> infrastructure without choosing it.
+> subpoena power (R16) — routing users through *project-operated infrastructure*
+> is the wrong instinct, so the shared proxy is dropped for v1 entirely. Users
+> who want integrated (in-flow) email results self-host the proxy; everyone else
+> gets the deep-link. Nobody is routed through project infrastructure at all.
 
 - **Client-side, always:** Pwned Passwords range API — no key, no rate limit,
   k-anonymity (5-char SHA-1 prefix). Ships in the static app.
@@ -197,20 +200,14 @@ honest explanation of what it touches. Rungs ordered from most to least private:
    with the (small) attack surface on the user's own infra — operator == user,
    collapsing the operator-trust residual (see R2). For self-hosters who want the
    integrated flow on zero third-party trust.
-4. **Opt-in: the project's shared, OHTTP-fronted proxy.** Integrated results with
-   no self-hosting — **available only when the user explicitly turns it on**, not
-   the default. The **OHTTP / Oblivious HTTP relay** means the relay sees the IP
-   but not the prefix and the gateway sees the prefix but not the IP, so no
-   single party can correlate IP↔query — turning "trust me not to log" into a
-   structural guarantee (see R2 residual). Accepted cost: the project funds the
-   HIBP subscription and is the nominal operator.
-   - **Load-bearing assumption — state it or the guarantee collapses:** OHTTP's
-     privacy holds *only if the relay and the gateway are operated by separate,
-     non-colluding parties.* If the project runs both (or contracts a single
-     vendor for both), it degrades back to "trust me not to log." If we offer
-     this rung at all, the design **must** name an independent relay operator
-     distinct from the gateway, or not claim the structural guarantee. See
-     [08](08-open-questions.md) Q2.
+4. **Deferred (NOT in v1): the project's shared, OHTTP-fronted proxy.** Would
+   give integrated results with no self-hosting, but **we do not ship it in v1.**
+   Standing up project-operated infrastructure for a high-risk population cuts
+   against the safety premise, and the OHTTP guarantee would require an
+   **independent relay operator distinct from the gateway** — privacy holds
+   *only if relay and gateway are separate, non-colluding parties*; if the
+   project runs both, it degrades to "trust me not to log." Revisit **only** if a
+   credible independent relay partner appears. See [08](08-open-questions.md) Q2.
 
 - **Rejected:** embedding the key client-side (leaks it); keyless email k-anon
   (doesn't exist — even range mode needs the key); **calling HIBP directly from

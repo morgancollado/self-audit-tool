@@ -9,14 +9,14 @@ Resolved-this-session items are noted so the record is complete.
   `morgancollado/morgan-collado` under `/scope/` for now — extract later.)
 - **Breach check:** **stateless serverless proxy** for email checks; password
   check stays client-side.
-- **Proxy operation (revised — privacy route):** the **default email path is the
-  deep-link**, which routes the user through **no project infrastructure**.
-  Self-hosted proxy and the project's shared OHTTP-fronted proxy are **explicit
-  opt-ins**, each behind an honest explanation. We reversed the earlier
-  "shared proxy as default" call because defaulting a high-risk population into
-  project-operated infrastructure contradicts the safety premise (see
-  [03](03-architecture.md) Decision 2, [06](06-risk-register.md) R2/R16). Q2
-  below is reframed accordingly.
+- **Proxy operation (decided — privacy route):** the **default email path is the
+  deep-link**, which routes the user through **no project infrastructure**. The
+  **self-hosted proxy** is the integrated opt-in. The **project's shared
+  OHTTP-fronted proxy is dropped for v1** (revisit only with an independent relay
+  partner). We reversed the earlier "shared proxy as default" call because
+  defaulting a high-risk population into project-operated infrastructure
+  contradicts the safety premise (see [03](03-architecture.md) Decision 2,
+  [06](06-risk-register.md) R2/R16). See Q2 below.
 - **i18n/jurisdiction:** **US *and* Colombia** are in scope; language is
   decoupled from jurisdiction (`es-US` ≠ `es-CO`).
 
@@ -26,19 +26,16 @@ Resolved-this-session items are noted so the record is complete.
    **public** (open-source/self-hostable is a non-negotiable). Confirm name and
    that public is intended from day one (vs. private until M2).
 
-2. **The HIBP proxy — confirm the privacy-route default, and who (if anyone) runs
-   a shared instance.** **Revised decision:** the **deep-link is the default**
-   (no project infra in the path); **self-hosted proxy** is the integrated
-   opt-in; the **project's shared OHTTP proxy** is an *additional* opt-in only.
-   Two things still need a call: **(a)** confirm you're happy trading the
-   out-of-box integrated experience for the conservative default (I recommend
-   yes for this population); **(b)** *if* we offer the shared OHTTP rung at all,
-   **who operates the relay vs. the gateway?** OHTTP's guarantee holds only if
-   they are **separate, non-colluding parties** — if the project runs both, the
-   structural guarantee collapses to "trust me." Name an independent relay
-   operator or drop the claim. BYO-key-direct-from-browser remains **not viable**
-   (HIBP CORS + `User-Agent`, verified). See [03](03-architecture.md) Decision 2
-   and R2/R16 in [06](06-risk-register.md).
+2. **The HIBP proxy — DECIDED: privacy route, shared OHTTP rung dropped for v1.**
+   The **deep-link is the default** (no project infra in the path); the
+   **self-hosted proxy** is the integrated opt-in. The **project's shared OHTTP
+   proxy is NOT shipped in v1** — we avoid standing up project-operated
+   infrastructure for a high-risk population, and OHTTP's guarantee would anyway
+   require an independent relay operator distinct from the gateway (unmet). It
+   may be revisited only if a credible **independent relay partner** appears.
+   BYO-key-direct-from-browser remains **not viable** (HIBP CORS + `User-Agent`,
+   verified). See [03](03-architecture.md) Decision 2 and R2/R16 in
+   [06](06-risk-register.md).
 
 3. **Colombia scope depth.** Colombia-only, or is broader LatAm expected later?
    And **do you have access to local legal review** for the CO content (gates
@@ -65,32 +62,33 @@ Resolved-this-session items are noted so the record is complete.
    sustaining model is ever wanted, note that BADBOL's **NonCommercial** data
    license would constrain a paid offering built on that data.
 
-## New (from the stress-test pass)
+## New (from the stress-test pass) — all DECIDED this round
 
-9. **State-aware jurisdiction depth.** v1 models US jurisdiction as `country` +
-   `region` (state) because rights are sub-national. Which states do we fill in
-   first (CA is mandatory for DROP; which others — TX, FL, NY…)? And we must
-   commit to **never implying CCPA-style rights to a user whose state lacks
-   them.** Confirm this is the right call vs. a coarser "US" with caveats.
+9. **State-aware jurisdiction depth. — DECIDED: full US coverage.** Author **all
+   US states** (50 + DC), not a coarse "US." Sequencing: **CA first** (DROP),
+   then the comprehensive-privacy-law states (CO, VA, CT, plus high-population
+   TX, FL, NY), then the remaining states as fast-follow content work — this is
+   *data* authoring against the existing `country`+`region` model, not a
+   rewrite, so v1 can ship a priority subset and expand without re-architecting.
+   Standing commitment: **never imply CCPA-style rights to a user whose state
+   lacks them** (honest "limited rights here" content for thin-rights states).
 
-10. **Browser-extension appetite (M6).** The roadmap adds an on-device extension
-    as the real "on your behalf" automation that *keeps custody on the user's
-    machine*. Confirm you want this as a post-v1 track (large, brittle), and the
-    target browsers (Chromium + Firefox?).
+10. **Browser-extension appetite (M6). — DECIDED: yes.** Post-v1 track, targeting
+    **Chromium + Firefox**, keeping all PII on-device (no custody).
 
-11. **Legal review for the name-change / court-record flow.** This is now
-    first-class content (often the biggest, most permanent deadname source) and
-    includes sealed-petition routes that vary by state. Who reviews it for
-    accuracy before release (same gate as R4/R11)?
+11. **Legal review for the name-change / court-record flow. — DECIDED: yes,
+    start now.** Begin the research and **stand up the flow now** (don't wait on
+    review to start building); **general release of the content is gated on
+    legal review** (name-change-experienced legal-aid org / trans-law clinic),
+    shipped behind a "verify locally" banner until reviewed. Same gate as
+    R4/R11.
 
-12. **Dual-use stance (R15).** The Discover flow is also a doxxing recipe. Are
-    you comfortable with the mitigation (self-audit framing; declining to spell
-    out the most operational targeting steps; no "look someone else up"
-    affordance), and is that an acceptable, documented residual?
+12. **Dual-use stance (R15). — DECIDED: accepted.** Mitigation stands:
+    self-audit framing, no "look someone else up" affordance, declining to spell
+    out the most operational targeting steps. Documented residual.
 
-13. **Encrypted export default (R14).** Confirmed design: backups are
-    **passphrase-encrypted by default**, plaintext only as a warned opt-out.
-    Confirm you accept the small UX cost (a passphrase prompt) for this data.
+13. **Encrypted export default (R14). — DECIDED: yes.** Backups are
+    **passphrase-encrypted by default**; plaintext only as a warned opt-out.
 
 ## Items tagged `[VERIFY]` during research
 None outstanding — the load-bearing facts were verified this session:

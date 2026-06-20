@@ -79,9 +79,11 @@ later expansions (breach email, LatAm).
   cloud-synced) Downloads folder (see [04](04-data-model.md), [06](06-risk-register.md) R14).
 - **State-aware US jurisdiction:** the jurisdiction model carries the user's
   **state**, because deletion rights are sub-national (a California resident has
-  CCPA/CPRA/DROP; a Texas resident has almost nothing). v1 fills in a few states
-  and is honest about the rest rather than implying universal rights. See
-  [04](04-data-model.md).
+  CCPA/CPRA/DROP; a Texas resident has almost nothing). **Target is full US
+  coverage (all 50 + DC)**; v1 ships a priority subset (CA first, then
+  CO/VA/CT/TX/FL/NY) and is honest about thin-rights states, with the rest
+  filled in as fast-follow *data* work — never implying rights a state doesn't
+  grant. See [04](04-data-model.md), [08](08-open-questions.md) Q9.
 - **Attached-action queue:** the findings log never shows a bare finding — each
   carries its prepared remediation, sorted by impact; immutable items are
   demoted to a "monitor" footnote (the no-dead-end rule).
