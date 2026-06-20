@@ -54,7 +54,13 @@ function buildCsp(hashes) {
   const proxy = process.env.NEXT_PUBLIC_HIBP_PROXY_URL;
   const cdn = process.env.NEXT_PUBLIC_CONTENT_CDN_URL;
   const connect = ["'self'", HIBP_RANGE_ORIGIN, proxy, cdn].filter(Boolean).join(' ');
-  const scriptSrc = ["'self'", ...hashes.map((h) => `'sha256-${h}'`), "'strict-dynamic'"].join(' ');
+  // NB: NO 'strict-dynamic' here. This is a hash-only CSP for the static export,
+  // whose framework chunks are parser-inserted, same-origin <script src> tags.
+  // strict-dynamic would make browsers ignore 'self' and refuse those chunks,
+  // leaving a dead, un-hydrated shell (panic button included). Plain 'self'
+  // allows the same-origin chunks; the hashes still pin the inline scripts.
+  // (Mirrors lib/security/csp.ts, which gates strict-dynamic behind a nonce.)
+  const scriptSrc = ["'self'", ...hashes.map((h) => `'sha256-${h}'`)].join(' ');
   return [
     "default-src 'self'",
     `script-src ${scriptSrc}`,

@@ -33,10 +33,18 @@ function scriptSrc({ nonce, hashes }: CspOptions): string {
   const sources = ["'self'"];
   if (nonce) sources.push(`'nonce-${nonce}'`);
   if (hashes) for (const h of hashes) sources.push(`'sha256-${h}'`);
-  // strict-dynamic: modern browsers ignore 'self'/host-list and trust only
-  // scripts loaded by an already-trusted (nonce/hash) script. Older browsers
-  // fall back to 'self'.
-  sources.push("'strict-dynamic'");
+  // 'strict-dynamic' is only safe WITH a nonce (the dynamic/middleware build).
+  // Under strict-dynamic, modern browsers ignore 'self' and the host-list and
+  // trust only nonce/hash-matched scripts plus what they inject — so the nonce
+  // carries the framework's own <script> tags.
+  //
+  // It must NOT be emitted for a hash-only CSP (the static export): there the
+  // framework chunks are parser-inserted <script src> tags with no nonce and no
+  // SRI, hashes only cover INLINE scripts, and strict-dynamic would make the
+  // browser refuse every same-origin chunk — the app would never hydrate.
+  // Without it, plain 'self' allows those same-origin chunks while the inline
+  // hashes still pin inline scripts.
+  if (nonce) sources.push("'strict-dynamic'");
   return sources.join(' ');
 }
 
