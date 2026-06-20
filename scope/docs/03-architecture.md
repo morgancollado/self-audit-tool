@@ -134,17 +134,53 @@ fully optional; password checks stay client-side.**
     6-char prefix shared by thousands of addresses. This is the key property
     that lets us call it "stateless and safe" honestly.
 - **Hard requirements on the proxy** (see [06](06-risk-register.md)):
-  no request logging, no storage, no analytics, minimal headers, strict CORS,
+  no request logging, no storage, no analytics, minimal headers, CORS locked to
+  the app origin (UX hygiene, **not** a security boundary — see R2),
   its own rate limiting, deployed separately (e.g., a Cloudflare Worker) so the
   app stays static and self-hostable, and **the app must fully function without
   it** — when the proxy URL is unset, the email check renders as a deep-link to
   haveibeenpwned.com.
+- **Why a proxy is unavoidable for *integrated* email (verified against HIBP's
+  API docs):** HIBP states *"CORS is only supported for non-authenticated APIs.
+  APIs requiring a key should not be hit directly from the client side as it
+  exposes the secret."* The email hash-**range** (k-anonymity) endpoint still
+  requires the key, so it is authenticated and **also** CORS-blocked; HIBP
+  additionally requires a `User-Agent` header browsers cannot set cross-origin.
+  **Consequence:** even a user supplying *their own* key cannot call HIBP from
+  the browser — integrated email checks require a proxy, period. HIBP itself
+  recommends a Cloudflare Worker for exactly this.
 - **Honest impact on "no backend":** this *is* a backend. It is the one
   documented exception. It is mitigated by (a) handling only a non-identifying
   prefix, (b) statelessness, (c) physical isolation, (d) optionality. A
   self-hoster who wants zero servers simply omits it.
+
+#### Tiered access model — best UX vs. zero infrastructure
+
+The key constraint is HIBP's, not ours: you **cannot** have *both*
+fully-integrated email results *and* zero project-operated infrastructure for an
+arbitrary user — something must hold the key, and (per above) it cannot be the
+browser. So the only lever is *where the keyed component lives and who is
+trusted.* The tool offers a ladder that degrades safely at each rung:
+
+1. **Password check** — client-side Pwned Passwords (keyless, k-anonymous).
+   Integrated, zero infrastructure. Always on.
+2. **Email out of the box** — **deep-link** to haveibeenpwned.com. Zero
+   infrastructure; the cost is a context switch, no capture of the result into
+   the findings log, and the user's *full* email reaching HIBP + its CDN.
+3. **Power tier — point the app at a proxy URL** (the project's optional shared
+   proxy, or one the **user self-hosts**). Unlocks fully-integrated, in-flow
+   email results that feed the remediation tracker. A self-hosted proxy moves
+   the (small) attack surface onto the user, who is then their own trusted
+   operator — collapsing the operator-trust residual (see R2).
+4. **Shared instance, if ever operated** — front it with an **OHTTP / Oblivious
+   HTTP relay**: the relay sees the IP but not the prefix, the gateway sees the
+   prefix but not the IP, so no single party can correlate IP↔query. This turns
+   "trust me not to log" into a structural guarantee (see R2 residual).
+
 - **Rejected:** embedding the key client-side (leaks it); keyless email k-anon
-  (doesn't exist).
+  (doesn't exist — even range mode needs the key); **calling HIBP directly from
+  the browser with the user's own key (CORS-blocked + `User-Agent` restriction,
+  verified) — so BYO-key still needs a proxy.**
 
 ### Decision 3 — localStorage UX & safety
 **Recommendation:** three storage modes (persistent / ephemeral / wiped),

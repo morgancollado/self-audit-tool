@@ -24,6 +24,11 @@ Resolved-this-session items are noted so the record is complete.
    self-hoster bring their own key; (c) default to deep-link, proxy strictly
    opt-in/self-hosted. **Recommendation: (c) + (b)** — no shared key to fund or
    trust; deep-link works out of the box.
+   *Update:* a fourth option — BYO-key called directly from the browser — is
+   **not viable** (HIBP CORS + `User-Agent` constraint, verified); BYO-key still
+   needs a proxy. See the tiered access model in [03](03-architecture.md)
+   (Decision 2) and R2 in [06](06-risk-register.md). If a shared instance is
+   ever run, front it with OHTTP.
 
 3. **Colombia scope depth.** Colombia-only, or is broader LatAm expected later?
    And **do you have access to local legal review** for the CO content (gates
@@ -54,6 +59,10 @@ Resolved-this-session items are noted so the record is complete.
 None outstanding — the load-bearing facts were verified this session:
 - HIBP: Pwned Passwords range is keyless/k-anonymous; **email search (incl.
   k-anonymity mode) requires an API key** → justifies the proxy.
+- HIBP: **CORS is allowed only for non-authenticated APIs**; key'd endpoints
+  must not be called client-side and require a `User-Agent` browsers can't set
+  cross-origin → a proxy is unavoidable for integrated email checks, even with a
+  user's own key (verified against HIBP API docs).
 - **BADBOL license = CC BY-NC-SA 4.0.**
 - **California DROP** live 2026 (broker compliance mandatory Aug 1 2026).
 - Workshop origin (Imani Thompson, *Cache Me Outside* / *"404: Deadname Not

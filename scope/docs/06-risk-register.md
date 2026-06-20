@@ -33,13 +33,23 @@ the one consciously accepted relaxation of "no backend."
   KV, no files).
 - Holds the `hibp-api-key` as a secret; never returns it; does the final
   HIBP call server-to-server.
-- Strict **CORS** (only the app origin), its **own rate limiting**, minimal
-  response (the hash-suffix list HIBP returns; client matches locally).
+- **CORS** locked to the app origin — treated as **UX hygiene, not a security
+  boundary** (CORS is browser-enforced; a script or `curl` ignores it). The real
+  abuse controls are the **prefix-only design + the proxy's own rate limiting**.
+  Minimal response (the hash-suffix list HIBP returns; client matches locally).
 - **Physically separate deploy** (e.g., Cloudflare Worker) so the app stays a
   pure static artifact and self-hosters can omit it.
 - **Graceful degradation:** when the proxy URL is unset, the email feature
   renders as a **deep-link to haveibeenpwned.com** — the app never breaks and
   stays 100% static.
+
+**Why a proxy is unavoidable (verified against HIBP's API docs):** HIBP allows
+CORS only for *non-authenticated* APIs and states key'd endpoints must not be
+hit client-side; the email hash-**range** (k-anonymity) endpoint still needs the
+key, and HIBP requires a `User-Agent` browsers can't set cross-origin. So a
+proxy is the *only* way to integrate email checks — even with a user's own key.
+The full tradeoff ladder (deep-link → self-hosted proxy → OHTTP-fronted shared
+instance) is the **tiered access model** in [03](03-architecture.md), Decision 2.
 
 **Why this honors the spirit of "no user data on a server":** the only thing
 the server ever sees is a non-identifying prefix shared by thousands of
@@ -47,9 +57,13 @@ addresses, held in memory for the duration of one request and then gone. A
 self-hoster who wants literal zero servers turns it off and uses the deep-link.
 
 **Residual risk:** users must trust whoever operates the proxy not to log at the
-platform edge. Mitigations: open-source the proxy, document the deploy, let
-users point the app at their **own** proxy, and default to the deep-link if they
-prefer zero trust.
+platform edge — which sees `source IP + 6-char prefix + timing`, revealing
+*that a breach check happened from this IP*, not the address. Mitigations:
+open-source the proxy, document the deploy, let users point the app at their
+**own** proxy (operator == user), and default to the deep-link if they prefer
+zero trust. For a shared instance, front it with an **OHTTP / Oblivious HTTP
+relay** so IP and prefix are never visible to the same party — converting
+"trust me not to log" into a structural guarantee.
 
 ## Extended: legal-content risk (R4)
 
