@@ -1,0 +1,28 @@
+{
+  "slug": "spokeo",
+  "jurisdiction": { "country": "us" },
+  "name": "Spokeo",
+  "category": "people-search",
+  "exposesDeadnameRisk": "high",
+  "searchUrl": "https://www.spokeo.com/",
+  "optOut": {
+    "methods": ["web-form"],
+    "webFormUrl": "https://www.spokeo.com/optout",
+    "email": null,
+    "mailingAddress": null,
+    "requiresId": false,
+    "optOutExposesLinkage": true,
+    "leaveItGuidance": "Low-reach listing. If your current<->former name link isn't already here, submitting it reveals the connection to Spokeo. Consider leaving it and monitoring instead.",
+    "steps": [
+      "Find your listing via the search URL.",
+      "Copy the profile URL.",
+      "Submit it on the opt-out page with your email.",
+      "Confirm via the verification email."
+    ],
+    "templateKey": "ccpa-deletion-generic"
+  },
+  "notes": "Re-check in ~6 months; brokers often re-list.",
+  "attribution": "Derived from Big-Ass Data Broker Opt-Out List (CC BY-NC-SA).",
+  "sourceUrl": "https://github.com/yaelwrites/Big-Ass-Data-Broker-Opt-Out-List",
+  "lastVerified": "2026-06-01"
+}

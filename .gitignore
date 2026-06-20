@@ -1,0 +1,15 @@
+# dependencies
+/node_modules
+
+# next.js
+/.next/
+/out/
+next-env.d.ts
+
+# build / misc
+*.tsbuildinfo
+.vercel
+.DS_Store
+
+# local env (never commit secrets; the HIBP key lives only in the proxy deploy)
+.env*.local

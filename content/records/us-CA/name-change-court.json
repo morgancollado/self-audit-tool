@@ -1,0 +1,16 @@
+{
+  "slug": "name-change-court",
+  "jurisdiction": { "country": "us", "region": "CA" },
+  "class": "court-record",
+  "exposesDeadnameRisk": "high",
+  "permanence": "high",
+  "whatItIs": "A legal name-change petition/order is a public court record. It ties your former and current name together and is routinely indexed by data brokers and search engines — often the single most durable deadname source.",
+  "actions": [
+    "Check whether California offers a confidential / sealed name change for safety-at-risk petitioners (e.g. survivors of abuse or stalking) and whether you qualify.",
+    "Where permitted, request sealing or redaction of the existing record.",
+    "Suppress downstream copies: Google 'Results about you', broker opt-outs, and archive removal requests."
+  ],
+  "sealedPetitionAvailable": true,
+  "disclaimer": "Informational only — not legal advice; sealing rules and eligibility vary by court and change over time. Verify with a name-change-experienced legal-aid org.",
+  "lastVerified": "2026-06-20"
+}

@@ -1,10 +1,13 @@
 # Errata — Scoping Documents
 
-> **Status: scoping only.** This directory contains the planning artifacts for
-> **Errata**, a proposed tool. No application code lives here yet. See
+> **Status: M0 in progress.** This `scope/` directory holds the planning
+> artifacts for **Errata**; the first implemented foundations (CSP, content
+> schema, staleness reporting) now live at the repo root — see
+> [`docs/12-app-foundations.md`](docs/12-app-foundations.md). See
 > [`docs/08-open-questions.md`](docs/08-open-questions.md) for decisions still
-> open with the requester, and [`docs/11-brand.md`](docs/11-brand.md) for the
-> name rationale, look, and voice.
+> open, [`docs/11-brand.md`](docs/11-brand.md) for name/look/voice, and
+> [`docs/13-partnerships-and-review.md`](docs/13-partnerships-and-review.md) for
+> the legal/co-design/security-review outreach.
 
 ## What this is
 
@@ -128,6 +131,8 @@ target.
 | 09 | [Removal feasibility](docs/09-removal-feasibility.md) | The automation ceiling; the 95%/no-custody rule; DROP hero feature; extension track; no-dead-end rule |
 | 10 | [Stress-test findings](docs/10-stress-test-findings.md) | Edge cases surfaced in the stress-test pass and where each was folded in |
 | 11 | [Brand: Errata](docs/11-brand.md) | Name rationale; wordmark; AA palette; type; voice; phase labels; deniability-as-safety |
+| 12 | [App foundations (M0)](docs/12-app-foundations.md) | Implemented: CSP nonce/hash strategy, content JSON schema + no-dead-end gate, staleness reporting |
+| 13 | [Partnerships & review](docs/13-partnerships-and-review.md) | Outreach targets: legal review, community co-design, independent security review |
 
 ## License stance (recommended)
 

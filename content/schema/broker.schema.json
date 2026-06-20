@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://errata.tools/schema/broker.schema.json",
+  "title": "Data broker (jurisdiction-scoped)",
+  "type": "object",
+  "properties": {
+    "slug": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+    "jurisdiction": { "$ref": "common.schema.json#/$defs/jurisdiction" },
+    "name": { "type": "string", "minLength": 1 },
+    "category": {
+      "enum": ["people-search", "credit-bureau", "marketing", "background-check", "consulta-de-datos", "other"]
+    },
+    "exposesDeadnameRisk": { "$ref": "common.schema.json#/$defs/riskLevel" },
+    "searchUrl": { "$ref": "common.schema.json#/$defs/url" },
+    "optOut": {
+      "type": "object",
+      "properties": {
+        "methods": {
+          "type": "array",
+          "items": { "enum": ["web-form", "email", "mail", "phone"] },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "webFormUrl": { "anyOf": [{ "$ref": "common.schema.json#/$defs/url" }, { "type": "null" }] },
+        "email": { "anyOf": [{ "type": "string", "format": "email" }, { "type": "null" }] },
+        "mailingAddress": { "anyOf": [{ "type": "string" }, { "type": "null" }] },
+        "requiresId": { "type": "boolean" },
+        "optOutExposesLinkage": {
+          "type": "boolean",
+          "description": "Does the opt-out itself force disclosing the current<->deadname linkage to this custodian? (Opt-out paradox, R13.)"
+        },
+        "leaveItGuidance": {
+          "type": "string",
+          "description": "Shown when opting out may expose more than it removes; supports the first-class 'leave it' outcome."
+        },
+        "steps": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "minItems": 1,
+          "description": "The action. Non-empty — a broker with no steps is a dead-end (forbidden)."
+        },
+        "templateKey": { "type": "string" }
+      },
+      "required": ["methods", "requiresId", "steps"],
+      "additionalProperties": false
+    },
+    "notes": { "type": "string" },
+    "attribution": { "type": "string" },
+    "sourceUrl": { "$ref": "common.schema.json#/$defs/url" },
+    "lastVerified": { "$ref": "common.schema.json#/$defs/isoDate" }
+  },
+  "required": ["slug", "jurisdiction", "name", "category", "exposesDeadnameRisk", "optOut", "lastVerified"],
+  "additionalProperties": false
+}

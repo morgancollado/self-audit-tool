@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://errata.tools/schema/law.schema.json",
+  "title": "Law framing (jurisdiction-scoped, informational only)",
+  "type": "object",
+  "properties": {
+    "jurisdiction": { "$ref": "common.schema.json#/$defs/jurisdiction" },
+    "appliesNationally": {
+      "type": "boolean",
+      "description": "If false, this right is region-specific and must NOT be shown to users of other regions (a us-TX user must never see CCPA framing)."
+    },
+    "key": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+    "title": { "type": "string", "minLength": 1 },
+    "summary": { "type": "string", "minLength": 1 },
+    "authorizedAgent": { "type": "boolean" },
+    "specialMechanisms": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "key": { "type": "string" },
+          "title": { "type": "string" },
+          "summary": { "type": "string" },
+          "url": { "$ref": "common.schema.json#/$defs/url" }
+        },
+        "required": ["key", "title", "summary"],
+        "additionalProperties": false
+      }
+    },
+    "disclaimer": {
+      "type": "string",
+      "description": "Required: informational-not-legal-advice (R4).",
+      "minLength": 1
+    },
+    "lastVerified": { "$ref": "common.schema.json#/$defs/isoDate" }
+  },
+  "required": ["jurisdiction", "appliesNationally", "key", "title", "summary", "disclaimer", "lastVerified"],
+  "additionalProperties": false
+}

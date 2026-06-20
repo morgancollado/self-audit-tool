@@ -339,6 +339,11 @@ can drop the same artifact on any static host. Vercel-specific guardrails
   as a secret. Its URL is injected into the app as a public config value; absent
   → deep-link fallback.
 
+> **CSP delivery is implemented (M0):** a per-request **nonce** via edge
+> middleware on the dynamic Vercel build, and build-time **hashes** for the
+> static self-host/offline artifact — see [12](12-app-foundations.md). The
+> middleware is a stateless header-setter, not the backend exception.
+
 ## Build / deploy / maintenance pipeline
 
 - **CI:** lint + typecheck + **axe accessibility check** + a **"no tracker"
