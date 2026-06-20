@@ -22,9 +22,13 @@ Resolved-this-session items are noted so the record is complete.
 
 ## Still open
 
-1. **Final repo name & visibility.** Proposed: **`self-audit-toolkit`**,
-   **public** (open-source/self-hostable is a non-negotiable). Confirm name and
-   that public is intended from day one (vs. private until M2).
+1. **Repo name & visibility. — Name DECIDED: Errata.** Product name is
+   **Errata** (rationale + brand in [11](11-brand.md)); proposed repo slug
+   **`errata`**. Two sub-items remain: **(a)** confirm domain/trademark/app-store
+   availability for "errata" — a common word, so expect collisions; fall back to
+   a qualified domain (`errata.app` / `errata.tools` / `geterrata.*`) if needed;
+   **(b)** confirm **public** from day one (recommended — open-source/
+   self-hostable is a non-negotiable) vs. private until M2.
 
 2. **The HIBP proxy — DECIDED: privacy route, shared OHTTP rung dropped for v1.**
    The **deep-link is the default** (no project infra in the path); the

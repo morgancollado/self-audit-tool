@@ -1,9 +1,10 @@
-# Self-Audit Toolkit — Scoping Documents
+# Errata — Scoping Documents
 
-> **Status: scoping only.** This directory contains the planning artifacts for a
-> proposed tool. No application code lives here yet. See
+> **Status: scoping only.** This directory contains the planning artifacts for
+> **Errata**, a proposed tool. No application code lives here yet. See
 > [`docs/08-open-questions.md`](docs/08-open-questions.md) for decisions still
-> open with the requester.
+> open with the requester, and [`docs/11-brand.md`](docs/11-brand.md) for the
+> name rationale, look, and voice.
 
 ## What this is
 
@@ -106,8 +107,9 @@ target.
 > These scope docs were written into the portfolio repo under `/scope/` only
 > because automated creation of a new repository was blocked by the
 > integration's permissions during this session. Extract them to the dedicated
-> repo when it exists. Proposed name: **`self-audit-toolkit`** (calm,
-> non-alarming — final name is an open question).
+> repo when it exists. **Product name: Errata** (calm, literate, and
+> deniable-in-a-tab — see [`docs/11-brand.md`](docs/11-brand.md)); proposed repo
+> slug **`errata`** (confirm domain/trademark and visibility — [`docs/08-open-questions.md`](docs/08-open-questions.md) Q1).
 
 ## Document index
 
@@ -125,6 +127,7 @@ target.
 | 08 | [Open questions](docs/08-open-questions.md) | Assumptions needing the requester's confirmation |
 | 09 | [Removal feasibility](docs/09-removal-feasibility.md) | The automation ceiling; the 95%/no-custody rule; DROP hero feature; extension track; no-dead-end rule |
 | 10 | [Stress-test findings](docs/10-stress-test-findings.md) | Edge cases surfaced in the stress-test pass and where each was folded in |
+| 11 | [Brand: Errata](docs/11-brand.md) | Name rationale; wordmark; AA palette; type; voice; phase labels; deniability-as-safety |
 
 ## License stance (recommended)
 
