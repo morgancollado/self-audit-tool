@@ -26,8 +26,13 @@ export function ReportBroken(props: Props) {
   return (
     <div className="report-broken" role="group" aria-label="Report an out-of-date guide">
       <label htmlFor="report-note">
-        What looks wrong? <strong>Don’t include your name, deadname, or any personal info.</strong>
+        What looks wrong? <span className="report-broken-optional">(optional)</span>
       </label>
+      <p className="report-broken-hint">
+        The guide name and version are already attached, so you can leave this blank. If you do
+        write something, <strong>never include your name, deadname, address, or anything personal</strong>
+        {' '}— it will be posted publicly.
+      </p>
       <textarea
         id="report-note"
         value={note}
@@ -37,7 +42,8 @@ export function ReportBroken(props: Props) {
         onChange={(e) => setNote(e.target.value)}
       />
       <p className="report-broken-hint">
-        This opens a public GitHub issue in a new tab. Nothing is sent through Errata.
+        This opens a <strong>public</strong> issue on GitHub, in a new tab, under your own GitHub
+        account — anyone can see it and it stays public. Nothing is routed through Errata.
       </p>
       <a className="report-broken-submit" href={href} target="_blank" rel="noopener noreferrer">
         Open a report on GitHub

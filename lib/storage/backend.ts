@@ -13,15 +13,21 @@ export interface KeyValueBackend {
 
 /**
  * In-memory backend. Used for ephemeral/session-only mode (nothing touches
- * disk) and as the test double. Values are structured-cloned on write so callers
- * can't mutate stored state by reference.
+ * disk) and as the test double. Values are JSON round-tripped on write/read, so
+ * they're deep-copied and callers can't mutate stored state by reference. (The
+ * model is JSON-safe by design — coarse date strings, no Date/Map instances.)
  */
 export class MemoryBackend implements KeyValueBackend {
   private map = new Map<string, string>();
 
   async get<T>(key: string): Promise<T | undefined> {
     const raw = this.map.get(key);
-    return raw === undefined ? undefined : (JSON.parse(raw) as T);
+    if (raw === undefined) return undefined;
+    try {
+      return JSON.parse(raw) as T;
+    } catch {
+      return undefined;
+    }
   }
 
   async set<T>(key: string, value: T): Promise<void> {

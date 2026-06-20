@@ -19,7 +19,14 @@ export function isLocalStorageAvailable(): boolean {
 export class LocalStorageBackend implements KeyValueBackend {
   async get<T>(key: string): Promise<T | undefined> {
     const raw = localStorage.getItem(PREFIX + key);
-    return raw === null ? undefined : (JSON.parse(raw) as T);
+    if (raw === null) return undefined;
+    try {
+      return JSON.parse(raw) as T;
+    } catch {
+      // localStorage is shared and externally writable; a corrupt/tampered value
+      // must read as absent rather than throw and brick the load path.
+      return undefined;
+    }
   }
 
   async set<T>(key: string, value: T): Promise<void> {

@@ -120,6 +120,7 @@ button.safety-intro-primary { font-weight: 600; }
 .report-broken textarea { width: 100%; font: inherit; padding: 0.5rem; }
 .report-broken-submit { display: inline-block; margin-top: 0.5rem; }
 .report-broken-hint { color: var(--slate); font-size: 0.9rem; }
+.report-broken-optional { color: var(--slate); font-weight: 400; }
 
 /* Navigation */
 .breadcrumb { font-size: 0.95rem; }

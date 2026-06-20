@@ -39,7 +39,9 @@ function collectDeps() {
   try {
     const lock = readFileSync('package-lock.json', 'utf8');
     for (const name of BLOCKLIST) {
-      if (lock.includes(`"node_modules/${name}"`) || lock.includes(`"${name}"`)) all.add(name);
+      // Match an installed package path (including nested node_modules) or a
+      // dependency-declaration key — not just any quoted occurrence of the name.
+      if (lock.includes(`node_modules/${name}"`) || lock.includes(`"${name}":`)) all.add(name);
     }
   } catch {
     /* no lockfile yet — direct deps only */

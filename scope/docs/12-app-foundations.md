@@ -22,8 +22,13 @@ delivery** — identical app code, two CSP mechanisms keyed to the deploy mode:
   the request IP exactly as any host's access log already does
   ([06](06-risk-register.md) R9). The one documented backend exception remains
   *only* the optional breach proxy ([03](03-architecture.md) Decision 2).
-- **`strict-dynamic`** lets the trusted bootstrap (nonce- or hash-allowed) load
-  the rest of the app, so we never need `'unsafe-inline'` for scripts.
+- **`strict-dynamic`** is used **only on the dynamic (nonce) build**, where the
+  nonce-trusted bootstrap loads the rest of the app. It is deliberately
+  **omitted from the static (hash-only) CSP**: there the framework chunks are
+  parser-inserted, same-origin `<script src>` tags with no nonce, so
+  `strict-dynamic` would make browsers ignore `'self'` and refuse them — a dead,
+  un-hydrated shell. Plain `'self'` allows those chunks while the inline hashes
+  still pin inline scripts. Neither build needs `'unsafe-inline'`.
 - **No CSP `report-uri`/`report-to`** — reporting would phone home; deliberately
   omitted (consistent with the no-tracker rule).
 - **Self-hosters who want the stronger nonce path** can run the same app in
@@ -35,11 +40,13 @@ delivery** — identical app code, two CSP mechanisms keyed to the deploy mode:
 static) · `vercel.json` (non-nonce security headers) · `app/layout.tsx` (nonce
 wiring) · `next.config.mjs` (mode switch).
 
-> **Open verification task (do in M0):** after the first real `next build`,
-> confirm the dynamic CSP has **no** `'unsafe-inline'`/`'unsafe-eval'` in
-> `script-src`, and that the static export's injected hashes cover every inline
-> script Next emits. Next's framework scripts are the thing most likely to need
-> attention; budget a half-day to lock this down on real output.
+> **Verified on real output, and now automated:** both builds were loaded in
+> headless Chromium under the **enforced** CSP. The dynamic build's per-request
+> nonce matches the framework `<script>` tags; the static export hydrates with
+> **zero** CSP violations and no `'unsafe-inline'`/`'unsafe-eval'`. Guarded
+> against regression by `npm run test:csp` (`scripts/csp-smoke.mjs`) in CI — a
+> green build alone does **not** prove the app runs under its CSP, which is
+> exactly how an earlier `strict-dynamic` self-block slipped through.
 
 ## 2. Content-as-data JSON Schema + the no-dead-end gate
 
@@ -65,10 +72,14 @@ All broker/platform/law/record/template content is validated against Draft
 
 With **zero analytics**, we have no automated way to learn a broker/platform flow
 has rotted. The escape hatch is a button that opens a **prefilled GitHub issue**
-— a plain navigation to github.com, nothing routed through Errata, and **no PII**:
-only the content slug, type, version, and a user note. The builder additionally
-**scrubs** emails and long digit runs as defense-in-depth, and the prefilled body
-warns the user not to include personal info. *(Verified by unit tests.)*
+— a plain navigation to github.com, nothing routed through Errata. The structured
+fields (slug, type, version) already locate the staleness, so the free-text note
+is **optional and de-emphasized**, and the UI states plainly that the issue is
+**public and filed under the user's own GitHub account** and warns against
+including any personal info. The builder additionally **scrubs** emails and long
+digit runs as defense-in-depth. This is the one feature that intentionally leaves
+the device, so the framing — not the scrub — is the primary control.
+*(Verified by unit tests.)*
 
 **Files:** `lib/report/issue-url.ts` · `lib/report/issue-url.test.ts` ·
 `components/ReportBroken.tsx`.
@@ -92,16 +103,36 @@ the same logic runs in every mode and is testable in Node.
     platform-level hard wipe (deletes the IndexedDB database, clears namespaced
     localStorage) — **proven by test**;
   - switching persistent → ephemeral can wipe what was already saved.
-- **React shell**: `StorageProvider` (loads state, requests
-  `storage.persist()` against iOS eviction — R18), `PanicButton` (always-visible,
-  instant, unconfirmed by design), `SafetyIntro` (first-run shared-device
-  warning + ephemeral offer), `StorageModeToggle`. Minimal AA-contrast styling
-  in `app/globals.css` using the Errata palette.
+- **React shell**: `StorageProvider` starts in **session-only mode and writes
+  nothing to disk** (not even the named database) until the user makes an
+  explicit choice — opening IndexedDB and requesting `storage.persist()` (R18)
+  happen only on opt-in, and `persist()` is off the critical path so it can't
+  wedge load. `PanicButton` is always-visible, instant, and unconfirmed by
+  design; panic **closes the IndexedDB connection before deleting** so the hard
+  wipe takes effect immediately, and it reloads even if a wipe step fails.
+  `SafetyIntro` presents the first-run session-only/save choice; `StorageModeToggle`
+  switches later. Minimal AA-contrast styling in `app/globals.css`.
 
 **Verified:** `npm run build` (dynamic, nonce middleware) and
 `npm run build:static` (export + 15 inline-script hashes, no
-`unsafe-inline`/`unsafe-eval`) both pass; `npm test` is 14/14 green;
+`unsafe-inline`/`unsafe-eval`) both pass; `npm run test:csp` loads the static
+export in real Chromium and confirms it hydrates under the enforced CSP with no
+violations and no pre-consent storage trace; `npm test` is 15/15 green;
 `tsc --noEmit` clean.
+
+## Known limitations (tracked for M1)
+
+Accepted for M0, called out so they aren't lost:
+
+- **Single-document audit store.** `AuditStore` reads and rewrites the entire
+  `AuditState` (all findings + remediations) on every mutation, keyed `"audit"`.
+  Fine at M0 scale; a heavy Discover sweep will make each update rewrite the
+  whole blob, and the read-modify-write has no cross-tab guard (last writer
+  wins). Revisit with per-record keys / a transaction when M1 brings real volume.
+- **Nonce CSP forces dynamic rendering.** Reading the nonce via `headers()` opts
+  every route into per-request SSR on Vercel (no full static caching) — the
+  deliberate price of the strongest CSP. The static export stays the zero-server
+  alternative for hosts/users who prefer caching or offline use.
 
 ## CI wiring (M0)
 
@@ -111,6 +142,7 @@ the same logic runs in every mode and is testable in Node.
 |--------|------|
 | `npm run validate:content` | schema + no-dead-end + cross-field |
 | `npm run audit:no-tracker` | blocks `@vercel/analytics`/`speed-insights` & friends (R6) |
+| `npm run test:csp` | static export hydrates under its enforced CSP, no pre-consent trace (real browser) |
 | `npm run test:report-url` | report URL stays PII-free |
 | `npm run typecheck` / `lint` | standard |
 
