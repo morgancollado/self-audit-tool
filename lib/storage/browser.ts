@@ -24,6 +24,10 @@ function realBackends(): StorageBackends {
     persistentPrefs,
     ephemeralPrefs: new MemoryBackend(),
     hardWipe: async () => {
+      // Close our own connection first; otherwise deleteDatabase() is blocked by
+      // the open handle and silently deferred, leaving the database on disk until
+      // the next reload closes it.
+      if (persistentAudit instanceof IndexedDbBackend) persistentAudit.close();
       await deleteDatabase();
       if (isLocalStorageAvailable()) await new LocalStorageBackend().clear();
     },

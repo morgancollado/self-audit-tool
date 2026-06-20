@@ -163,9 +163,13 @@ export function StorageProvider({ children }: { children: ReactNode }) {
   );
 
   const panic = useCallback(async () => {
-    await manager.wipeAll();
-    // Hard reload to a neutral screen; nothing should survive.
-    if (typeof window !== 'undefined') window.location.replace('/');
+    try {
+      await manager.wipeAll();
+    } finally {
+      // Always hard-reload to a neutral screen, even if a wipe step rejected —
+      // the panic button must never appear to do nothing.
+      if (typeof window !== 'undefined') window.location.replace('/');
+    }
   }, [manager]);
 
   return (

@@ -89,13 +89,20 @@ export class StorageManager {
    * either mode's store. The caller (UI) reloads to a neutral screen.
    */
   async wipeAll(): Promise<void> {
-    await Promise.all([
+    // Panic must never throw or hang: settle every clear (one failing backend
+    // must not abort the others) and run the hard wipe regardless. The caller
+    // reloads to a neutral screen even if a step rejected.
+    await Promise.allSettled([
       this.backends.persistentAudit.clear(),
       this.backends.ephemeralAudit.clear(),
       this.backends.persistentPrefs.clear(),
       this.backends.ephemeralPrefs.clear(),
     ]);
-    await this.backends.hardWipe();
+    try {
+      await this.backends.hardWipe();
+    } catch {
+      /* best-effort: the stores above are already cleared */
+    }
     // Reset in-memory store handles.
     this.audit = new AuditStore(this.auditBackend());
     this.activePrefs = this.prefsBackend();

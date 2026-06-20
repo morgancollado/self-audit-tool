@@ -72,6 +72,17 @@ export class IndexedDbBackend implements KeyValueBackend {
     const keys = await tx<IDBValidKey[]>(db, 'readonly', (s) => s.getAllKeys());
     return keys.map(String);
   }
+
+  /**
+   * Close the cached connection. Panic-delete calls this before deleteDatabase()
+   * so the open handle doesn't block the delete (a blocked delete is silently
+   * deferred until the connection closes, leaving the DB on disk until reload).
+   */
+  close(): void {
+    const pending = this.dbPromise;
+    this.dbPromise = undefined;
+    if (pending) pending.then((db) => db.close()).catch(() => {});
+  }
 }
 
 /**

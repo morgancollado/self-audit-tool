@@ -101,6 +101,26 @@ test('panic wipeAll clears every backend and hard-wipes', async () => {
   assert.equal(b.hardWipeCalls, 1, 'hard platform wipe must run');
 });
 
+test('panic is resilient: one failing backend still clears the rest and hard-wipes', async () => {
+  const b = testBackends();
+  // Simulate a backend whose clear() rejects (e.g. an IndexedDB error mid-panic).
+  (b.persistentAudit as { clear: () => Promise<void> }).clear = async () => {
+    throw new Error('backend clear failed');
+  };
+  const mgr = StorageManager.create(b, 'persistent');
+  await b.ephemeralAudit.set('x', 1);
+  await b.persistentPrefs.set('p', 1);
+
+  // Must not throw — the panic UI reloads regardless and the user must not be
+  // left thinking nothing happened.
+  await assert.doesNotReject(() => mgr.wipeAll());
+
+  // The other backends were still cleared and the hard wipe still ran.
+  assert.equal(b.ephemeralAudit.size, 0);
+  assert.equal(b.persistentPrefs.size, 0);
+  assert.equal(b.hardWipeCalls, 1, 'hard wipe runs even when a backend.clear rejects');
+});
+
 test('switch persistent -> ephemeral with wipeExisting clears disk', async () => {
   const b = testBackends();
   const mgr = StorageManager.create(b, 'persistent');
