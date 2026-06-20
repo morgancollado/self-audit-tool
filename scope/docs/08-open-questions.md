@@ -56,17 +56,23 @@ Resolved-this-session items are noted so the record is complete.
    a Vercel Edge Function. See [03](03-architecture.md) Hosting and
    [06](06-risk-register.md) R6/R9.
 
-5. **Commercial-alternative links.** Should we honestly link to paid services
-   (DeleteMe/Optery) as the "pay someone" path? **No affiliate links** either
-   way (would conflict with no-dark-patterns). Default: a neutral mention, no
-   links, unless you want otherwise.
+5. **Commercial-alternative links. — DECIDED: yes, tasteful.** Honestly link to
+   paid services (DeleteMe / Optery) as the "I'd rather pay someone" path.
+   **Hard constraints to keep it on-brand:** **no affiliate links**, no ranking/
+   preferencing, no urgency, presented as a calm aside (not a push), clearly
+   labeled as third parties we don't control, and paired with the honest note
+   that they require giving the provider your data (the custody tradeoff Errata
+   refuses — see [09](09-removal-feasibility.md)). Placement: an optional
+   "other ways to do this" sidebar near opt-out, never interrupting the free
+   flow. Folded into [00](00-prior-art.md) and [02](02-features-moscow.md).
 
-6. **Encrypted export.** Is a passphrase-encrypted backup wanted (vs. plaintext
-   JSON with a warning)? Currently a **Could** for later.
+6. **Encrypted export. — DECIDED (earlier): yes, encrypted by default.** See
+   R14 / [04](04-data-model.md). Plaintext only as a warned opt-out.
 
-7. **Name retention default.** Confirmed design: storing the user's
-   name/deadname is **off by default**. Confirm you're comfortable that the
-   convenience of pre-filled templates is opt-in only.
+7. **Name retention default. — DECIDED: off, firmly.** Storing the user's
+   name/deadname is **off by default**; pre-filled templates are an explicit
+   opt-in convenience only. This is the core honeypot mitigation (R1) and is now
+   a settled constraint, not a preference to revisit. See [04](04-data-model.md).
 
 8. **Donor/funding model, if any.** The tool is free/DIY by design. If any
    sustaining model is ever wanted, note that BADBOL's **NonCommercial** data

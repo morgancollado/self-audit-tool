@@ -53,7 +53,9 @@ hero feature, and the browser extension as roadmap **M6**.
 
 ## Open questions — all resolved this round
 Q2, Q9, Q10, Q11, Q12, Q13 are **decided** (see [08](08-open-questions.md)).
-The remaining standing items are the original Q1 (name **decided: Errata**; only
-domain/visibility left), and Q3, Q5, Q7, Q8 (Colombia depth & local review,
-commercial-service links, name-retention default, funding). **Q4 hosting is
-decided: Vercel** (analytics off, CI-blocklisted).
+Most originals are now decided too: **Q1** name = Errata (domain deferred by
+choice), **Q4** host = Vercel (analytics off, CI-blocklisted), **Q5** tasteful
+paid-service links (no affiliate), **Q6** encrypted export, **Q7** name-retention
+off (firm). The only genuinely open items are **Q3** (Colombia depth + who does
+local legal review) and **Q8** (funding) — plus the parallel **Q11** legal-review
+resourcing for the name-change content.

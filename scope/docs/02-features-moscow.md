@@ -61,6 +61,7 @@ Prioritization across both phases. **Must** = required for a credible, safe v1.
 | **Should** | Remediation tracker (sent / confirmed / re-check date) | Tied to findings log; re-surfaces brokers that re-list |
 | **Should** | Authorized-agent **packet** generator | Signed authorization + batched requests so the user (or a trusted person) can act as agent — friction down, **custody stays with the user** ([09](09-removal-feasibility.md)) |
 | **Could** | Other state-law variants (the US patchwork) | Per-state notes where they add rights; backfills the state-aware model |
+| **Should** | **Tasteful "rather pay someone?" links** (DeleteMe/Optery) | Calm optional aside; **no affiliate links**, no preferencing/urgency; labeled as third parties; notes the data-custody tradeoff ([00](00-prior-art.md), [08](08-open-questions.md) Q5) |
 | **Won't (yet)** | Server-side / authorized-agent **auto**-submission | Requires PII custody — the honeypot we refuse |
 
 ## Phase 2 — Pillar 2: Per-platform hardening & deadname removal
