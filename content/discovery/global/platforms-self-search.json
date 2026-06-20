@@ -1,0 +1,18 @@
+{
+  "slug": "platforms-self-search",
+  "category": "platform",
+  "title": "Look yourself up on the platforms you've used",
+  "why": "Old accounts, tags, and posts can carry a former name long after you've moved on — on profiles you forgot you had, or in other people's posts about you.",
+  "instructions": [
+    "For each platform you've ever used (current or abandoned), search your name, former name, and old handles.",
+    "Check old usernames and email addresses you no longer use — accounts tied to them may still be public.",
+    "Note any profile, tag, or post that shows your former name. Hardening and removal come in Phase 2."
+  ],
+  "deadnameAware": true,
+  "deadnamePrompts": [
+    "Do any old usernames contain your former name?",
+    "Are you tagged under a former name in someone else's photos or posts?"
+  ],
+  "priority": "medium",
+  "lastVerified": "2026-06-20"
+}

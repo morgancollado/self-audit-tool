@@ -4,6 +4,7 @@
 // state with the storage-mode control. The Discover/Remediate flows land in
 // M1/M2 (scope/docs/07-roadmap.md).
 
+import Link from 'next/link';
 import { useStorage } from '@/lib/storage/StorageProvider';
 import { SafetyIntro } from '@/components/SafetyIntro';
 import { StorageModeToggle } from '@/components/StorageModeToggle';
@@ -24,7 +25,12 @@ export default function HomePage() {
 
       {preferences.safetyIntroAcknowledged && (
         <>
-          <p>You’re set up. The Discover and Remediate steps arrive next.</p>
+          <p>You’re set up.</p>
+          <p>
+            <Link className="cta" href="/discover">
+              Start discovering →
+            </Link>
+          </p>
           <StorageModeToggle />
         </>
       )}

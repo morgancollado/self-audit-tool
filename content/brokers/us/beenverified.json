@@ -1,0 +1,28 @@
+{
+  "slug": "beenverified",
+  "jurisdiction": { "country": "us" },
+  "name": "BeenVerified",
+  "category": "background-check",
+  "exposesDeadnameRisk": "high",
+  "searchUrl": "https://www.beenverified.com/",
+  "optOut": {
+    "methods": ["web-form"],
+    "webFormUrl": "https://www.beenverified.com/app/optout/search",
+    "email": null,
+    "mailingAddress": null,
+    "requiresId": false,
+    "optOutExposesLinkage": true,
+    "leaveItGuidance": "BeenVerified aggregates name history and relatives. If the former-name link isn't already present, the opt-out search itself surfaces it.",
+    "steps": [
+      "Search for your record on the opt-out page.",
+      "Select your listing from the results.",
+      "Provide an email to receive the verification link.",
+      "Click the verification link to complete the removal."
+    ],
+    "templateKey": "ccpa-deletion-generic"
+  },
+  "notes": "Shares a data backbone with several sibling people-search sites; re-check related brokers too.",
+  "attribution": "Derived from Big-Ass Data Broker Opt-Out List (CC BY-NC-SA).",
+  "sourceUrl": "https://github.com/yaelwrites/Big-Ass-Data-Broker-Opt-Out-List",
+  "lastVerified": "2026-06-01"
+}

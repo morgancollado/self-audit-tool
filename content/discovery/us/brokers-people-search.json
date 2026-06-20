@@ -1,0 +1,21 @@
+{
+  "slug": "brokers-people-search",
+  "jurisdiction": { "country": "us" },
+  "category": "broker",
+  "title": "Check the big people-search brokers",
+  "why": "People-search sites assemble name history, addresses, relatives, and phone numbers — and they often show former names. This is where a deadname is most likely to be sitting in plain sight, and it's the exposure you can most directly remove later.",
+  "instructions": [
+    "Open each broker's own search page (links below) and look yourself up.",
+    "Search your current name, and — when you're ready — your former name.",
+    "For anything that shows your former name or ties it to your current one, add it to your ledger and mark whether it exposes your deadname.",
+    "Don't submit an opt-out yet — that's Phase 2. Right now you're just mapping what's out there."
+  ],
+  "deadnameAware": true,
+  "deadnamePrompts": [
+    "Does the listing show a 'previously known as' / AKA / name-history field?",
+    "Are relatives or old addresses listed that would help someone connect your names?"
+  ],
+  "refIds": ["spokeo", "whitepages", "beenverified"],
+  "priority": "high",
+  "lastVerified": "2026-06-20"
+}

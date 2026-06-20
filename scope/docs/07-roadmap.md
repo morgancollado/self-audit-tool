@@ -32,6 +32,13 @@ The differentiator's first half: find your exposure, deadname-aware.
 - **Exit criteria:** a user can complete a discovery pass and have a populated,
   prioritized findings log — all local.
 
+> **Status: M1 implemented.** Discovery checklist (resumable, deadname-aware),
+> in-memory query generator (no name retention), and the findings ledger are
+> live over the M0 store at `/discover`. Content: discovery-step + query-template
+> schemas (+ cross-reference validation), 4 steps, 5 deadname-aware query
+> templates, 3 BADBOL brokers. 20/20 tests green; both builds pass. Next:
+> M2 remediation.
+
 ## M2 — Phase 2: Opt-out generation + platform hardening (US)  *(large)*
 The remediation core; the bulk of the value. Everything here is **prepared
 in-memory; the user presses send** (95% rule), and **every finding carries an

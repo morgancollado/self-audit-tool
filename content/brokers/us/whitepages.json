@@ -1,0 +1,28 @@
+{
+  "slug": "whitepages",
+  "jurisdiction": { "country": "us" },
+  "name": "Whitepages",
+  "category": "people-search",
+  "exposesDeadnameRisk": "high",
+  "searchUrl": "https://www.whitepages.com/",
+  "optOut": {
+    "methods": ["web-form"],
+    "webFormUrl": "https://www.whitepages.com/suppression-requests",
+    "email": null,
+    "mailingAddress": null,
+    "requiresId": false,
+    "optOutExposesLinkage": true,
+    "leaveItGuidance": "Whitepages shows name history prominently. If your former name isn't already listed, submitting a suppression request reveals the link — weigh it against how reachable the listing already is.",
+    "steps": [
+      "Find your listing via the search URL.",
+      "Copy the listing URL.",
+      "Submit it on the suppression-requests page.",
+      "Complete the phone or email verification step."
+    ],
+    "templateKey": "ccpa-deletion-generic"
+  },
+  "notes": "Re-check periodically; Whitepages re-lists from fresh sources.",
+  "attribution": "Derived from Big-Ass Data Broker Opt-Out List (CC BY-NC-SA).",
+  "sourceUrl": "https://github.com/yaelwrites/Big-Ass-Data-Broker-Opt-Out-List",
+  "lastVerified": "2026-06-01"
+}

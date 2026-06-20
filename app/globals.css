@@ -120,3 +120,64 @@ button.safety-intro-primary { font-weight: 600; }
 .report-broken textarea { width: 100%; font: inherit; padding: 0.5rem; }
 .report-broken-submit { display: inline-block; margin-top: 0.5rem; }
 .report-broken-hint { color: var(--slate); font-size: 0.9rem; }
+
+/* Navigation */
+.breadcrumb { font-size: 0.95rem; }
+.cta { font-weight: 600; font-size: 1.1rem; }
+
+/* Name inputs */
+.name-inputs { border: 1px solid var(--cream); border-radius: var(--radius); padding: 1rem; margin: 1.25rem 0; }
+.name-inputs legend { font-weight: 600; padding: 0 0.4rem; }
+.name-inputs-note { color: var(--slate); font-size: 0.9rem; margin: 0.25rem 0 0.75rem; }
+.name-inputs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+.name-inputs label, .add-finding label, .finding-controls label { display: flex; flex-direction: column; gap: 0.25rem; font-size: 0.95rem; }
+.name-inputs input, .add-finding input, select, .report-broken textarea {
+  font: inherit; padding: 0.45rem 0.55rem; border: 1px solid var(--slate);
+  border-radius: var(--radius); background: var(--paper); color: var(--ink);
+}
+@media (max-width: 32rem) { .name-inputs-grid { grid-template-columns: 1fr; } }
+
+/* Checklist */
+.checklist { list-style: none; padding: 0; margin: 0; }
+.step-card { background: var(--cream); border-radius: var(--radius); padding: 1rem 1.25rem; margin: 1rem 0; }
+.step-card.step-done { opacity: 0.7; }
+.step-head { display: flex; align-items: baseline; justify-content: space-between; gap: 0.75rem; }
+.step-head h3 { margin: 0.2rem 0; }
+.step-why { color: var(--slate); }
+.step-instructions, .step-prompts { padding-left: 1.2rem; }
+.step-prompts { border-left: 3px solid var(--marker); list-style: none; padding: 0.4rem 0 0.4rem 0.9rem; margin: 0.75rem 0; }
+.step-prompts li { margin: 0.25rem 0; }
+
+.broker-row { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem; padding: 0.4rem 0; border-top: 1px solid var(--paper); }
+.broker-row span:first-child { font-weight: 600; min-width: 8rem; }
+
+.query-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.5rem; padding: 0.4rem 0; border-top: 1px solid var(--paper); }
+.query-row code { font-family: var(--mono); font-size: 0.9rem; word-break: break-word; }
+.query-deadname code { font-weight: 700; }
+.query-actions { display: flex; gap: 0.6rem; align-items: center; }
+.copy-button { background: var(--paper); color: var(--marker); border: 1px solid var(--marker); padding: 0.25rem 0.6rem; }
+
+.step-footer { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.75rem; margin-top: 0.75rem; }
+.step-done-toggle { display: flex; align-items: center; gap: 0.4rem; }
+
+/* Add-finding form */
+.add-finding { display: grid; gap: 0.5rem; background: var(--paper); padding: 0.75rem; border-radius: var(--radius); margin-top: 0.5rem; width: 100%; }
+.add-finding-checkbox { flex-direction: row !important; align-items: center; gap: 0.4rem; }
+.add-finding-actions { display: flex; gap: 0.75rem; align-items: center; }
+
+/* Badges */
+.badge { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; padding: 0.15rem 0.45rem; border-radius: 999px; white-space: nowrap; }
+.priority-high { background: var(--proof); color: var(--paper); }
+.priority-medium { background: var(--marker); color: var(--marker-ink); }
+.priority-low { background: var(--cream); color: var(--slate); border: 1px solid var(--slate); }
+.badge-deadname { background: var(--ink); color: var(--paper); }
+
+/* Ledger */
+.ledger { margin: 2rem 0; }
+.ledger-summary { color: var(--slate); }
+.ledger-list { list-style: none; padding: 0; margin: 0; }
+.finding { border: 1px solid var(--cream); border-radius: var(--radius); padding: 0.75rem 1rem; margin: 0.6rem 0; }
+.finding-head { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+.finding-what { margin: 0.4rem 0; }
+.finding-controls { display: flex; flex-wrap: wrap; gap: 1rem; align-items: flex-end; }
+.finding-controls label { font-size: 0.85rem; }

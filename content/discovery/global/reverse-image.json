@@ -1,0 +1,17 @@
+{
+  "slug": "reverse-image",
+  "category": "search",
+  "title": "Reverse-image search (optional)",
+  "why": "Photos can connect a former identity to a current one even when the names don't match. This step links out to image-search tools — Errata never uploads anything for you.",
+  "instructions": [
+    "Pick a photo of yourself that's publicly online (an old profile picture, for example).",
+    "Use a reverse-image-search tool to see where else that image appears.",
+    "If an image surfaces under your former name, add it to your ledger."
+  ],
+  "deadnameAware": true,
+  "deadnamePrompts": [
+    "Heads-up: image-search tools are third parties. Anything you upload goes to them, not through Errata — only use a photo you're comfortable sharing with that tool."
+  ],
+  "priority": "low",
+  "lastVerified": "2026-06-20"
+}

@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://errata.tools/schema/query-template.schema.json",
+  "title": "Copyable search-query template (Phase 1 discovery)",
+  "description": "A search string with {{placeholders}} filled in-memory from the user's transient input. No personal data is stored unless the user opts in.",
+  "type": "object",
+  "properties": {
+    "key": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+    "label": { "type": "string", "minLength": 1 },
+    "engine": { "enum": ["google", "bing", "duckduckgo", "any"] },
+    "template": { "type": "string", "minLength": 1 },
+    "placeholders": {
+      "type": "array",
+      "items": { "enum": ["name", "deadname", "city", "employer", "aliases"] },
+      "uniqueItems": true
+    },
+    "deadnameAware": {
+      "type": "boolean",
+      "description": "True if this query targets the deadname specifically — the differentiator."
+    },
+    "notes": { "type": "string" }
+  },
+  "required": ["key", "label", "engine", "template", "placeholders", "deadnameAware"],
+  "additionalProperties": false
+}

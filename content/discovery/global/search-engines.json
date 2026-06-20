@@ -1,0 +1,19 @@
+{
+  "slug": "search-engines",
+  "category": "search",
+  "title": "Search engines, the way someone targeting you would",
+  "why": "A hostile actor starts with a search engine. Seeing exactly what they'd see — including where your former name surfaces — tells you what to prioritize.",
+  "instructions": [
+    "Fill in the name and detail fields above; we'll build the search strings for you (nothing is sent or saved).",
+    "Copy each query and run it in a search engine. Try more than one engine — results differ.",
+    "Add anything that exposes your former name, or ties your names together, to your ledger."
+  ],
+  "deadnameAware": true,
+  "deadnamePrompts": [
+    "Check past the first page — older results sink but don't disappear.",
+    "Try image search for your deadname; photos are indexed separately from text."
+  ],
+  "queryTemplateKeys": ["name-or-deadname", "deadname-city", "deadname-employer", "deadname-plain", "name-city"],
+  "priority": "high",
+  "lastVerified": "2026-06-20"
+}

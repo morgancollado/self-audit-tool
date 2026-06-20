@@ -1,0 +1,9 @@
+{
+  "key": "deadname-city",
+  "label": "Deadname + city",
+  "engine": "google",
+  "template": "\"{{deadname}}\" \"{{city}}\"",
+  "placeholders": ["deadname", "city"],
+  "deadnameAware": true,
+  "notes": "Where your former name still appears tied to where you live."
+}
