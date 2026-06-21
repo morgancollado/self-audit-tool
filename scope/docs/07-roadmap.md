@@ -218,6 +218,15 @@ action** (no dead-ends).
 > NY gains a state records guide. Remaining: records for the rest of the states
 > (deep per-state legal research, gated on review) and the standing legal review of
 > all rights/records prose.
+>
+> **Update — per-state records extended to 12 states.** Court-record sealing /
+> publication-waiver guidance now covers CA, NY, IL, WA, plus TX, PA, MA, MI, NJ —
+> with honest framing where the option is narrower. Each is region-gated and behind
+> the verify-locally banner; states without an authored record still fall back to
+> the national name-change guide (which already prompts "ask your court about
+> sealed/confidential petitions"). Smoke test uses WY as the no-record baseline and
+> asserts CA and TX each gain their state guide. Remaining records states are
+> further per-state legal research, still gated on review.
 
 ## M3 — Breach checks (privacy-route default)  *(small–medium)*
 - Client-side **password** k-anonymity check (no proxy).

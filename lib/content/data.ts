@@ -13,6 +13,11 @@ import recNameChangeCourtCa from '../../content/records/us-CA/name-change-court.
 import recNameChangeSealingNy from '../../content/records/us-NY/name-change-sealing.json';
 import recNameChangeSealingIl from '../../content/records/us-IL/name-change-sealing.json';
 import recNameChangeSealingWa from '../../content/records/us-WA/name-change-sealing.json';
+import recNameChangeSealingTx from '../../content/records/us-TX/name-change-sealing.json';
+import recNameChangeSealingPa from '../../content/records/us-PA/name-change-sealing.json';
+import recNameChangeSealingMa from '../../content/records/us-MA/name-change-sealing.json';
+import recNameChangeSealingMi from '../../content/records/us-MI/name-change-sealing.json';
+import recNameChangeSealingNj from '../../content/records/us-NJ/name-change-sealing.json';
 import recWebArchive from '../../content/records/global/web-archive.json';
 import recSearchCache from '../../content/records/global/search-cache.json';
 
@@ -67,6 +72,11 @@ const RECORDS = [
   recNameChangeSealingNy,
   recNameChangeSealingIl,
   recNameChangeSealingWa,
+  recNameChangeSealingTx,
+  recNameChangeSealingPa,
+  recNameChangeSealingMa,
+  recNameChangeSealingMi,
+  recNameChangeSealingNj,
   recWebArchive,
   recSearchCache,
 ] as unknown as DeadnameRecord[];
