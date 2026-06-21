@@ -6,16 +6,34 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useStorage } from '@/lib/storage/StorageProvider';
+import { SafetyIntro } from '@/components/SafetyIntro';
+import { StorageModeToggle } from '@/components/StorageModeToggle';
 import { NameInputs } from '@/components/NameInputs';
 import { DiscoveryChecklist } from '@/components/DiscoveryChecklist';
 import { FindingsLedger } from '@/components/FindingsLedger';
 import { QueryVars } from '@/lib/discover/queries';
 
 export default function DiscoverPage() {
-  const { ready } = useStorage();
+  const { ready, preferences } = useStorage();
   const [vars, setVars] = useState<QueryVars>({});
 
   if (!ready) return <p>Loading…</p>;
+
+  // The deadname-input surface must never be reachable without the shared-device
+  // safety choice. A first-time visitor who deep-links straight here (bookmark,
+  // shared link, history) meets the safety intro first — it offers session-only
+  // vs. save — exactly as on the landing page. Without this, /discover let
+  // someone type their deadname on a shared device with no warning at all.
+  if (!preferences.safetyIntroAcknowledged) {
+    return (
+      <>
+        <p className="breadcrumb">
+          <Link href="/">← Errata</Link>
+        </p>
+        <SafetyIntro />
+      </>
+    );
+  }
 
   return (
     <>
@@ -29,6 +47,8 @@ export default function DiscoverPage() {
         that stays on this device.
       </p>
 
+      {/* Keep the shared-device mode choice reachable on this sensitive page. */}
+      <StorageModeToggle />
       <NameInputs vars={vars} onChange={setVars} />
       <DiscoveryChecklist vars={vars} />
       <FindingsLedger />
