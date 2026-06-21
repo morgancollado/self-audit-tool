@@ -38,8 +38,9 @@ export default function RecordsPage() {
   return (
     <>
       <p className="breadcrumb">
-        <Link href="/">← Errata</Link> · <Link href="/discover">Discover</Link> ·{' '}
-        <Link href="/remediate">Remediate</Link> · <Link href="/harden">Harden</Link>
+        <Link href="/">← Errata</Link> · <Link href="/playbook">Playbook</Link> ·{' '}
+        <Link href="/discover">Discover</Link> · <Link href="/remediate">Remediate</Link> ·{' '}
+        <Link href="/harden">Harden</Link>
       </p>
       <h1>Public records & name change</h1>
       <p>

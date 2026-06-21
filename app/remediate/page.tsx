@@ -66,7 +66,8 @@ export default function RemediatePage() {
   return (
     <>
       <p className="breadcrumb">
-        <Link href="/">← Errata</Link> · <Link href="/discover">Discover</Link>
+        <Link href="/">← Errata</Link> · <Link href="/playbook">Playbook</Link> ·{' '}
+        <Link href="/discover">Discover</Link>
       </p>
       <h1>Remediate</h1>
       <p>

@@ -27,9 +27,13 @@ export default function HomePage() {
         <>
           <p>You’re set up.</p>
           <p>
-            <Link className="cta" href="/discover">
-              Start discovering →
+            <Link className="cta" href="/playbook">
+              Follow the full playbook →
             </Link>
+          </p>
+          <p>Or jump straight to a step:</p>
+          <p>
+            <Link href="/discover">Discover what’s out there →</Link>
           </p>
           <p>
             Already know where you’re listed?{' '}

@@ -304,12 +304,39 @@ try {
   await axeFailures(recpage, '/records');
   await recctx.close();
 
+  // ---- /playbook: safety gate + the four stages render, axe-clean (M2) ----
+  const pbctx = await browser.newContext();
+  const pbpage = await pbctx.newPage();
+  await pbpage.addInitScript(() => {
+    window.__csp = [];
+    document.addEventListener('securitypolicyviolation', (e) =>
+      window.__csp.push(`${e.effectiveDirective || e.violatedDirective} ${e.blockedURI || 'inline'}`));
+  });
+  await pbpage.goto(base + 'playbook', { waitUntil: 'networkidle' });
+
+  let pbIntroGate = false;
+  try {
+    await pbpage.getByText('Before you start').waitFor({ timeout: 8000 });
+    pbIntroGate = true;
+  } catch { /* intro not shown */ }
+  if (!pbIntroGate) fail('/playbook did not show the safety intro for a fresh visitor (deep-link bypass).');
+
+  await pbpage.getByRole('button', { name: /session-only/i }).click();
+  await pbpage.locator('ol.playbook li.playbook-stage').first().waitFor({ timeout: 8000 });
+  const stageCount = await pbpage.locator('ol.playbook li.playbook-stage').count();
+  const pbviol = await pbpage.evaluate(() => window.__csp || []);
+  console.log(`[csp-smoke] /playbook: intro-gated=${pbIntroGate}, stages=${stageCount}`);
+  if (pbviol.length) fail('/playbook violated its CSP.');
+  if (stageCount !== 4) fail(`/playbook should cross-link all four pillars; rendered ${stageCount}.`);
+  await axeFailures(pbpage, '/playbook');
+  await pbctx.close();
+
   if (!process.exitCode) {
     console.log('[csp-smoke] OK — static export runs under its CSP, leaves no pre-consent trace,');
-    console.log('[csp-smoke]      gates /discover, /remediate, /harden & /records behind the safety intro,');
-    console.log('[csp-smoke]      routes deadname searches to DuckDuckGo, omits the former name from opt-outs');
-    console.log('[csp-smoke]      by default, surfaces CA DROP, region-gates state records, and never shows');
-    console.log('[csp-smoke]      CCPA to a non-CA user.');
+    console.log('[csp-smoke]      gates /discover, /remediate, /harden, /records & /playbook behind the');
+    console.log('[csp-smoke]      safety intro, routes deadname searches to DuckDuckGo, omits the former');
+    console.log('[csp-smoke]      name from opt-outs by default, surfaces CA DROP, region-gates state');
+    console.log('[csp-smoke]      records, and never shows CCPA to a non-CA user.');
   }
 } finally {
   await browser.close();

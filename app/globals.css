@@ -175,6 +175,18 @@ button.safety-intro-primary { font-weight: 600; }
 .priority-low { background: var(--cream); color: var(--slate); border: 1px solid var(--slate); }
 .badge-deadname { background: var(--ink); color: var(--paper); }
 
+/* Consolidated playbook */
+.playbook-summary { background: var(--cream); border-radius: var(--radius); padding: 0.6rem 1rem; margin: 1rem 0; }
+.playbook-summary p { margin: 0.2rem 0; }
+.playbook { list-style: none; padding: 0; margin: 1rem 0; counter-reset: none; }
+.playbook-stage { background: var(--cream); border-radius: var(--radius); padding: 1rem 1.25rem; margin: 1rem 0; }
+.playbook-stage.playbook-done { border-left: 4px solid var(--marker); }
+.playbook-stage-head { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; }
+.playbook-stage-head h2 { margin: 0.2rem 0; font-size: 1.25rem; }
+.playbook-num { display: inline-flex; align-items: center; justify-content: center; width: 1.8rem; height: 1.8rem; border-radius: 999px; background: var(--marker); color: var(--marker-ink); font-weight: 700; font-family: var(--serif); flex: none; }
+.playbook-blurb { color: var(--slate); margin: 0.5rem 0; }
+.playbook-status { font-weight: 600; margin: 0.3rem 0; }
+
 /* Public records & name change */
 .state-select { margin: 0.75rem 0 1.25rem; }
 .record-list { margin: 1rem 0; }

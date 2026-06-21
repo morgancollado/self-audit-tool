@@ -157,10 +157,20 @@ action** (no dead-ends).
 > region. Smoke test now gates `/records`, asserts CA gains the state record, and
 > runs the axe scan there too.
 >
-> Remaining M2 (subsequent slices): consolidated **deadname-removal playbook**
-> cross-linking the pillars; **encrypted-by-default export/import**; authoring the
-> remaining states toward full coverage (records + rights). Note: ledger findings
-> are already tied into `/remediate` (findings-driven, per the PR #2 review).
+> **Update — consolidated deadname-removal playbook landed.** A new `/playbook`
+> route (gated behind the safety intro) cross-links the four pillars in the order
+> that works best — Discover → brokers → platforms → records — as a single guided
+> path, and reflects the user's own local progress at each stage (findings +
+> deadname findings, and per-pillar action counts) via a pure summary
+> (`lib/remediate/progress.ts`). It's read-only over the audit state: it sends and
+> stores nothing of its own. The home page now leads with it, and each pillar
+> breadcrumb links back to it as the hub. Smoke test gates `/playbook`, asserts all
+> four stages render, and runs the axe scan there too.
+>
+> Remaining M2 (subsequent slices): **encrypted-by-default export/import**;
+> authoring the remaining states toward full coverage (records + rights). Note:
+> ledger findings are already tied into `/remediate` (findings-driven, per the
+> PR #2 review).
 
 ## M3 — Breach checks (privacy-route default)  *(small–medium)*
 - Client-side **password** k-anonymity check (no proxy).

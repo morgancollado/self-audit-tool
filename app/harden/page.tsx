@@ -34,8 +34,8 @@ export default function HardenPage() {
   return (
     <>
       <p className="breadcrumb">
-        <Link href="/">← Errata</Link> · <Link href="/discover">Discover</Link> ·{' '}
-        <Link href="/remediate">Remediate</Link>
+        <Link href="/">← Errata</Link> · <Link href="/playbook">Playbook</Link> ·{' '}
+        <Link href="/discover">Discover</Link> · <Link href="/remediate">Remediate</Link>
       </p>
       <h1>Harden platforms</h1>
       <p>
