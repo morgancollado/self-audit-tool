@@ -1,6 +1,5 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "comment": "CSP is set per-request by middleware.ts (it carries the nonce); do NOT add a static Content-Security-Policy here for the dynamic build or it will conflict. These are the non-nonce security headers.",
   "headers": [
     {
       "source": "/(.*)",
