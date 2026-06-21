@@ -76,6 +76,8 @@ export interface SpecialMechanism {
   key: string;
   title: string;
   summary: string;
+  /** Operational status, e.g. when a not-yet-live mechanism actually starts. */
+  status?: string;
   url?: string;
 }
 

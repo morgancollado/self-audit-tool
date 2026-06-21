@@ -44,32 +44,60 @@ test('fillOptOutText trims values', () => {
   assert.equal(fillOptOutText('Name: {{name}}', { name: '  Sam  ' }), 'Name: Sam');
 });
 
-test('buildMailto encodes spaces as %20, not +', () => {
+test('buildMailto encodes spaces as %20, not +, and leaves the address verbatim', () => {
   const url = buildMailto('a@b.com', 'Sub ject', 'Body line one');
-  assert.ok(url.startsWith('mailto:a%40b.com?'));
+  assert.ok(url.startsWith('mailto:a@b.com?'), url);
   assert.ok(url.includes('subject=Sub%20ject'), url);
   assert.ok(!url.includes('+'), 'plus-encoding breaks some mail clients');
 });
 
-test('PARADOX: the former name is omitted by default', () => {
-  const g = generateOptOut(webFormBroker, template, { name: 'Alex', aliases: 'Deadname' }, false);
+const underCurrent = (includeOtherName = false) => ({ listedUnder: 'current' as const, includeOtherName });
+const underFormer = (includeOtherName = false) => ({ listedUnder: 'former' as const, includeOtherName });
+
+test('PARADOX: neither name is broadcast by default (listing under current name)', () => {
+  const g = generateOptOut(webFormBroker, template, { name: 'Alex', aliases: 'Deadname' }, underCurrent());
   assert.equal(g.includesFormerName, false);
-  assert.ok(!g.body.includes('Deadname'), 'deadname must not appear unless opted in');
+  assert.equal(g.includesCurrentName, true, 'the current name is the listing key, so it is present');
+  assert.ok(!g.body.includes('Deadname'), 'former name must not appear unless opted in');
   assert.ok(g.exposesLinkage, 'broker still flagged as linkage-exposing for the warning');
 });
 
-test('opting in writes the former name into the request', () => {
-  const g = generateOptOut(webFormBroker, template, { name: 'Alex', aliases: 'Deadname' }, true);
+test('opting in writes the former name in as the "also listed under" name', () => {
+  const g = generateOptOut(webFormBroker, template, { name: 'Alex', aliases: 'Deadname' }, underCurrent(true));
   assert.equal(g.includesFormerName, true);
   assert.ok(g.body.includes('Also listed under: Deadname'));
 });
 
+test('INVERSE PARADOX: a listing under the former name does not disclose the current name by default', () => {
+  // The record is filed under the deadname, so the request must carry it to match;
+  // but the *current* name (the linkage) must stay out unless opted in.
+  const g = generateOptOut(webFormBroker, template, { name: 'Alex', aliases: 'Deadname' }, underFormer());
+  assert.ok(g.body.includes('Name: Deadname'), 'the former name keys the request (the listing is under it)');
+  assert.ok(!g.body.includes('Alex'), 'the current name must not appear unless opted in');
+  assert.equal(g.includesFormerName, true);
+  assert.equal(g.includesCurrentName, false);
+});
+
+test('opting in under a former-name listing adds the current name as the linkage', () => {
+  const g = generateOptOut(webFormBroker, template, { name: 'Alex', aliases: 'Deadname' }, underFormer(true));
+  assert.ok(g.body.includes('Name: Deadname'));
+  assert.ok(g.body.includes('Also listed under: Alex'));
+  assert.equal(g.includesCurrentName, true);
+});
+
+test('missingPrimaryName is flagged when the keying name is blank', () => {
+  const g = generateOptOut(webFormBroker, template, { aliases: 'Deadname' }, underCurrent());
+  assert.equal(g.missingPrimaryName, true, 'no current name entered, listing keyed on current');
+  const g2 = generateOptOut(webFormBroker, template, { name: 'Alex' }, underCurrent());
+  assert.equal(g2.missingPrimaryName, false);
+});
+
 test('mailto format only offered when the broker accepts email', () => {
-  const webOnly = generateOptOut(webFormBroker, template, { name: 'Alex' }, false);
+  const webOnly = generateOptOut(webFormBroker, template, { name: 'Alex' }, underCurrent());
   assert.ok(!webOnly.formats.includes('mailto'));
   assert.equal(webOnly.mailtoUrl, undefined);
 
-  const byEmail = generateOptOut(emailBroker, template, { name: 'Alex' }, false);
+  const byEmail = generateOptOut(emailBroker, template, { name: 'Alex' }, underCurrent());
   assert.ok(byEmail.formats.includes('mailto'));
-  assert.ok(byEmail.mailtoUrl?.startsWith('mailto:privacy%40mailbroker.example'));
+  assert.ok(byEmail.mailtoUrl?.startsWith('mailto:privacy@mailbroker.example'));
 });

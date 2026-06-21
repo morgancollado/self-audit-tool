@@ -46,7 +46,29 @@ export function buildMailto(to: string, subject: string, body: string): string {
   // URLSearchParams encodes spaces as '+', which some mail clients mishandle in
   // the body; mailto wants %20.
   const query = params.toString().replace(/\+/g, '%20');
-  return `mailto:${encodeURIComponent(to)}?${query}`;
+  // The address is left verbatim: it comes from our own vetted content (a single,
+  // clean address), and percent-encoding the '@' (or a comma-separated recipient
+  // list) breaks some mail clients' parsing of the `to`.
+  return `mailto:${to}?${query}`;
+}
+
+/** Which of the user's names the broker's listing is filed under. */
+export type ListedUnder = 'current' | 'former';
+
+export interface GenerateOptOutOpts {
+  /**
+   * Which name the listing is filed under. The opt-out paradox cuts both ways
+   * (R13): if the record is under the FORMER name, the request must carry it to
+   * match the record — and disclosing the CURRENT name is then the linkage. If
+   * it's under the CURRENT name, the former name is the linkage. We always key
+   * the request on the listing's own name and make the *other* name opt-in.
+   */
+  listedUnder: ListedUnder;
+  /**
+   * Include the user's other name (the one the listing is NOT under). This is the
+   * linkage disclosure in both directions; the UI defaults it OFF everywhere.
+   */
+  includeOtherName: boolean;
 }
 
 export interface GeneratedOptOut {
@@ -59,32 +81,46 @@ export interface GeneratedOptOut {
   body: string;
   /** Present only when the broker accepts email and has a contact address. */
   mailtoUrl?: string;
-  /** True when the user chose to include their former name in this request. */
+  /** The former name appears in this request (whether as the primary or the opt-in name). */
   includesFormerName: boolean;
+  /** The current name appears in this request (whether as the primary or the opt-in name). */
+  includesCurrentName: boolean;
   /** The opt-out itself discloses the current<->former linkage to this custodian. */
   exposesLinkage: boolean;
+  /** True when the request has no identifying name at all (the user hasn't filled their details). */
+  missingPrimaryName: boolean;
   requiresId: boolean;
   disclaimer: string;
 }
 
 /**
  * Build the opt-out artifact for a broker from a template and the transient vars.
- * `includeAliases` gates whether the former name is written into the request at
- * all; the UI defaults it OFF for linkage-exposing brokers.
+ * The request is keyed on the name the listing is filed under (`opts.listedUnder`);
+ * the user's *other* name is written in only when `opts.includeOtherName` is set —
+ * the UI defaults that OFF everywhere, so neither name is ever broadcast to a new
+ * custodian without an explicit, informed choice (the opt-out paradox, R13).
  */
 export function generateOptOut(
   broker: Broker,
   template: OptOutTemplate,
   vars: OptOutVars,
-  includeAliases: boolean,
+  opts: GenerateOptOutOpts,
 ): GeneratedOptOut {
+  const { listedUnder, includeOtherName } = opts;
+  // Key the request on the name the record is actually under; the other name is
+  // the linkage disclosure and only ever written in on opt-in.
+  const primary = listedUnder === 'former' ? vars.aliases : vars.name;
+  const other = listedUnder === 'former' ? vars.name : vars.aliases;
+  const otherName = includeOtherName ? other : undefined;
+
   const values: Partial<Record<TemplateVar, string>> = {
-    name: vars.name,
+    name: primary,
+    // `aliases` is the template's "also listed under" slot — used here for
+    // whichever name is the secondary one, and dropped entirely when not opted in.
+    aliases: otherName,
     location: vars.location,
     email: vars.email,
     brokerName: broker.name,
-    // The linkage is only ever written in when explicitly opted in.
-    aliases: includeAliases ? vars.aliases : undefined,
   };
 
   const subject = fillOptOutText(template.subject, values);
@@ -96,7 +132,8 @@ export function generateOptOut(
   const hasEmail = broker.optOut.methods.includes('email') && !!broker.optOut.email;
   const formats = template.formats.filter((f) => (f === 'mailto' ? hasEmail : true));
 
-  const includesFormerName = includeAliases && !isBlank(vars.aliases);
+  const formerPresent = listedUnder === 'former' ? !isBlank(primary) : !isBlank(otherName);
+  const currentPresent = listedUnder === 'current' ? !isBlank(primary) : !isBlank(otherName);
 
   return {
     brokerSlug: broker.slug,
@@ -105,8 +142,10 @@ export function generateOptOut(
     subject,
     body,
     mailtoUrl: hasEmail ? buildMailto(broker.optOut.email!, subject, body) : undefined,
-    includesFormerName,
+    includesFormerName: formerPresent,
+    includesCurrentName: currentPresent,
     exposesLinkage: broker.optOut.optOutExposesLinkage ?? false,
+    missingPrimaryName: isBlank(primary),
     requiresId: broker.optOut.requiresId,
     disclaimer: template.disclaimer,
   };

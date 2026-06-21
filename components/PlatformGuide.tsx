@@ -17,7 +17,9 @@ export function PlatformGuide({ platform }: { platform: Platform }) {
   const dr = platform.deadnameRemoval;
 
   const track = async (pillar: 'deadname' | 'platform', action: string, key: string) => {
-    await addRemediation({ findingId: undefined, pillar, refId: platform.slug, action, state: 'sent' });
+    // Platform actions are self-completed, not mailed to a custodian — record them
+    // as 'confirmed' (done), not 'sent', which is the broker-opt-out state.
+    await addRemediation({ findingId: undefined, pillar, refId: platform.slug, action, state: 'confirmed' });
     setTracked((prev) => new Set(prev).add(key));
   };
 
@@ -82,6 +84,11 @@ export function PlatformGuide({ platform }: { platform: Platform }) {
           </button>
         )}
       </div>
+
+      <p className="content-verified">
+        Steps last verified {platform.lastVerified}. Platform settings move often — if a step looks
+        different, follow the closest equivalent and let us know.
+      </p>
     </section>
   );
 }

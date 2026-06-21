@@ -246,3 +246,24 @@ button.safety-intro-primary { font-weight: 600; }
 .finding-what { margin: 0.4rem 0; }
 .finding-controls { display: flex; flex-wrap: wrap; gap: 1rem; align-items: flex-end; }
 .finding-controls label { font-size: 0.85rem; }
+
+/* Screen-reader-only live regions and labels (kept out of layout, so they don't
+   disturb flexbox actions rows). */
+.visually-hidden {
+  position: absolute !important;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%);
+  white-space: nowrap; border: 0;
+}
+
+/* M2 additions */
+.optout-listedunder { border: 1px solid var(--cream); border-radius: var(--radius); padding: 0.5rem 0.75rem; margin: 0.75rem 0; display: flex; flex-wrap: wrap; gap: 1rem; }
+.optout-listedunder legend { font-size: 0.85rem; font-weight: 700; }
+.optout-listedunder label { display: inline-flex; align-items: center; gap: 0.4rem; }
+.optout-filter { display: flex; flex-wrap: wrap; gap: 1rem 1.5rem; align-items: flex-end; margin: 0.75rem 0 1.25rem; }
+.optout-filter label { display: flex; align-items: center; gap: 0.4rem; font-size: 0.9rem; }
+.optout-filter-search { flex-direction: column; align-items: flex-start; gap: 0.25rem; }
+.optout-filter-search input { font: inherit; padding: 0.4rem 0.5rem; border: 1px solid var(--slate); border-radius: var(--radius); background: var(--paper); color: var(--ink); }
+.content-verified { font-size: 0.8rem; color: var(--slate); margin: 0.4rem 0 0; }
+.law-mechanism-status { font-size: 0.9rem; margin: 0.4rem 0; }

@@ -4,8 +4,14 @@
 // memory, the user presses send (the 95% rule). Gated behind the shared-device
 // safety intro exactly like /discover — the former-name input surface must never
 // be reachable without the safety choice.
+//
+// Findings-driven: when the user has run Discover, this leads with the brokers
+// they were actually found on (and ties each prepared request back to its finding
+// for the tracker), rather than dumping the whole dataset on them. With no
+// findings it still shows the full set — no dead end — but with a nudge to Discover
+// first, and a filter so the list stays usable as the dataset grows.
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useStorage } from '@/lib/storage/StorageProvider';
 import { getBrokers } from '@/lib/content/data';
@@ -18,8 +24,23 @@ import { RemediationTracker } from '@/components/RemediationTracker';
 import { OptOutVars } from '@/lib/remediate/optout';
 
 export default function RemediatePage() {
-  const { ready, preferences } = useStorage();
+  const { ready, preferences, state } = useStorage();
   const [vars, setVars] = useState<OptOutVars>({});
+  const [onlyFlagged, setOnlyFlagged] = useState(true);
+  const [query, setQuery] = useState('');
+
+  const allBrokers = useMemo(() => getBrokers('us'), []);
+
+  // Map broker slug -> the discovery finding that flagged it, so we can lead with
+  // (and tie remediations back to) where the user was actually found.
+  const findingBySlug = useMemo(() => {
+    const m = new Map<string, string>();
+    for (const f of state?.findings ?? []) {
+      if (f.source === 'broker' && f.refId && !m.has(f.refId)) m.set(f.refId, f.id);
+    }
+    return m;
+  }, [state]);
+  const hasFindings = findingBySlug.size > 0;
 
   if (!ready) return <p>Loading…</p>;
 
@@ -34,7 +55,13 @@ export default function RemediatePage() {
     );
   }
 
-  const brokers = getBrokers('us');
+  const q = query.trim().toLowerCase();
+  const brokers = allBrokers
+    // Flagged-first ordering so discovered listings lead.
+    .slice()
+    .sort((a, b) => Number(findingBySlug.has(b.slug)) - Number(findingBySlug.has(a.slug)))
+    .filter((b) => (onlyFlagged && hasFindings ? findingBySlug.has(b.slug) : true))
+    .filter((b) => (q ? b.name.toLowerCase().includes(q) : true));
 
   return (
     <>
@@ -44,8 +71,8 @@ export default function RemediatePage() {
       <h1>Remediate</h1>
       <p>
         For each broker, Errata prepares a removal request from your details — on this device. Read
-        it, decide whether to include your former name, then send it yourself. Nothing is transmitted
-        for you.
+        it, decide which name the listing is under and whether to include your other name, then send
+        it yourself. Nothing is transmitted for you.
       </p>
 
       <StorageModeToggle />
@@ -53,10 +80,45 @@ export default function RemediatePage() {
       <OptOutInputs vars={vars} onChange={setVars} />
 
       <h2>Prepare your removal requests</h2>
+
+      {!hasFindings && (
+        <p className="name-inputs-note">
+          These are the brokers Errata covers. Tip: <Link href="/discover">run Discover</Link> first to
+          focus on the ones you’re actually listed on.
+        </p>
+      )}
+
+      <div className="optout-filter">
+        {hasFindings && (
+          <label>
+            <input
+              type="checkbox"
+              checked={onlyFlagged}
+              onChange={(e) => setOnlyFlagged(e.target.checked)}
+            />
+            Show only brokers from my Discover findings
+          </label>
+        )}
+        <label className="optout-filter-search">
+          Filter by name
+          <input
+            type="text"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="e.g. Spokeo"
+            autoComplete="off"
+          />
+        </label>
+      </div>
+
       <div className="optout-list">
-        {brokers.map((b) => (
-          <OptOutGenerator key={b.slug} broker={b} vars={vars} />
-        ))}
+        {brokers.length === 0 ? (
+          <p className="name-inputs-note">No brokers match that filter.</p>
+        ) : (
+          brokers.map((b) => (
+            <OptOutGenerator key={b.slug} broker={b} vars={vars} findingId={findingBySlug.get(b.slug)} />
+          ))
+        )}
       </div>
 
       <p className="discover-next">

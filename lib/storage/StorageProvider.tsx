@@ -176,11 +176,25 @@ export function StorageProvider({ children }: { children: ReactNode }) {
 
   const addRemediation = useCallback(
     async (input: NewRemediationInput): Promise<Remediation> => {
-      const remediation = newRemediation(input);
+      let result: Remediation = newRemediation(input);
       await mutate((d) => {
-        d.remediations.unshift(remediation);
+        // Dedupe by (pillar, refId): the same broker/platform action shouldn't
+        // accrete duplicate tracker rows if the user re-mounts the page and clicks
+        // "track it" again. Update the existing row in place instead.
+        const existing = input.refId
+          ? d.remediations.find((r) => r.pillar === input.pillar && r.refId === input.refId)
+          : undefined;
+        if (existing) {
+          existing.action = input.action;
+          existing.state = input.state ?? existing.state;
+          if (input.findingId) existing.findingId = input.findingId;
+          existing.updatedAt = today();
+          result = existing;
+        } else {
+          d.remediations.unshift(result);
+        }
       });
-      return remediation;
+      return result;
     },
     [mutate],
   );

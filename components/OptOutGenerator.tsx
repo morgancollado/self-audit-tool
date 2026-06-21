@@ -2,30 +2,51 @@
 
 // Per-broker opt-out generator (Phase 2 / M2). Prepares the request in memory and
 // hands the user the artifact; the send is always their keystroke (the 95% rule).
-// Surfaces the opt-out paradox (R13): including the former name is opt-in, off by
-// default for brokers where the opt-out itself discloses the linkage, and "leave
-// it" is offered as a real, first-class outcome — never a failure state.
+// Surfaces the opt-out paradox (R13) in BOTH directions: the request is keyed on
+// the name the listing is actually filed under, and the user's *other* name is
+// opt-in and OFF by default everywhere — so opting out never silently broadcasts
+// either name to a custodian that didn't already hold it. "Leave it" stays a real,
+// first-class outcome.
 
 import { useState } from 'react';
 import { useStorage } from '@/lib/storage/StorageProvider';
 import { getOptOutTemplate } from '@/lib/content/data';
 import { Broker } from '@/lib/content/types';
-import { OptOutVars, generateOptOut } from '@/lib/remediate/optout';
+import { ListedUnder, OptOutVars, generateOptOut } from '@/lib/remediate/optout';
 import { CopyButton } from './CopyButton';
 
-export function OptOutGenerator({ broker, vars }: { broker: Broker; vars: OptOutVars }) {
+export function OptOutGenerator({
+  broker,
+  vars,
+  findingId,
+}: {
+  broker: Broker;
+  vars: OptOutVars;
+  findingId?: string;
+}) {
   const { addRemediation } = useStorage();
   const exposesLinkage = broker.optOut.optOutExposesLinkage ?? false;
-  // Default the former-name inclusion OFF whenever opting out would expose the
-  // current<->former linkage to this custodian.
-  const [includeAliases, setIncludeAliases] = useState(!exposesLinkage);
+  const [listedUnder, setListedUnder] = useState<ListedUnder>('current');
+  // The other name is the linkage disclosure in both directions — default OFF
+  // ALWAYS, never keyed off exposesLinkage (a broker that simply forgot the flag
+  // must not become the one place a deadname leaks by default).
+  const [includeOtherName, setIncludeOtherName] = useState(false);
   const [tracked, setTracked] = useState(false);
 
   const template = broker.optOut.templateKey ? getOptOutTemplate(broker.optOut.templateKey) : undefined;
-  const gen = template ? generateOptOut(broker, template, vars, includeAliases) : undefined;
+  const gen = template ? generateOptOut(broker, template, vars, { listedUnder, includeOtherName }) : undefined;
+
+  // Switching which name the listing is under flips the meaning of "the other
+  // name", so reset the opt-in to its safe default whenever it changes.
+  const changeListedUnder = (next: ListedUnder) => {
+    setListedUnder(next);
+    setIncludeOtherName(false);
+  };
+
+  const otherLabel = listedUnder === 'current' ? 'former name' : 'current name';
 
   const track = async (action: string) => {
-    await addRemediation({ findingId: undefined, pillar: 'optout', refId: broker.slug, action, state: 'sent' });
+    await addRemediation({ findingId, pillar: 'optout', refId: broker.slug, action, state: 'sent' });
     setTracked(true);
   };
 
@@ -55,15 +76,59 @@ export function OptOutGenerator({ broker, vars }: { broker: Broker; vars: OptOut
 
       {gen ? (
         <>
+          <fieldset className="optout-listedunder">
+            <legend>Which name is this listing filed under?</legend>
+            <label>
+              <input
+                type="radio"
+                name={`listedunder-${broker.slug}`}
+                checked={listedUnder === 'current'}
+                onChange={() => changeListedUnder('current')}
+              />
+              My current name
+            </label>
+            <label>
+              <input
+                type="radio"
+                name={`listedunder-${broker.slug}`}
+                checked={listedUnder === 'former'}
+                onChange={() => changeListedUnder('former')}
+              />
+              My former name
+            </label>
+          </fieldset>
+
+          {listedUnder === 'former' && (
+            <p className="optout-warn" role="note">
+              This request will contain your former name, because the listing is filed under it — that
+              is necessary to ask for this specific record’s removal. Your current name stays out unless
+              you add it below.
+            </p>
+          )}
+
           <label className="optout-aliases">
             <input
               type="checkbox"
-              checked={includeAliases}
-              onChange={(e) => setIncludeAliases(e.target.checked)}
+              checked={includeOtherName}
+              onChange={(e) => setIncludeOtherName(e.target.checked)}
             />
-            Include my former name in this request
-            {exposesLinkage && <span className="optout-aliases-warn"> — off by default; this discloses the link</span>}
+            Also include my {otherLabel} in this request
+            <span className="optout-aliases-warn"> — off by default; adding it discloses the link</span>
           </label>
+
+          {/* Concise, screen-reader-announced status for the toggle above. */}
+          <p className="visually-hidden" role="status" aria-live="polite">
+            {includeOtherName
+              ? `Your ${otherLabel} will be included in the ${broker.name} request.`
+              : `Your ${otherLabel} is left out of the ${broker.name} request.`}
+          </p>
+
+          {gen.missingPrimaryName && (
+            <p className="optout-warn" role="note">
+              Add your {listedUnder === 'former' ? 'former name' : 'current name'} in “Your details”
+              above so Errata can fill this request in.
+            </p>
+          )}
 
           <p className="optout-format-note">
             Prepared on this device. Nothing is sent until you send it. Subject and message:
@@ -99,6 +164,7 @@ export function OptOutGenerator({ broker, vars }: { broker: Broker; vars: OptOut
           )}
 
           <p className="optout-disclaimer">{gen.disclaimer}</p>
+          <p className="content-verified">Broker details last verified {broker.lastVerified}.</p>
 
           <div className="optout-track">
             {tracked ? (

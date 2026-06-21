@@ -9,7 +9,8 @@
     {
       "key": "ca-drop",
       "title": "DROP — delete from every registered data broker in one request",
-      "summary": "California's DELETE Act created DROP, the Delete Request and Opt-out Platform: a single verified request that every data broker registered with the state must honor. Registered brokers are required to begin processing DROP deletion requests by August 1, 2026. It is the closest thing to one-button removal — and the state, not Errata, operates it, so we hold nothing.",
+      "summary": "California's DELETE Act created DROP, the Delete Request and Opt-out Platform: a single verified request that every data broker registered with the state must honor. It is the closest thing to one-button removal — and the state, not Errata, operates it, so we hold nothing.",
+      "status": "Registered brokers are required to begin processing DROP deletion requests on August 1, 2026. Until then the platform may not yet remove your data — check the CPPA site for the live request flow and current dates before relying on it.",
       "url": "https://cppa.ca.gov/"
     }
   ],

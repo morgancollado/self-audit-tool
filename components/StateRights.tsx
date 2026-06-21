@@ -48,6 +48,13 @@ export function StateRights() {
         by state and change often; verify your own before relying on any wording here.
       </p>
 
+      {/* Announce the rights swap to screen-reader users when the state changes. */}
+      <p className="visually-hidden" role="status" aria-live="polite">
+        {region
+          ? `Showing deletion rights for ${stateName(region) ?? region}.`
+          : 'No state selected; showing the national baseline only.'}
+      </p>
+
       {!region && (
         <p className="name-inputs-note">
           Pick your state to see the deletion rights you can use. You don’t need to — the broker
@@ -90,6 +97,11 @@ function LawCard({ law, hero }: { law: Law; hero: boolean }) {
         <div key={m.key} className={`law-mechanism${hero ? ' law-mechanism-hero' : ''}`}>
           <h4>{m.title}</h4>
           <p>{m.summary}</p>
+          {m.status && (
+            <p className="law-mechanism-status" role="note">
+              <strong>Availability:</strong> {m.status}
+            </p>
+          )}
           {m.url && (
             <a href={m.url} target="_blank" rel="noopener noreferrer">
               Open the official site ↗
@@ -99,6 +111,7 @@ function LawCard({ law, hero }: { law: Law; hero: boolean }) {
       ))}
 
       <p className="optout-disclaimer">{law.disclaimer}</p>
+      <p className="content-verified">Last verified {law.lastVerified}.</p>
     </article>
   );
 }

@@ -20,6 +20,7 @@ import http from 'node:http';
 import { readFileSync, existsSync, statSync } from 'node:fs';
 import { join, extname } from 'node:path';
 import { chromium } from 'playwright';
+import { AxeBuilder } from '@axe-core/playwright';
 
 const OUT = 'out';
 const TYPES = {
@@ -31,6 +32,25 @@ const TYPES = {
 function fail(msg) {
   console.error(`[csp-smoke] FAIL — ${msg}`);
   process.exitCode = 1;
+}
+
+// Accessibility scan for a loaded route. We own color/structure via the design
+// tokens and the layout shell (AA-claimed; landmarks live in the root layout) and
+// track those separately; here we fail the gate on the structural a11y axe can
+// prove — missing labels/names, invalid ARIA, duplicate ids — at serious/critical
+// impact, which is exactly what the M2 form surfaces must get right.
+const AXE_IGNORE = new Set(['color-contrast', 'region', 'landmark-one-main', 'page-has-heading-one']);
+async function axeFailures(page, label) {
+  const { violations } = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa']).analyze();
+  const serious = violations.filter(
+    (v) => !AXE_IGNORE.has(v.id) && (v.impact === 'serious' || v.impact === 'critical'),
+  );
+  if (serious.length) {
+    for (const v of serious.slice(0, 12)) console.error(`    • [${label}] ${v.id} (${v.impact}): ${v.help}`);
+    fail(`${label} has ${serious.length} serious/critical accessibility violation(s).`);
+  } else {
+    console.log(`[csp-smoke] ${label}: no serious/critical axe violations.`);
+  }
 }
 
 if (!existsSync(join(OUT, 'index.html'))) {
@@ -144,6 +164,7 @@ try {
   if (runHrefs.length === 0) fail('/discover produced no run links after a deadname was entered.');
   if (toGoogle.length > 0) fail(`a deadname "Run" link points at Google: ${toGoogle[0]}`);
   if (!runHrefs.every((h) => h && h.includes('duckduckgo.com'))) fail('a deadname "Run" link is not routed to DuckDuckGo.');
+  await axeFailures(dpage, '/discover');
   await dctx.close();
 
   // ---- /remediate: safety gate + opt-out paradox default (M2) ----
@@ -172,7 +193,7 @@ try {
   await rpage.getByRole('button', { name: /session-only/i }).click();
   await rpage.getByLabel('Former name (deadname)').waitFor({ timeout: 8000 });
   await rpage.getByLabel('Former name (deadname)').fill('Deadname McTest');
-  await rpage.getByLabel('Current name').fill('Alex Real');
+  await rpage.getByLabel('Current name', { exact: true }).fill('Alex Real');
   await rpage.waitForTimeout(300);
   const bodies = await rpage.locator('pre.optout-body').allInnerTexts();
   const rviol = await rpage.evaluate(() => window.__csp || []);
@@ -181,6 +202,21 @@ try {
   if (rviol.length) fail('/remediate violated its CSP.');
   if (bodies.length === 0) fail('/remediate produced no prepared requests after a name was entered.');
   if (leaks.length > 0) fail('a prepared opt-out request included the former name by default (opt-out paradox violated).');
+
+  // INVERSE PARADOX (R13, both directions): mark the first broker's listing as
+  // filed under the FORMER name. The request must then carry the former name (to
+  // match the record) but must NOT disclose the current name unless opted in.
+  const firstOptout = rpage.locator('section.optout').first();
+  await firstOptout.getByRole('radio', { name: 'My former name' }).check();
+  await rpage.waitForTimeout(200);
+  const firstBody = await firstOptout.locator('pre.optout-body').innerText();
+  console.log(`[csp-smoke] /remediate inverse-paradox body: ${JSON.stringify(firstBody.slice(0, 80))}`);
+  if (!firstBody.includes('Deadname McTest')) {
+    fail('a former-name listing did not key the request on the former name.');
+  }
+  if (firstBody.includes('Alex Real')) {
+    fail('a former-name listing leaked the current name without opt-in (inverse opt-out paradox).');
+  }
 
   // State-aware rights (M2): selecting California surfaces DROP; selecting a state
   // with different rights must NEVER show CCPA framing (the core sub-national
@@ -198,6 +234,7 @@ try {
   console.log(`[csp-smoke] /remediate rights: CA→DROP=${caShowsDrop}, TX→shows CCPA=${txLeaksCcpa}`);
   if (!caShowsDrop) fail('selecting California did not surface DROP (the hero removal feature).');
   if (txLeaksCcpa) fail('a Texas user was shown CCPA framing (implies a right TX does not grant).');
+  await axeFailures(rpage, '/remediate');
   await rctx.close();
 
   // ---- /harden: safety gate + platform guides render, no dead-ends (M2) ----
@@ -228,6 +265,7 @@ try {
   if (hviol.length) fail('/harden violated its CSP.');
   if (guideCount === 0) fail('/harden rendered no platform guides after the safety intro.');
   if (redditSteps === 0) fail('Reddit (no direct username change) offered no steps — a dead-end.');
+  await axeFailures(hpage, '/harden');
   await hctx.close();
 
   if (!process.exitCode) {

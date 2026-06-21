@@ -2,24 +2,40 @@
 
 import { useState } from 'react';
 
+type CopyState = 'idle' | 'copied' | 'failed';
+
 export function CopyButton({ text, label = 'Copy' }: { text: string; label?: string }) {
-  const [copied, setCopied] = useState(false);
+  const [status, setStatus] = useState<CopyState>('idle');
+
+  const onClick = async () => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setStatus('copied');
+      setTimeout(() => setStatus('idle'), 1500);
+    } catch {
+      // Clipboard blocked (insecure context / denied permission). Don't fail
+      // silently — tell the user the text is selectable so they can copy by hand.
+      setStatus('failed');
+      setTimeout(() => setStatus('idle'), 4000);
+    }
+  };
+
+  const buttonLabel =
+    status === 'copied' ? 'Copied ✓' : status === 'failed' ? 'Select the text to copy' : label;
+
   return (
-    <button
-      type="button"
-      className="copy-button"
-      onClick={async () => {
-        try {
-          await navigator.clipboard.writeText(text);
-          setCopied(true);
-          setTimeout(() => setCopied(false), 1500);
-        } catch {
-          /* clipboard blocked; user can select manually */
-        }
-      }}
-      aria-label={copied ? 'Copied' : label}
-    >
-      {copied ? 'Copied ✓' : label}
-    </button>
+    <>
+      <button type="button" className="copy-button" onClick={onClick} aria-label={buttonLabel}>
+        {buttonLabel}
+      </button>
+      {/* Announce the result to assistive tech without depending on the label swap. */}
+      <span className="visually-hidden" role="status" aria-live="polite">
+        {status === 'copied'
+          ? 'Copied to clipboard.'
+          : status === 'failed'
+            ? 'Copying is blocked here. Select the text above and copy it manually.'
+            : ''}
+      </span>
+    </>
   );
 }

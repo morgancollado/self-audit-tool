@@ -119,6 +119,29 @@ action** (no dead-ends).
 > Reddit still offers steps. Guides are jurisdiction-agnostic; platform UIs drift,
 > so each carries `lastVerified` for the staleness surface.
 >
+> **Update — adversarial-review hardening (PR #2).** Findings from the review,
+> all fixed and gated:
+> - **Inverse opt-out paradox (R13, both directions):** the generator now keys
+>   each request on *which name the listing is filed under* (a per-broker choice),
+>   and the user's *other* name is opt-in and **OFF by default everywhere** — never
+>   keyed off `optOutExposesLinkage` anymore, so a broker that simply omits the flag
+>   can't become the one place a name leaks. A listing under the former name no
+>   longer forces disclosure of the current name. Guarded in the smoke test.
+> - **Findings-driven remediation:** `/remediate` now leads with the brokers
+>   Discover actually flagged, ties each prepared request back to its finding, and
+>   carries a "only my findings" toggle + name filter so the list scales; it still
+>   shows the full set (no dead-end) when there are no findings, with a nudge to
+>   Discover first.
+> - **Tracker:** de-duplicates by (pillar, refId) so re-mounting can't accrete
+>   duplicate rows; platform actions record as `confirmed` (done), not `sent`.
+> - **Accessibility:** an **axe scan** (WCAG 2 A/AA, serious/critical) now runs in
+>   the browser smoke test across `/discover`, `/remediate`, `/harden`; live-region
+>   announcements for the state swap, the include-name toggle, and copy results.
+> - **Honesty surfaces:** `lastVerified` is shown on broker/law/platform cards, and
+>   DROP carries an explicit **availability** note (processing required from
+>   2026-08-01) rather than reading as already-live. Empty-details state prompts the
+>   user to fill in their name. `buildMailto` leaves the address verbatim.
+>
 > Remaining M2 (subsequent slices): **legal name-change / court-record flow**
 > (research + scaffolding, gated on legal review) + archive/cache removal;
 > consolidated **deadname-removal playbook** cross-linking the pillars;
