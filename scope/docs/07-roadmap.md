@@ -142,12 +142,25 @@ action** (no dead-ends).
 >   2026-08-01) rather than reading as already-live. Empty-details state prompts the
 >   user to fill in their name. `buildMailto` leaves the address verbatim.
 >
-> Remaining M2 (subsequent slices): **legal name-change / court-record flow**
-> (research + scaffolding, gated on legal review) + archive/cache removal;
-> consolidated **deadname-removal playbook** cross-linking the pillars;
-> **encrypted-by-default export/import**; linking findings directly to their
-> prepared remediation in the ledger; authoring the remaining states toward full
-> coverage.
+> **Update — legal name-change / court-record + archive/cache removal landed.** A
+> new `/records` route (gated behind the safety intro like the other Phase 2
+> flows) covers the deadname's most permanent homes: the legal name-change process
+> (publication requirement + **sealed/confidential petition** routes flagged
+> *before* filing), the indexed court order, web archives (Wayback exclusion), and
+> search caches (remove-outdated-content + Results-about-you). Region-gated through
+> a pure selector (`lib/remediate/records.ts`): global records apply everywhere, a
+> region-specific court-record surfaces ONLY on an exact region match (a CA user
+> gains it; a TX user doesn't) — never cross-country. No-dead-end enforced by the
+> record schema (actions, or explicit monitor-only + harm-reduction). Carries the
+> standing not-yet-reviewed / verify-locally banner since name-change/sealing
+> content is gated on legal review (R4/R11). A reusable `StateSelect` drives the
+> region. Smoke test now gates `/records`, asserts CA gains the state record, and
+> runs the axe scan there too.
+>
+> Remaining M2 (subsequent slices): consolidated **deadname-removal playbook**
+> cross-linking the pillars; **encrypted-by-default export/import**; authoring the
+> remaining states toward full coverage (records + rights). Note: ledger findings
+> are already tied into `/remediate` (findings-driven, per the PR #2 review).
 
 ## M3 — Breach checks (privacy-route default)  *(small–medium)*
 - Client-side **password** k-anonymity check (no proxy).

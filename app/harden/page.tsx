@@ -52,6 +52,11 @@ export default function HardenPage() {
         ))}
       </div>
 
+      <p className="discover-next">
+        The most permanent sources — court orders, name changes, archives —{' '}
+        <Link href="/records">are handled here →</Link>
+      </p>
+
       <RemediationTracker />
     </>
   );

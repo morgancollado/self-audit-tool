@@ -1,0 +1,16 @@
+{
+  "slug": "name-change",
+  "jurisdiction": { "country": "us" },
+  "class": "name-change",
+  "exposesDeadnameRisk": "high",
+  "permanence": "high",
+  "whatItIs": "A legal name change in most US states is a public court process: you file a petition, many states require publishing notice in a newspaper, and the granted order becomes a public record that links your former and current name. It is often the single most durable deadname source.",
+  "actions": [
+    "Before you file, ask your court — or a name-change-experienced legal-aid org — whether your state offers a confidential or sealed name change for people at risk (survivors of abuse, stalking, or harassment) and whether you qualify; some states can also waive the newspaper-publication requirement.",
+    "If your order is already public, ask the court clerk what sealing, redaction, or after-the-fact publication-waiver options exist.",
+    "Suppress the downstream copies the order spawned: data-broker opt-outs, Google 'Results about you', and the web-archive and search-cache removals below."
+  ],
+  "sealedPetitionAvailable": true,
+  "disclaimer": "Informational only — not legal advice, and not yet reviewed by a lawyer. Name-change and sealing procedures vary by state and county and change often; verify with your court or a legal-aid org before relying on this.",
+  "lastVerified": "2026-06-01"
+}

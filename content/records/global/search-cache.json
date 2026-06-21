@@ -1,0 +1,14 @@
+{
+  "slug": "search-cache",
+  "class": "search-cache",
+  "exposesDeadnameRisk": "medium",
+  "permanence": "medium",
+  "whatItIs": "Search engines keep cached copies and stale results that can still show your former name after the original page has changed or come down.",
+  "actions": [
+    "After the source page is updated or removed, use Google's 'Remove outdated content' tool to refresh or drop the cached result.",
+    "Use Google's 'Results about you' tool for results that expose personal contact information.",
+    "Repeat with Bing's content-removal tool, then re-check in a few weeks — caches refresh on their own schedule."
+  ],
+  "disclaimer": "Informational only. Removing a cached copy doesn't remove the source page — opt out or fix the source too.",
+  "lastVerified": "2026-06-01"
+}

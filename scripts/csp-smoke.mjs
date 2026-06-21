@@ -268,11 +268,48 @@ try {
   await axeFailures(hpage, '/harden');
   await hctx.close();
 
+  // ---- /records: safety gate + region-gated records, no dead-ends (M2) ----
+  const recctx = await browser.newContext();
+  const recpage = await recctx.newPage();
+  await recpage.addInitScript(() => {
+    window.__csp = [];
+    document.addEventListener('securitypolicyviolation', (e) =>
+      window.__csp.push(`${e.effectiveDirective || e.violatedDirective} ${e.blockedURI || 'inline'}`));
+  });
+  await recpage.goto(base + 'records', { waitUntil: 'networkidle' });
+
+  let recIntroGate = false;
+  try {
+    await recpage.getByText('Before you start').waitFor({ timeout: 8000 });
+    recIntroGate = true;
+  } catch { /* intro not shown */ }
+  if (!recIntroGate) fail('/records did not show the safety intro for a fresh visitor (deep-link bypass).');
+
+  await recpage.getByRole('button', { name: /session-only/i }).click();
+  await recpage.locator('section.record').first().waitFor({ timeout: 8000 });
+  const baseRecords = await recpage.locator('section.record').count();
+  // Region-gated: a CA user gains the California court-record guide; a non-CA user
+  // must not see it (same sub-national rule as rights).
+  await recpage.getByLabel('Your state').selectOption('CA');
+  await recpage.waitForTimeout(300);
+  const caRecords = await recpage.locator('section.record').count();
+  await recpage.getByLabel('Your state').selectOption('TX');
+  await recpage.waitForTimeout(300);
+  const txRecords = await recpage.locator('section.record').count();
+  const recviol = await recpage.evaluate(() => window.__csp || []);
+  console.log(`[csp-smoke] /records: intro-gated=${recIntroGate}, base=${baseRecords}, CA=${caRecords}, TX=${txRecords}`);
+  if (recviol.length) fail('/records violated its CSP.');
+  if (baseRecords === 0) fail('/records rendered no record guides after the safety intro.');
+  if (!(caRecords > txRecords)) fail('a California user did not gain the state-specific court-record guide.');
+  await axeFailures(recpage, '/records');
+  await recctx.close();
+
   if (!process.exitCode) {
     console.log('[csp-smoke] OK — static export runs under its CSP, leaves no pre-consent trace,');
-    console.log('[csp-smoke]      gates /discover, /remediate & /harden behind the safety intro, routes');
-    console.log('[csp-smoke]      deadname searches to DuckDuckGo, omits the former name from opt-outs by');
-    console.log('[csp-smoke]      default, surfaces CA DROP, and never shows CCPA to a non-CA user.');
+    console.log('[csp-smoke]      gates /discover, /remediate, /harden & /records behind the safety intro,');
+    console.log('[csp-smoke]      routes deadname searches to DuckDuckGo, omits the former name from opt-outs');
+    console.log('[csp-smoke]      by default, surfaces CA DROP, region-gates state records, and never shows');
+    console.log('[csp-smoke]      CCPA to a non-CA user.');
   }
 } finally {
   await browser.close();

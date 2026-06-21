@@ -175,6 +175,17 @@ button.safety-intro-primary { font-weight: 600; }
 .priority-low { background: var(--cream); color: var(--slate); border: 1px solid var(--slate); }
 .badge-deadname { background: var(--ink); color: var(--paper); }
 
+/* Public records & name change */
+.state-select { margin: 0.75rem 0 1.25rem; }
+.record-list { margin: 1rem 0; }
+.record { background: var(--cream); border-radius: var(--radius); padding: 1rem 1.25rem; margin: 1rem 0; }
+.record-head { display: flex; align-items: baseline; justify-content: space-between; gap: 0.75rem; }
+.record-head h3 { margin: 0.2rem 0; }
+.record-steps { padding-left: 1.2rem; font-size: 0.95rem; }
+.record-steps li { margin: 0.3rem 0; }
+.record-sealed { border-left: 3px solid var(--proof); background: var(--paper); padding: 0.6rem 0.9rem; border-radius: var(--radius); margin: 0.6rem 0; font-size: 0.95rem; }
+.record-monitor { border-left: 3px solid var(--slate); background: var(--paper); padding: 0.6rem 0.9rem; border-radius: var(--radius); margin: 0.6rem 0; font-size: 0.95rem; }
+
 /* Platform hardening + deadname removal */
 .platform-list { margin: 1rem 0; }
 .platform { background: var(--cream); border-radius: var(--radius); padding: 1rem 1.25rem; margin: 1rem 0; }

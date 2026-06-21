@@ -1,0 +1,14 @@
+{
+  "slug": "web-archive",
+  "class": "archive",
+  "exposesDeadnameRisk": "medium",
+  "permanence": "high",
+  "whatItIs": "The Internet Archive's Wayback Machine and similar services keep snapshots of old pages — profiles, bylines, directory listings under your former name — long after the live page is gone or changed.",
+  "actions": [
+    "Once the live page is removed or updated, request exclusion of the archived snapshots: email info@archive.org from an address tied to the page or its domain, listing the exact archived URLs and why they should come down.",
+    "For pages you control, a robots.txt rule or a removal request can keep them from being re-archived.",
+    "For snapshots that can't be excluded, keep a list and re-check periodically — archives sometimes honor requests later."
+  ],
+  "disclaimer": "Informational only. Web archives are independent and may decline; there is no guaranteed removal.",
+  "lastVerified": "2026-06-01"
+}

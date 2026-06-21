@@ -124,6 +124,10 @@ export default function RemediatePage() {
       <p className="discover-next">
         Listed on platforms too? <Link href="/harden">Harden your accounts & remove your former name →</Link>
       </p>
+      <p className="discover-next">
+        Deadname in a court order, name-change petition, or web archive?{' '}
+        <Link href="/records">Tackle public records →</Link>
+      </p>
 
       <RemediationTracker />
     </>

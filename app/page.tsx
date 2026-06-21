@@ -39,6 +39,10 @@ export default function HomePage() {
             Want to clean up your accounts?{' '}
             <Link href="/harden">Harden platforms & remove your former name →</Link>
           </p>
+          <p>
+            Deadname in court records or archives?{' '}
+            <Link href="/records">Tackle public records & name change →</Link>
+          </p>
           <StorageModeToggle />
         </>
       )}

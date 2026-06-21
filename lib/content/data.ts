@@ -3,8 +3,14 @@
 // a generated manifest can replace this when the dataset grows.
 
 import { Country, Jurisdiction } from '../model/types';
-import { Broker, DiscoveryStep, Law, OptOutTemplate, Platform, QueryTemplate } from './types';
+import { Broker, DeadnameRecord, DiscoveryStep, Law, OptOutTemplate, Platform, QueryTemplate } from './types';
 import { selectLaws } from '../remediate/rights';
+import { selectRecords } from '../remediate/records';
+
+import recNameChange from '../../content/records/us/name-change.json';
+import recNameChangeCourtCa from '../../content/records/us-CA/name-change-court.json';
+import recWebArchive from '../../content/records/global/web-archive.json';
+import recSearchCache from '../../content/records/global/search-cache.json';
 
 import optoutDeletionGeneric from '../../content/templates/optout-deletion-generic.json';
 
@@ -67,6 +73,13 @@ const LAWS = [
 
 const PLATFORMS = [pGoogle, pInstagram, pX, pLinkedin, pTiktok, pReddit] as unknown as Platform[];
 
+const RECORDS = [
+  recNameChange,
+  recNameChangeCourtCa,
+  recWebArchive,
+  recSearchCache,
+] as unknown as DeadnameRecord[];
+
 const PRIORITY_ORDER = { high: 0, medium: 1, low: 2 } as const;
 // Easy wins first — encourage momentum (the inverse of priority order).
 const DIFFICULTY_ORDER = { low: 0, medium: 1, high: 2 } as const;
@@ -124,4 +137,13 @@ export function getPlatforms(): Platform[] {
 
 export function getPlatform(slug: string): Platform | undefined {
   return PLATFORMS.find((p) => p.slug === slug);
+}
+
+/**
+ * Records-class guides (Phase 2): the deadname's most permanent homes. Global
+ * records apply everywhere; region-specific ones surface ONLY on an exact region
+ * match. Never cross-country.
+ */
+export function getRecords(jurisdiction: Jurisdiction): DeadnameRecord[] {
+  return selectRecords(RECORDS, jurisdiction);
 }
