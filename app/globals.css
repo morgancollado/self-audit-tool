@@ -175,6 +175,19 @@ button.safety-intro-primary { font-weight: 600; }
 .priority-low { background: var(--cream); color: var(--slate); border: 1px solid var(--slate); }
 .badge-deadname { background: var(--ink); color: var(--paper); }
 
+/* Backup & restore */
+.backup { margin: 1.5rem 0; }
+.backup-block { background: var(--cream); border-radius: var(--radius); padding: 1rem 1.25rem; margin: 1rem 0; }
+.backup-block h3 { margin: 0.2rem 0 0.5rem; }
+.backup-warn { border-left: 3px solid var(--proof); background: var(--paper); padding: 0.6rem 0.9rem; border-radius: var(--radius); margin: 0.6rem 0; font-size: 0.92rem; }
+.backup-actions { margin: 0.75rem 0; }
+.backup-mode { border: 1px solid var(--slate); border-radius: var(--radius); padding: 0.5rem 0.75rem; margin: 0.75rem 0; }
+.backup-mode legend { padding: 0 0.4rem; font-weight: 600; }
+.backup-mode label { display: flex; align-items: center; gap: 0.4rem; }
+.backup-ok { color: var(--marker-ink); font-weight: 600; }
+.backup-err { color: var(--proof); font-weight: 600; }
+.backup input[type="file"] { font: inherit; }
+
 /* Consolidated playbook */
 .playbook-summary { background: var(--cream); border-radius: var(--radius); padding: 0.6rem 1rem; margin: 1rem 0; }
 .playbook-summary p { margin: 0.2rem 0; }

@@ -127,6 +127,11 @@ export default function PlaybookPage() {
         ))}
       </ol>
 
+      <p className="discover-next">
+        Working over several sittings? <Link href="/settings">Export an encrypted backup →</Link> so
+        you can pick up where you left off, even if this browser clears its storage.
+      </p>
+
       <p className="optout-disclaimer">
         Errata is information, not legal advice. Rights and removal processes vary by state and change
         over time — verify before you rely on anything here.

@@ -47,6 +47,9 @@ export default function HomePage() {
             Deadname in court records or archives?{' '}
             <Link href="/records">Tackle public records & name change →</Link>
           </p>
+          <p>
+            <Link href="/settings">Settings — storage & encrypted backup →</Link>
+          </p>
           <StorageModeToggle />
         </>
       )}

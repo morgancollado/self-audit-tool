@@ -167,10 +167,28 @@ action** (no dead-ends).
 > breadcrumb links back to it as the hub. Smoke test gates `/playbook`, asserts all
 > four stages render, and runs the axe scan there too.
 >
-> Remaining M2 (subsequent slices): **encrypted-by-default export/import**;
-> authoring the remaining states toward full coverage (records + rights). Note:
-> ledger findings are already tied into `/remediate` (findings-driven, per the
-> PR #2 review).
+> **Update — encrypted-by-default export/import landed.** A new `/settings` route
+> (gated behind the safety intro) hosts storage mode + **backup & restore**. Export
+> is **encrypted by default** (AES-256-GCM, PBKDF2-SHA-256 at 310k iterations,
+> `lib/storage/crypto.ts`); plaintext is an explicit, warned opt-out. Import
+> detects encrypted vs plaintext, prompts for the passphrase, runs schema
+> migrations, validates shape, and rejects malformed/newer-version/wrong-passphrase
+> files calmly — with **replace (default) or merge** (union by id, no duplicates).
+> The download is a same-origin blob `a[download]`, verified to work under the
+> strict CSP (`default-src 'self'`, no `blob:`) by the smoke test, which also
+> performs a real encrypted download and runs the axe scan on `/settings`. Unit
+> tests cover the crypto round-trip, wrong-passphrase rejection, "the deadname is
+> never readable in an encrypted backup," plaintext round-trip, and merge.
+>
+> **M2 deliverables are complete.** The full US Discover → Remediate loop is in
+> place — brokers (both-directions opt-out paradox), state-aware rights + CA DROP,
+> platform hardening + deadname removal, public records / name-change, the
+> consolidated playbook, and an encrypted-by-default backup — fully static, no
+> dead-ends, no trackers, axe-clean. Remaining before a credible public v1 is
+> **content depth, not architecture**: authoring the rest of the states (records +
+> rights) toward full coverage, and the **legal review** that gates general
+> release of the rights/records prose (it ships behind the verify-locally banner
+> until then).
 
 ## M3 — Breach checks (privacy-route default)  *(small–medium)*
 - Client-side **password** k-anonymity check (no proxy).

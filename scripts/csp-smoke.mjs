@@ -331,12 +331,46 @@ try {
   await axeFailures(pbpage, '/playbook');
   await pbctx.close();
 
+  // ---- /settings: safety gate + encrypted backup downloads under the CSP (M2) ----
+  const setctx = await browser.newContext({ acceptDownloads: true });
+  const setpage = await setctx.newPage();
+  await setpage.addInitScript(() => {
+    window.__csp = [];
+    document.addEventListener('securitypolicyviolation', (e) =>
+      window.__csp.push(`${e.effectiveDirective || e.violatedDirective} ${e.blockedURI || 'inline'}`));
+  });
+  await setpage.goto(base + 'settings', { waitUntil: 'networkidle' });
+
+  let setIntroGate = false;
+  try {
+    await setpage.getByText('Before you start').waitFor({ timeout: 8000 });
+    setIntroGate = true;
+  } catch { /* intro not shown */ }
+  if (!setIntroGate) fail('/settings did not show the safety intro for a fresh visitor (deep-link bypass).');
+
+  await setpage.getByRole('button', { name: /session-only/i }).click();
+  await setpage.getByText('Backup & restore', { exact: false }).waitFor({ timeout: 8000 });
+  // Encrypted-by-default export: enter a passphrase and download. The blob
+  // download must succeed under the strict CSP (default-src 'self', no blob:).
+  await setpage.getByLabel('Passphrase', { exact: true }).fill('a-strong-passphrase');
+  const [download] = await Promise.all([
+    setpage.waitForEvent('download', { timeout: 15000 }),
+    setpage.getByRole('button', { name: 'Download backup' }).click(),
+  ]);
+  const fname = download.suggestedFilename();
+  const setviol = await setpage.evaluate(() => window.__csp || []);
+  console.log(`[csp-smoke] /settings: intro-gated=${setIntroGate}, download=${JSON.stringify(fname)}`);
+  if (setviol.length) fail('/settings violated its CSP (the backup download was blocked).');
+  if (!/^errata-backup-.*\.json$/.test(fname)) fail(`unexpected backup filename: ${fname}`);
+  await axeFailures(setpage, '/settings');
+  await setctx.close();
+
   if (!process.exitCode) {
     console.log('[csp-smoke] OK — static export runs under its CSP, leaves no pre-consent trace,');
-    console.log('[csp-smoke]      gates /discover, /remediate, /harden, /records & /playbook behind the');
-    console.log('[csp-smoke]      safety intro, routes deadname searches to DuckDuckGo, omits the former');
-    console.log('[csp-smoke]      name from opt-outs by default, surfaces CA DROP, region-gates state');
-    console.log('[csp-smoke]      records, and never shows CCPA to a non-CA user.');
+    console.log('[csp-smoke]      gates every Phase-2 route behind the safety intro, routes deadname');
+    console.log('[csp-smoke]      searches to DuckDuckGo, omits the former name from opt-outs by default,');
+    console.log('[csp-smoke]      surfaces CA DROP, region-gates state records, never shows CCPA to a');
+    console.log('[csp-smoke]      non-CA user, and downloads an encrypted backup under the strict CSP.');
   }
 } finally {
   await browser.close();
