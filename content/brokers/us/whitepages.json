@@ -19,7 +19,7 @@
       "Submit it on the suppression-requests page.",
       "Complete the phone or email verification step."
     ],
-    "templateKey": "ccpa-deletion-generic"
+    "templateKey": "optout-deletion-generic"
   },
   "notes": "Re-check periodically; Whitepages re-lists from fresh sources.",
   "attribution": "Derived from Big-Ass Data Broker Opt-Out List (CC BY-NC-SA).",

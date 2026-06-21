@@ -76,6 +76,30 @@ action** (no dead-ends).
 - **Exit criteria:** a complete US Discover → Remediate loop, fully static, with
   no dead-end findings anywhere. **This is the credible public v1.**
 
+> **Status: M2 in progress — opt-out generation core landed.** The per-broker
+> opt-out generator is live at `/remediate` (gated behind the safety intro, same
+> as `/discover`). It prepares each request **in-memory** from transient identity
+> and the user presses send (the 95% rule, enforced in code: there is no path
+> that transmits). Formats: copyable text + printable letter always; `mailto:`
+> when the broker accepts email. The **opt-out paradox (R13)** is first-class —
+> including the former name is **opt-in per broker, defaulted OFF** wherever the
+> opt-out itself discloses the linkage, with the broker's "leave it" guidance
+> surfaced as a real outcome; `requiresId` brokers carry a minimize-disclosure
+> warning. A **remediation tracker** (todo/sent/confirmed/blocked + re-check date)
+> records what was sent, all local. Content: `template` schema wired with one
+> generic `optout-deletion-generic` template; validation now enforces
+> broker→template cross-refs and template placeholder integrity. The browser
+> smoke test guards the `/remediate` safety gate and asserts no prepared request
+> leaks the former name by default. All gates green; both builds pass.
+>
+> Remaining M2 (subsequent slices): **state-aware rights surfacing** (CCPA/CPRA
+> gated on region — must never imply CA rights to non-CA users) + **California
+> DROP** hero feature; **platform hardening + deadname-removal flows** (Google,
+> Meta/IG, X, LinkedIn, TikTok, Reddit); **legal name-change / court-record
+> flow** (research + scaffolding, gated on legal review); consolidated
+> **deadname-removal playbook**; **encrypted-by-default export/import**; linking
+> findings directly to their prepared remediation in the ledger.
+
 ## M3 — Breach checks (privacy-route default)  *(small–medium)*
 - Client-side **password** k-anonymity check (no proxy).
 - Email check: **deep-link is the default** (no project infra in the path).

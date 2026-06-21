@@ -31,6 +31,10 @@ export default function HomePage() {
               Start discovering →
             </Link>
           </p>
+          <p>
+            Already know where you’re listed?{' '}
+            <Link href="/remediate">Go straight to removal requests →</Link>
+          </p>
           <StorageModeToggle />
         </>
       )}

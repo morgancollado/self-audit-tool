@@ -32,6 +32,18 @@ export interface DiscoveryStep {
   lastVerified: string;
 }
 
+export type OptOutFormat = 'text' | 'mailto' | 'letter';
+export type TemplateVar = 'name' | 'aliases' | 'location' | 'email' | 'brokerName';
+
+export interface OptOutTemplate {
+  key: string;
+  formats: OptOutFormat[];
+  subject: string;
+  body: string;
+  placeholders?: TemplateVar[];
+  disclaimer: string;
+}
+
 export interface BrokerOptOut {
   methods: ('web-form' | 'email' | 'mail' | 'phone')[];
   webFormUrl?: string | null;

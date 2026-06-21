@@ -52,6 +52,11 @@ export default function DiscoverPage() {
       <NameInputs vars={vars} onChange={setVars} />
       <DiscoveryChecklist vars={vars} />
       <FindingsLedger />
+
+      <p className="discover-next">
+        When you’re ready to act on what you found,{' '}
+        <Link href="/remediate">prepare removal requests →</Link>
+      </p>
     </>
   );
 }

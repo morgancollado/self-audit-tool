@@ -3,7 +3,9 @@
 // a generated manifest can replace this when the dataset grows.
 
 import { Country } from '../model/types';
-import { Broker, DiscoveryStep, QueryTemplate } from './types';
+import { Broker, DiscoveryStep, OptOutTemplate, QueryTemplate } from './types';
+
+import optoutDeletionGeneric from '../../content/templates/optout-deletion-generic.json';
 
 import spokeo from '../../content/brokers/us/spokeo.json';
 import whitepages from '../../content/brokers/us/whitepages.json';
@@ -37,6 +39,8 @@ const QUERY_TEMPLATES = [
   qNameCity,
 ] as unknown as QueryTemplate[];
 
+const OPTOUT_TEMPLATES = [optoutDeletionGeneric] as unknown as OptOutTemplate[];
+
 const PRIORITY_ORDER = { high: 0, medium: 1, low: 2 } as const;
 
 /** Brokers for a country (no cross-country fallback). */
@@ -66,4 +70,9 @@ export function getQueryTemplates(): QueryTemplate[] {
 
 export function getQueryTemplate(key: string): QueryTemplate | undefined {
   return QUERY_TEMPLATES.find((q) => q.key === key);
+}
+
+/** Opt-out output template (Phase 2) by key. */
+export function getOptOutTemplate(key: string): OptOutTemplate | undefined {
+  return OPTOUT_TEMPLATES.find((t) => t.key === key);
 }

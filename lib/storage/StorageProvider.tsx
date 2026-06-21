@@ -6,8 +6,8 @@
 // the app behaves as ephemeral and the panic button still works.
 
 import { createContext, useContext, useEffect, useState, useCallback, ReactNode } from 'react';
-import { AuditState, Finding, Preferences, StorageMode, DEFAULT_PREFERENCES } from '../model/types';
-import { NewFindingInput, newFinding } from '../model/factory';
+import { AuditState, Finding, Remediation, Preferences, StorageMode, DEFAULT_PREFERENCES } from '../model/types';
+import { NewFindingInput, newFinding, NewRemediationInput, newRemediation, today } from '../model/factory';
 import { StorageManager, memoryBackends } from './manager';
 import { createDefaultStorage, requestPersistentStorage } from './browser';
 
@@ -24,6 +24,10 @@ interface StorageContextValue {
   addFinding: (input: NewFindingInput) => Promise<Finding>;
   updateFinding: (id: string, patch: Partial<Finding>) => Promise<void>;
   removeFinding: (id: string) => Promise<void>;
+  // Remediation tracker (Phase 2)
+  addRemediation: (input: NewRemediationInput) => Promise<Remediation>;
+  updateRemediation: (id: string, patch: Partial<Remediation>) => Promise<void>;
+  removeRemediation: (id: string) => Promise<void>;
   // Resumable discovery progress
   setStepDone: (stepId: string, done: boolean) => Promise<void>;
   /** PANIC: wipe everything and reload to a neutral screen. */
@@ -150,6 +154,39 @@ export function StorageProvider({ children }: { children: ReactNode }) {
     [mutate],
   );
 
+  const addRemediation = useCallback(
+    async (input: NewRemediationInput): Promise<Remediation> => {
+      const remediation = newRemediation(input);
+      await mutate((d) => {
+        d.remediations.unshift(remediation);
+      });
+      return remediation;
+    },
+    [mutate],
+  );
+
+  const updateRemediation = useCallback(
+    async (id: string, patch: Partial<Remediation>) => {
+      await mutate((d) => {
+        const r = d.remediations.find((x) => x.id === id);
+        if (r) {
+          Object.assign(r, patch);
+          r.updatedAt = today();
+        }
+      });
+    },
+    [mutate],
+  );
+
+  const removeRemediation = useCallback(
+    async (id: string) => {
+      await mutate((d) => {
+        d.remediations = d.remediations.filter((x) => x.id !== id);
+      });
+    },
+    [mutate],
+  );
+
   const setStepDone = useCallback(
     async (stepId: string, done: boolean) => {
       await mutate((d) => {
@@ -186,6 +223,9 @@ export function StorageProvider({ children }: { children: ReactNode }) {
         addFinding,
         updateFinding,
         removeFinding,
+        addRemediation,
+        updateRemediation,
+        removeRemediation,
         setStepDone,
         panic,
       }}

@@ -19,7 +19,7 @@
       "Provide an email to receive the verification link.",
       "Click the verification link to complete the removal."
     ],
-    "templateKey": "ccpa-deletion-generic"
+    "templateKey": "optout-deletion-generic"
   },
   "notes": "Shares a data backbone with several sibling people-search sites; re-check related brokers too.",
   "attribution": "Derived from Big-Ass Data Broker Opt-Out List (CC BY-NC-SA).",

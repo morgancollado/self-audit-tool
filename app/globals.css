@@ -175,6 +175,41 @@ button.safety-intro-primary { font-weight: 600; }
 .priority-low { background: var(--cream); color: var(--slate); border: 1px solid var(--slate); }
 .badge-deadname { background: var(--ink); color: var(--paper); }
 
+/* Remediate — opt-out generator */
+.discover-next, .optout-legal { margin: 1.5rem 0; }
+.optout-legal { color: var(--slate); font-size: 0.9rem; }
+.optout-list { margin: 1rem 0; }
+.optout { background: var(--cream); border-radius: var(--radius); padding: 1rem 1.25rem; margin: 1rem 0; }
+.optout-head { display: flex; align-items: baseline; justify-content: space-between; gap: 0.75rem; }
+.optout-head h3 { margin: 0.2rem 0; }
+.optout-paradox { border-left: 3px solid var(--proof); background: var(--paper); padding: 0.6rem 0.9rem; border-radius: var(--radius); margin: 0.6rem 0; font-size: 0.95rem; }
+.optout-warn { color: var(--proof); font-size: 0.92rem; }
+.optout-aliases { display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap; font-size: 0.95rem; margin: 0.5rem 0; }
+.optout-aliases-warn { color: var(--proof); font-weight: 600; }
+.optout-format-note { color: var(--slate); font-size: 0.9rem; margin: 0.5rem 0 0.25rem; }
+.optout-field { display: flex; flex-direction: column; gap: 0.25rem; font-size: 0.95rem; }
+.optout-field input { font: inherit; padding: 0.45rem 0.55rem; border: 1px solid var(--slate); border-radius: var(--radius); background: var(--paper); color: var(--ink); }
+.optout-body { font-family: var(--mono); font-size: 0.88rem; white-space: pre-wrap; word-break: break-word; background: var(--paper); border: 1px solid var(--slate); border-radius: var(--radius); padding: 0.75rem; margin: 0.5rem 0; }
+.optout-actions { display: flex; flex-wrap: wrap; gap: 0.6rem; align-items: center; margin: 0.5rem 0; }
+.optout-send { font-weight: 600; font-size: 0.95rem; }
+.optout-steps { padding-left: 1.2rem; font-size: 0.95rem; }
+.optout-disclaimer { color: var(--slate); font-size: 0.85rem; margin: 0.6rem 0; }
+.optout-track { margin-top: 0.5rem; }
+.optout-tracked { color: var(--marker-ink); font-weight: 600; }
+
+/* Remediation tracker */
+.tracker { margin: 2rem 0; }
+.tracker-list { list-style: none; padding: 0; margin: 0; }
+.tracker-item { border: 1px solid var(--cream); border-radius: var(--radius); padding: 0.75rem 1rem; margin: 0.6rem 0; }
+.tracker-head { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+.tracker-controls { display: flex; flex-wrap: wrap; gap: 1rem; align-items: flex-end; margin-top: 0.5rem; }
+.tracker-controls label { display: flex; flex-direction: column; gap: 0.25rem; font-size: 0.85rem; }
+.tracker-controls input[type="date"] { font: inherit; padding: 0.4rem 0.5rem; border: 1px solid var(--slate); border-radius: var(--radius); background: var(--paper); color: var(--ink); }
+.state-todo { background: var(--cream); color: var(--slate); border: 1px solid var(--slate); }
+.state-sent { background: var(--marker); color: var(--marker-ink); }
+.state-confirmed { background: var(--ink); color: var(--paper); }
+.state-blocked { background: var(--proof); color: var(--paper); }
+
 /* Ledger */
 .ledger { margin: 2rem 0; }
 .ledger-summary { color: var(--slate); }

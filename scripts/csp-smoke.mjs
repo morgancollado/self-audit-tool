@@ -146,9 +146,47 @@ try {
   if (!runHrefs.every((h) => h && h.includes('duckduckgo.com'))) fail('a deadname "Run" link is not routed to DuckDuckGo.');
   await dctx.close();
 
+  // ---- /remediate: safety gate + opt-out paradox default (M2) ----
+  const rctx = await browser.newContext();
+  const rpage = await rctx.newPage();
+  await rpage.addInitScript(() => {
+    window.__csp = [];
+    document.addEventListener('securitypolicyviolation', (e) =>
+      window.__csp.push(`${e.effectiveDirective || e.violatedDirective} ${e.blockedURI || 'inline'}`));
+  });
+  await rpage.goto(base + 'remediate', { waitUntil: 'networkidle' });
+
+  // Same deep-link rule as /discover: a fresh visitor meets the safety intro, not
+  // the former-name input.
+  let rIntroGate = false;
+  try {
+    await rpage.getByText('Before you start').waitFor({ timeout: 8000 });
+    rIntroGate = true;
+  } catch { /* intro not shown */ }
+  const rDeadnameBefore = await rpage.getByLabel('Former name (deadname)').count();
+  if (!rIntroGate) fail('/remediate did not show the safety intro for a fresh visitor (deep-link bypass).');
+  if (rDeadnameBefore > 0) fail('/remediate exposed the former-name input before the safety intro was acknowledged.');
+
+  // Acknowledge → enter a former name → the prepared requests must NOT contain it
+  // by default (opt-out paradox, R13: the linkage is opt-in per broker).
+  await rpage.getByRole('button', { name: /session-only/i }).click();
+  await rpage.getByLabel('Former name (deadname)').waitFor({ timeout: 8000 });
+  await rpage.getByLabel('Former name (deadname)').fill('Deadname McTest');
+  await rpage.getByLabel('Current name').fill('Alex Real');
+  await rpage.waitForTimeout(300);
+  const bodies = await rpage.locator('pre.optout-body').allInnerTexts();
+  const rviol = await rpage.evaluate(() => window.__csp || []);
+  const leaks = bodies.filter((b) => b.includes('Deadname McTest'));
+  console.log(`[csp-smoke] /remediate: intro-gated=${rIntroGate}, prepared requests=${bodies.length}, leaking former name=${leaks.length}`);
+  if (rviol.length) fail('/remediate violated its CSP.');
+  if (bodies.length === 0) fail('/remediate produced no prepared requests after a name was entered.');
+  if (leaks.length > 0) fail('a prepared opt-out request included the former name by default (opt-out paradox violated).');
+  await rctx.close();
+
   if (!process.exitCode) {
     console.log('[csp-smoke] OK — static export runs under its CSP, leaves no pre-consent trace,');
-    console.log('[csp-smoke]      gates /discover behind the safety intro, and routes deadname searches to DuckDuckGo.');
+    console.log('[csp-smoke]      gates /discover & /remediate behind the safety intro, routes deadname');
+    console.log('[csp-smoke]      searches to DuckDuckGo, and omits the former name from opt-outs by default.');
   }
 } finally {
   await browser.close();
