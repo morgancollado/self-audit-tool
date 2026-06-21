@@ -1,9 +1,12 @@
 {
   "key": "deadname-employer",
   "label": "Deadname + employer / school",
-  "engine": "google",
+  "engine": "duckduckgo",
   "template": "\"{{deadname}}\" \"{{employer}}\"",
-  "placeholders": ["deadname", "employer"],
+  "placeholders": [
+    "deadname",
+    "employer"
+  ],
   "deadnameAware": true,
   "notes": "Old bylines, rosters, directories, and announcements often tie a former name to a workplace or school."
 }

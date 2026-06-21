@@ -1,9 +1,12 @@
 {
   "key": "name-or-deadname",
   "label": "Current name OR deadname",
-  "engine": "google",
+  "engine": "duckduckgo",
   "template": "\"{{name}}\" OR \"{{deadname}}\"",
-  "placeholders": ["name", "deadname"],
+  "placeholders": [
+    "name",
+    "deadname"
+  ],
   "deadnameAware": true,
   "notes": "Pages that connect the two names together are the highest-priority exposure."
 }

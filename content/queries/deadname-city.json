@@ -1,9 +1,12 @@
 {
   "key": "deadname-city",
   "label": "Deadname + city",
-  "engine": "google",
+  "engine": "duckduckgo",
   "template": "\"{{deadname}}\" \"{{city}}\"",
-  "placeholders": ["deadname", "city"],
+  "placeholders": [
+    "deadname",
+    "city"
+  ],
   "deadnameAware": true,
   "notes": "Where your former name still appears tied to where you live."
 }

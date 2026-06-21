@@ -14,10 +14,17 @@ test('fillTemplate returns null when any term is missing or blank', () => {
   assert.equal(fillTemplate('"{{deadname}}"', { deadname: '   ' }), null);
 });
 
-test('buildEngineUrl encodes the query and defaults any->google', () => {
+test('buildEngineUrl encodes the query and defaults any->privacy engine', () => {
   assert.equal(buildEngineUrl('google', '"a b"'), 'https://www.google.com/search?q=%22a%20b%22');
-  assert.ok(buildEngineUrl('any', 'x').startsWith('https://www.google.com/search?q='));
+  assert.ok(buildEngineUrl('any', 'x').startsWith('https://duckduckgo.com/?q='));
   assert.ok(buildEngineUrl('duckduckgo', 'x').startsWith('https://duckduckgo.com/?q='));
+});
+
+test('SAFETY: a deadname-aware query never reaches a profiling engine', () => {
+  // Even when the template names google, deadnameAware forces the privacy engine.
+  const url = buildEngineUrl('google', '"Deadname"', true);
+  assert.ok(url.startsWith('https://duckduckgo.com/?q='), url);
+  assert.ok(!url.includes('google.com'), 'the deadname must never be routed to google');
 });
 
 const templates: QueryTemplate[] = [
@@ -41,5 +48,13 @@ test('generateQueries puts deadname-aware queries first', () => {
 
 test('generateQueries emits clickable urls', () => {
   const out = generateQueries(templates, { deadname: 'B', city: 'Austin' });
-  assert.ok(out[0].url.includes('search?q='));
+  assert.ok(out[0].url.includes('q='));
+});
+
+test('generateQueries routes every deadname-aware query to duckduckgo', () => {
+  const out = generateQueries(templates, { name: 'A', city: 'Austin', deadname: 'B', employer: 'C' });
+  for (const q of out.filter((x) => x.deadnameAware)) {
+    assert.equal(q.engine, 'duckduckgo', `${q.key} must resolve to duckduckgo`);
+    assert.ok(q.url.startsWith('https://duckduckgo.com/?q='), q.url);
+  }
 });

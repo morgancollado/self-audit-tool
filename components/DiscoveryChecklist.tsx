@@ -5,7 +5,7 @@ import { useStorage } from '@/lib/storage/StorageProvider';
 import { getDiscoverySteps, getBroker, getQueryTemplate } from '@/lib/content/data';
 import { DiscoveryStep, DiscoveryCategory } from '@/lib/content/types';
 import { FindingSource } from '@/lib/model/types';
-import { QueryVars, generateQueries } from '@/lib/discover/queries';
+import { QueryVars, generateQueries, ENGINE_LABEL } from '@/lib/discover/queries';
 import { CopyButton } from './CopyButton';
 import { AddFindingForm } from './AddFindingForm';
 
@@ -105,17 +105,25 @@ function StepCard({
           {queries.length === 0 ? (
             <p className="name-inputs-note">Fill in your details above and your search strings appear here.</p>
           ) : (
-            queries.map((q) => (
-              <div key={q.key} className={`query-row${q.deadnameAware ? ' query-deadname' : ''}`}>
-                <code>{q.query}</code>
-                <span className="query-actions">
-                  <CopyButton text={q.query} />
-                  <a href={q.url} target="_blank" rel="noopener noreferrer">
-                    Run ↗
-                  </a>
-                </span>
-              </div>
-            ))
+            <>
+              <p className="query-privacy-note">
+                Safest is to <strong>copy</strong> a query and paste it into a private / incognito
+                window. “Run” opens the search in a new tab — it’s sent to the search engine and shows
+                up in your browsing history. Searches for your former name always open in DuckDuckGo,
+                which doesn’t profile you.
+              </p>
+              {queries.map((q) => (
+                <div key={q.key} className={`query-row${q.deadnameAware ? ' query-deadname' : ''}`}>
+                  <code>{q.query}</code>
+                  <span className="query-actions">
+                    <CopyButton text={q.query} label="Copy query" />
+                    <a className="query-run" href={q.url} target="_blank" rel="noopener noreferrer">
+                      Run on {ENGINE_LABEL[q.engine]} ↗
+                    </a>
+                  </span>
+                </div>
+              ))}
+            </>
           )}
         </div>
       )}

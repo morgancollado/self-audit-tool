@@ -26,19 +26,43 @@ export function fillTemplate(template: string, vars: QueryVars): string | null {
 const ENGINE_URL: Record<Exclude<SearchEngine, 'any'>, string> = {
   google: 'https://www.google.com/search?q=',
   bing: 'https://www.bing.com/search?q=',
+  // DuckDuckGo doesn't profile the searcher or tie the query to an account — the
+  // privacy default, and what we force for any deadname-bearing query.
   duckduckgo: 'https://duckduckgo.com/?q=',
 };
 
-/** A clickable search URL for the query. 'any' defaults to Google. */
-export function buildEngineUrl(engine: SearchEngine, query: string): string {
-  const base = engine === 'any' ? ENGINE_URL.google : ENGINE_URL[engine];
-  return base + encodeURIComponent(query);
+export const ENGINE_LABEL: Record<Exclude<SearchEngine, 'any'>, string> = {
+  google: 'Google',
+  bing: 'Bing',
+  duckduckgo: 'DuckDuckGo',
+};
+
+const PRIVACY_ENGINE: Exclude<SearchEngine, 'any'> = 'duckduckgo';
+
+/**
+ * Resolve which engine a query actually runs on. SAFETY POLICY, enforced in code
+ * (not left to content): a deadname-aware query is ALWAYS routed to the privacy
+ * engine — never Google/Bing. Running the user's former name through a profiling
+ * engine would tie their current identity to their deadname in that engine's
+ * logs (and their own history) — the exact linkage Errata exists to reduce.
+ * 'any' also resolves to the privacy engine.
+ */
+export function resolveEngine(engine: SearchEngine, deadnameAware: boolean): Exclude<SearchEngine, 'any'> {
+  if (deadnameAware) return PRIVACY_ENGINE;
+  return engine === 'any' ? PRIVACY_ENGINE : engine;
+}
+
+/** A clickable search URL for the query, honoring the deadname privacy policy. */
+export function buildEngineUrl(engine: SearchEngine, query: string, deadnameAware = false): string {
+  const resolved = resolveEngine(engine, deadnameAware);
+  return ENGINE_URL[resolved] + encodeURIComponent(query);
 }
 
 export interface GeneratedQuery {
   key: string;
   label: string;
-  engine: SearchEngine;
+  /** The engine the query actually runs on (after the deadname privacy policy). */
+  engine: Exclude<SearchEngine, 'any'>;
   query: string;
   url: string;
   deadnameAware: boolean;
@@ -53,9 +77,9 @@ export function generateQueries(templates: QueryTemplate[], vars: QueryVars): Ge
     out.push({
       key: t.key,
       label: t.label,
-      engine: t.engine,
+      engine: resolveEngine(t.engine, t.deadnameAware),
       query,
-      url: buildEngineUrl(t.engine, query),
+      url: buildEngineUrl(t.engine, query, t.deadnameAware),
       deadnameAware: t.deadnameAware,
     });
   }
