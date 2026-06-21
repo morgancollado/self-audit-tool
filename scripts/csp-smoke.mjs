@@ -234,6 +234,21 @@ try {
   console.log(`[csp-smoke] /remediate rights: CA→DROP=${caShowsDrop}, TX→shows CCPA=${txLeaksCcpa}`);
   if (!caShowsDrop) fail('selecting California did not surface DROP (the hero removal feature).');
   if (txLeaksCcpa) fail('a Texas user was shown CCPA framing (implies a right TX does not grant).');
+
+  // A newly-authored comprehensive state (Oregon) surfaces its own law, not CA's.
+  await rpage.getByLabel('Your state').selectOption('OR');
+  await rpage.waitForTimeout(300);
+  const orText = await rpage.locator('section.rights').innerText();
+  if (!orText.includes('Oregon')) fail('selecting Oregon did not surface Oregon-specific rights.');
+  if (orText.toUpperCase().includes('CCPA')) fail('an Oregon user was shown CCPA framing.');
+  // A genuinely thin state (New York) shows the honest "no general deletion right"
+  // card rather than implying a right that doesn't exist.
+  await rpage.getByLabel('Your state').selectOption('NY');
+  await rpage.waitForTimeout(300);
+  const nyText = await rpage.locator('section.rights').innerText();
+  if (!nyText.includes('New York')) fail('selecting New York did not surface its honest limited-rights note.');
+  console.log('[csp-smoke] /remediate rights: OR→Oregon shown, NY→limited note shown');
+
   await axeFailures(rpage, '/remediate');
   await rctx.close();
 

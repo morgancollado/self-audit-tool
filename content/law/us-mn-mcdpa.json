@@ -1,0 +1,10 @@
+{
+  "jurisdiction": { "country": "us", "region": "MN" },
+  "appliesNationally": false,
+  "key": "us-mn-mcdpa",
+  "title": "Minnesota: Minnesota Consumer Data Privacy Act (MCDPA) deletion & opt-out",
+  "summary": "Minnesota residents can request deletion of the personal data a business holds and opt out of its sale and targeted advertising, including through a recognized universal opt-out signal. Minnesota also adds rights around profiling — to question the result of a profiling decision and learn the reasons behind it. The MCDPA took effect on July 31, 2025.",
+  "authorizedAgent": true,
+  "disclaimer": "General information, not legal advice, and not yet independently reviewed — verify the current process and your eligibility before relying on it.",
+  "lastVerified": "2026-06-01"
+}

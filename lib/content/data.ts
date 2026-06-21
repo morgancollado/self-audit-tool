@@ -27,6 +27,22 @@ import lawCoCpa from '../../content/law/us-co-cpa.json';
 import lawCtCtdpa from '../../content/law/us-ct-ctdpa.json';
 import lawVaVcdpa from '../../content/law/us-va-vcdpa.json';
 import lawTxTdpsa from '../../content/law/us-tx-tdpsa.json';
+import lawOrOcpa from '../../content/law/us-or-ocpa.json';
+import lawMtMcdpa from '../../content/law/us-mt-mcdpa.json';
+import lawDeDpdpa from '../../content/law/us-de-dpdpa.json';
+import lawNhNdpa from '../../content/law/us-nh-ndpa.json';
+import lawNjNjdpa from '../../content/law/us-nj-njdpa.json';
+import lawNeNdpa from '../../content/law/us-ne-ndpa.json';
+import lawMnMcdpa from '../../content/law/us-mn-mcdpa.json';
+import lawMdModpa from '../../content/law/us-md-modpa.json';
+import lawTnTipa from '../../content/law/us-tn-tipa.json';
+import lawInIncdpa from '../../content/law/us-in-incdpa.json';
+import lawKyKcdpa from '../../content/law/us-ky-kcdpa.json';
+import lawRiRidtppa from '../../content/law/us-ri-ridtppa.json';
+import lawUtUcpa from '../../content/law/us-ut-ucpa.json';
+import lawIaIcdpa from '../../content/law/us-ia-icdpa.json';
+import lawFlFdbr from '../../content/law/us-fl-fdbr.json';
+import lawNyNone from '../../content/law/us-ny-none.json';
 
 import spokeo from '../../content/brokers/us/spokeo.json';
 import whitepages from '../../content/brokers/us/whitepages.json';
@@ -69,6 +85,22 @@ const LAWS = [
   lawCtCtdpa,
   lawVaVcdpa,
   lawTxTdpsa,
+  lawOrOcpa,
+  lawMtMcdpa,
+  lawDeDpdpa,
+  lawNhNdpa,
+  lawNjNjdpa,
+  lawNeNdpa,
+  lawMnMcdpa,
+  lawMdModpa,
+  lawTnTipa,
+  lawInIncdpa,
+  lawKyKcdpa,
+  lawRiRidtppa,
+  lawUtUcpa,
+  lawIaIcdpa,
+  lawFlFdbr,
+  lawNyNone,
 ] as unknown as Law[];
 
 const PLATFORMS = [pGoogle, pInstagram, pX, pLinkedin, pTiktok, pReddit] as unknown as Platform[];

@@ -1,0 +1,10 @@
+{
+  "jurisdiction": { "country": "us", "region": "NY" },
+  "appliesNationally": false,
+  "key": "us-ny-none",
+  "title": "New York: no general deletion right yet",
+  "summary": "New York has not enacted a comprehensive consumer-privacy law with a general right to delete (the SHIELD Act covers data-breach security, not deletion). A broader New York privacy bill has been proposed but is not in force. To remove your information, rely on the data broker's own opt-out (below) and any federal or sector-specific routes that apply.",
+  "authorizedAgent": false,
+  "disclaimer": "General information, not legal advice, and not yet independently reviewed. New York law here is limited; the broker's own opt-out (below) is the practical route — verify before relying on it.",
+  "lastVerified": "2026-06-01"
+}

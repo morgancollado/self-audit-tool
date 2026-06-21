@@ -1,0 +1,10 @@
+{
+  "jurisdiction": { "country": "us", "region": "FL" },
+  "appliesNationally": false,
+  "key": "us-fl-fdbr",
+  "title": "Florida: Digital Bill of Rights (FDBR) — limited applicability",
+  "summary": "Florida's Digital Bill of Rights grants deletion and opt-out rights, but it applies only to very large companies (broadly, those with over $1 billion in global revenue meeting set criteria). Most data brokers and people-search sites fall outside it, so for removal you will usually rely on the broker's own opt-out rather than Florida law. The FDBR took effect on July 1, 2024.",
+  "authorizedAgent": false,
+  "disclaimer": "General information, not legal advice, and not yet independently reviewed. Because the FDBR's reach is narrow, the broker's own opt-out (below) is usually the practical route — verify before relying on either.",
+  "lastVerified": "2026-06-01"
+}

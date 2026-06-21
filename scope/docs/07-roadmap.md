@@ -189,6 +189,19 @@ action** (no dead-ends).
 > rights) toward full coverage, and the **legal review** that gates general
 > release of the rights/records prose (it ships behind the verify-locally banner
 > until then).
+>
+> **Update — state rights coverage expanded (Q9).** The rights layer now covers
+> 21 states: the priority subset (CA, CO, CT, VA, TX) plus the comprehensive-law
+> states in effect by mid-2026 (OR, MT, DE, NH, NJ, NE, MN, MD, TN, IN, KY, RI),
+> the two narrower laws called out honestly (UT, IA), and the two remaining
+> priority states that are genuinely weak — FL (applies only to ~$1B+ companies,
+> so most brokers fall outside it) and NY (no general deletion right yet) — each
+> routed to the universal broker opt-out so there's no dead-end. Unauthored states
+> still degrade gracefully to the national baseline + an honest "no verified
+> guidance yet" note. Every card carries the not-reviewed / verify-locally banner.
+> Smoke test now also asserts a comprehensive state (OR) surfaces its own law (not
+> CCPA) and a thin state (NY) shows the honest limited note. **Still gated on legal
+> review before general release; records remain national + CA.**
 
 ## M3 — Breach checks (privacy-route default)  *(small–medium)*
 - Client-side **password** k-anonymity check (no proxy).
