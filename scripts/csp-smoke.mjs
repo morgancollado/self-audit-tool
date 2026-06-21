@@ -181,12 +181,30 @@ try {
   if (rviol.length) fail('/remediate violated its CSP.');
   if (bodies.length === 0) fail('/remediate produced no prepared requests after a name was entered.');
   if (leaks.length > 0) fail('a prepared opt-out request included the former name by default (opt-out paradox violated).');
+
+  // State-aware rights (M2): selecting California surfaces DROP; selecting a state
+  // with different rights must NEVER show CCPA framing (the core sub-national
+  // safety rule — implying rights a state doesn't grant is a real-world harm).
+  await rpage.getByLabel('Your state').selectOption('CA');
+  let caShowsDrop = false;
+  try {
+    await rpage.getByText('DROP', { exact: false }).first().waitFor({ timeout: 8000 });
+    caShowsDrop = true;
+  } catch { /* DROP not shown */ }
+  await rpage.getByLabel('Your state').selectOption('TX');
+  await rpage.waitForTimeout(300);
+  const txText = (await rpage.locator('section.rights').innerText()).toUpperCase();
+  const txLeaksCcpa = txText.includes('CCPA');
+  console.log(`[csp-smoke] /remediate rights: CA→DROP=${caShowsDrop}, TX→shows CCPA=${txLeaksCcpa}`);
+  if (!caShowsDrop) fail('selecting California did not surface DROP (the hero removal feature).');
+  if (txLeaksCcpa) fail('a Texas user was shown CCPA framing (implies a right TX does not grant).');
   await rctx.close();
 
   if (!process.exitCode) {
     console.log('[csp-smoke] OK — static export runs under its CSP, leaves no pre-consent trace,');
     console.log('[csp-smoke]      gates /discover & /remediate behind the safety intro, routes deadname');
-    console.log('[csp-smoke]      searches to DuckDuckGo, and omits the former name from opt-outs by default.');
+    console.log('[csp-smoke]      searches to DuckDuckGo, omits the former name from opt-outs by default,');
+    console.log('[csp-smoke]      surfaces CA DROP, and never shows CCPA to a non-CA user.');
   }
 } finally {
   await browser.close();

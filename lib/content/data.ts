@@ -2,10 +2,18 @@
 // repo, no runtime egress). For M1 the set is small enough to import explicitly;
 // a generated manifest can replace this when the dataset grows.
 
-import { Country } from '../model/types';
-import { Broker, DiscoveryStep, OptOutTemplate, QueryTemplate } from './types';
+import { Country, Jurisdiction } from '../model/types';
+import { Broker, DiscoveryStep, Law, OptOutTemplate, QueryTemplate } from './types';
+import { selectLaws } from '../remediate/rights';
 
 import optoutDeletionGeneric from '../../content/templates/optout-deletion-generic.json';
+
+import lawBrokerOptout from '../../content/law/us-data-broker-optout.json';
+import lawCaCcpa from '../../content/law/us-ca-ccpa.json';
+import lawCoCpa from '../../content/law/us-co-cpa.json';
+import lawCtCtdpa from '../../content/law/us-ct-ctdpa.json';
+import lawVaVcdpa from '../../content/law/us-va-vcdpa.json';
+import lawTxTdpsa from '../../content/law/us-tx-tdpsa.json';
 
 import spokeo from '../../content/brokers/us/spokeo.json';
 import whitepages from '../../content/brokers/us/whitepages.json';
@@ -41,6 +49,15 @@ const QUERY_TEMPLATES = [
 
 const OPTOUT_TEMPLATES = [optoutDeletionGeneric] as unknown as OptOutTemplate[];
 
+const LAWS = [
+  lawBrokerOptout,
+  lawCaCcpa,
+  lawCoCpa,
+  lawCtCtdpa,
+  lawVaVcdpa,
+  lawTxTdpsa,
+] as unknown as Law[];
+
 const PRIORITY_ORDER = { high: 0, medium: 1, low: 2 } as const;
 
 /** Brokers for a country (no cross-country fallback). */
@@ -75,4 +92,12 @@ export function getQueryTemplate(key: string): QueryTemplate | undefined {
 /** Opt-out output template (Phase 2) by key. */
 export function getOptOutTemplate(key: string): OptOutTemplate | undefined {
   return OPTOUT_TEMPLATES.find((t) => t.key === key);
+}
+
+/**
+ * Laws applicable to a jurisdiction (Phase 2). Region-specific rights are
+ * surfaced ONLY to that region; never cross-country, never invented.
+ */
+export function getLaws(jurisdiction: Jurisdiction): Law[] {
+  return selectLaws(LAWS, jurisdiction);
 }

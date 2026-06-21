@@ -12,6 +12,7 @@ import { getBrokers } from '@/lib/content/data';
 import { SafetyIntro } from '@/components/SafetyIntro';
 import { StorageModeToggle } from '@/components/StorageModeToggle';
 import { OptOutInputs } from '@/components/OptOutInputs';
+import { StateRights } from '@/components/StateRights';
 import { OptOutGenerator } from '@/components/OptOutGenerator';
 import { RemediationTracker } from '@/components/RemediationTracker';
 import { OptOutVars } from '@/lib/remediate/optout';
@@ -48,13 +49,10 @@ export default function RemediatePage() {
       </p>
 
       <StorageModeToggle />
+      <StateRights />
       <OptOutInputs vars={vars} onChange={setVars} />
 
-      <p className="optout-legal" role="note">
-        This is general information, not legal advice. Deletion rights vary by state — verify your own
-        before relying on any wording here.
-      </p>
-
+      <h2>Prepare your removal requests</h2>
       <div className="optout-list">
         {brokers.map((b) => (
           <OptOutGenerator key={b.slug} broker={b} vars={vars} />

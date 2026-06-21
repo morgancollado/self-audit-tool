@@ -6,7 +6,7 @@
 // the app behaves as ephemeral and the panic button still works.
 
 import { createContext, useContext, useEffect, useState, useCallback, ReactNode } from 'react';
-import { AuditState, Finding, Remediation, Preferences, StorageMode, DEFAULT_PREFERENCES } from '../model/types';
+import { AuditState, Finding, Jurisdiction, Remediation, Preferences, StorageMode, DEFAULT_PREFERENCES } from '../model/types';
 import { NewFindingInput, newFinding, NewRemediationInput, newRemediation, today } from '../model/factory';
 import { StorageManager, memoryBackends } from './manager';
 import { createDefaultStorage, requestPersistentStorage } from './browser';
@@ -20,6 +20,8 @@ interface StorageContextValue {
   setMode: (mode: StorageMode, opts?: { wipeExisting?: boolean }) => Promise<void>;
   savePreferences: (next: Preferences) => Promise<void>;
   acknowledgeSafetyIntro: () => Promise<void>;
+  /** Set the user's jurisdiction (state). Drives state-aware rights surfacing. */
+  setJurisdiction: (jurisdiction: Jurisdiction) => Promise<void>;
   // Findings ledger (Phase 1)
   addFinding: (input: NewFindingInput) => Promise<Finding>;
   updateFinding: (id: string, patch: Partial<Finding>) => Promise<void>;
@@ -102,6 +104,24 @@ export function StorageProvider({ children }: { children: ReactNode }) {
     async (next: Preferences) => {
       await manager.savePreferences(next);
       setPreferences(next);
+    },
+    [manager],
+  );
+
+  const setJurisdiction = useCallback(
+    async (jurisdiction: Jurisdiction) => {
+      const next = { ...(await manager.loadPreferences()), jurisdiction };
+      await manager.savePreferences(next);
+      setPreferences(next);
+      // Keep an existing audit doc in sync, but don't force-create one — picking a
+      // state shouldn't write persisted state before the user does anything else.
+      const existing = await manager.audit.load();
+      if (existing) {
+        const updated = await manager.audit.update((d) => {
+          d.jurisdiction = jurisdiction;
+        });
+        setState(updated);
+      }
     },
     [manager],
   );
@@ -220,6 +240,7 @@ export function StorageProvider({ children }: { children: ReactNode }) {
         setMode,
         savePreferences,
         acknowledgeSafetyIntro,
+        setJurisdiction,
         addFinding,
         updateFinding,
         removeFinding,

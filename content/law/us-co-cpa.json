@@ -1,0 +1,10 @@
+{
+  "jurisdiction": { "country": "us", "region": "CO" },
+  "appliesNationally": false,
+  "key": "us-co-cpa",
+  "title": "Colorado: Colorado Privacy Act (CPA) deletion & opt-out",
+  "summary": "Colorado residents can request deletion of the personal data a business holds and opt out of its sale and targeted advertising. Colorado also recognizes a universal opt-out mechanism (a browser or extension signal) that covered businesses must honor.",
+  "authorizedAgent": true,
+  "disclaimer": "General information, not legal advice, and not yet independently reviewed — verify the current process and your eligibility before relying on it.",
+  "lastVerified": "2026-06-01"
+}

@@ -92,13 +92,26 @@ action** (no dead-ends).
 > smoke test guards the `/remediate` safety gate and asserts no prepared request
 > leaks the former name by default. All gates green; both builds pass.
 >
-> Remaining M2 (subsequent slices): **state-aware rights surfacing** (CCPA/CPRA
-> gated on region — must never imply CA rights to non-CA users) + **California
-> DROP** hero feature; **platform hardening + deadname-removal flows** (Google,
-> Meta/IG, X, LinkedIn, TikTok, Reddit); **legal name-change / court-record
-> flow** (research + scaffolding, gated on legal review); consolidated
-> **deadname-removal playbook**; **encrypted-by-default export/import**; linking
-> findings directly to their prepared remediation in the ledger.
+> **Update — state-aware rights + California DROP landed.** `/remediate` now opens
+> with a state selector that drives rights surfacing through a pure, region-gated
+> selector (`lib/remediate/rights.ts`): region-specific rights surface ONLY to an
+> exact region match, never cross-country, and never invented — a Texas user is
+> never shown CCPA framing. **California DROP is the hero**, gated on CA and
+> surfaced as a distinct callout (the state runs it; we hold nothing). Authored
+> law content for the v1 priority subset (CA + the national voluntary-opt-out
+> baseline, CO, CT, VA, TX), each carrying the required not-legal-advice
+> disclaimer and a standing **not-yet-reviewed / verify-locally** banner (R4/R11);
+> states without authored guidance get an honest "no verified guidance yet" note
+> plus the universal opt-out (no dead-end). `setJurisdiction` persists the state
+> (and syncs an existing audit doc) without force-creating storage. The smoke test
+> now asserts CA→DROP and that a non-CA user never sees CCPA.
+>
+> Remaining M2 (subsequent slices): **platform hardening + deadname-removal
+> flows** (Google, Meta/IG, X, LinkedIn, TikTok, Reddit); **legal name-change /
+> court-record flow** (research + scaffolding, gated on legal review);
+> consolidated **deadname-removal playbook**; **encrypted-by-default
+> export/import**; linking findings directly to their prepared remediation in the
+> ledger; authoring the remaining states toward full coverage.
 
 ## M3 — Breach checks (privacy-route default)  *(small–medium)*
 - Client-side **password** k-anonymity check (no proxy).

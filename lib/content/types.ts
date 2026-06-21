@@ -71,3 +71,23 @@ export interface Broker {
 }
 
 export type { Country };
+
+export interface SpecialMechanism {
+  key: string;
+  title: string;
+  summary: string;
+  url?: string;
+}
+
+export interface Law {
+  jurisdiction: Jurisdiction;
+  /** If false, the right is region-specific and must NOT be shown to other regions. */
+  appliesNationally: boolean;
+  key: string;
+  title: string;
+  summary: string;
+  authorizedAgent?: boolean;
+  specialMechanisms?: SpecialMechanism[];
+  disclaimer: string;
+  lastVerified: string;
+}
