@@ -40,17 +40,34 @@ export function AddFindingForm({ defaults, onDone }: { defaults: AddFindingDefau
     >
       <label>
         Where (e.g. “Spokeo”, “old LinkedIn”)
-        <input type="text" value={label} onChange={(e) => setLabel(e.target.value)} required />
+        <input
+          type="text"
+          autoComplete="off"
+          autoCorrect="off"
+          autoCapitalize="off"
+          spellCheck={false}
+          value={label}
+          onChange={(e) => setLabel(e.target.value)}
+          required
+        />
       </label>
       <label>
         What you found
         <input
           type="text"
+          autoComplete="off"
+          autoCorrect="off"
+          autoCapitalize="off"
+          spellCheck={false}
           value={whatFound}
           onChange={(e) => setWhatFound(e.target.value)}
           placeholder="in your own words"
         />
       </label>
+      <p className="report-broken-hint">
+        Saved on this device unless you’re in session-only mode. You don’t need to type your former
+        name here — tick the box below and it’s recorded without writing the name down.
+      </p>
       <label className="add-finding-checkbox">
         <input type="checkbox" checked={exposesDeadname} onChange={(e) => setExposesDeadname(e.target.checked)} />
         This exposes my former name

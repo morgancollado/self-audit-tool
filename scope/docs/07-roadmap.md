@@ -32,11 +32,25 @@ The differentiator's first half: find your exposure, deadname-aware.
 - **Exit criteria:** a user can complete a discovery pass and have a populated,
   prioritized findings log — all local.
 
-> **Status: M1 implemented.** Discovery checklist (resumable, deadname-aware),
-> in-memory query generator (no name retention), and the findings ledger are
-> live over the M0 store at `/discover`. Content: discovery-step + query-template
-> schemas (+ cross-reference validation), 4 steps, 5 deadname-aware query
-> templates, 3 BADBOL brokers. 20/20 tests green; both builds pass. Next:
+> **Status: M1 implemented, with post-review safety hardening.** Discovery
+> checklist (resumable, deadname-aware), in-memory query generator (no name
+> retention), and the findings ledger are live over the M0 store at `/discover`.
+> Content: discovery-step + query-template schemas (+ cross-reference
+> validation), 4 steps, 5 query templates, 3 BADBOL brokers.
+>
+> Hardening from the adversarial review: deadname-aware searches are routed to
+> **DuckDuckGo in code** (never Google/Bing) with **Copy** as the primary action
+> and an explicit warning; **`/discover` is gated behind the shared-device safety
+> intro** (no deep-link bypass) and carries the mode toggle; identity inputs
+> disable autocomplete/autocorrect/spellcheck and advise a private window on
+> shared devices; the ledger free-text cautions against typing the literal
+> deadname. A browser smoke test guards the engine routing and the `/discover`
+> gate. All gates green; both builds pass.
+>
+> Known follow-ups (low): the content TS types in `lib/content/types.ts` mirror
+> the JSON schemas by hand (drift risk — generate from schema later); the audit
+> doc is re-loaded on every ledger mutation; `lib/content/data.ts` imports
+> content explicitly (a manifest replaces it as the dataset grows). Next:
 > M2 remediation.
 
 ## M2 — Phase 2: Opt-out generation + platform hardening (US)  *(large)*

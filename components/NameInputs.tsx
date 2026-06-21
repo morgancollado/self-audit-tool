@@ -15,24 +15,25 @@ export function NameInputs({ vars, onChange }: { vars: QueryVars; onChange: (nex
       <legend>Your details (kept in memory only — never saved)</legend>
       <p className="name-inputs-note">
         We use these to build search strings for you. They stay on this page and disappear when you
-        leave — nothing is saved or sent.
+        leave — Errata saves and sends nothing. On a shared device, use a private / incognito window
+        so the browser itself doesn’t remember what you type.
       </p>
       <div className="name-inputs-grid">
         <label>
           Current name
-          <input type="text" autoComplete="off" value={vars.name ?? ''} onChange={set('name')} />
+          <input type="text" autoComplete="off" autoCorrect="off" autoCapitalize="off" spellCheck={false} value={vars.name ?? ''} onChange={set('name')} />
         </label>
         <label>
           Former name (deadname)
-          <input type="text" autoComplete="off" value={vars.deadname ?? ''} onChange={set('deadname')} />
+          <input type="text" autoComplete="off" autoCorrect="off" autoCapitalize="off" spellCheck={false} value={vars.deadname ?? ''} onChange={set('deadname')} />
         </label>
         <label>
           City
-          <input type="text" autoComplete="off" value={vars.city ?? ''} onChange={set('city')} />
+          <input type="text" autoComplete="off" autoCorrect="off" autoCapitalize="off" spellCheck={false} value={vars.city ?? ''} onChange={set('city')} />
         </label>
         <label>
           Employer or school
-          <input type="text" autoComplete="off" value={vars.employer ?? ''} onChange={set('employer')} />
+          <input type="text" autoComplete="off" autoCorrect="off" autoCapitalize="off" spellCheck={false} value={vars.employer ?? ''} onChange={set('employer')} />
         </label>
       </div>
     </fieldset>
