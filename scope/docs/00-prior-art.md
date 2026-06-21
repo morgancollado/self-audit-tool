@@ -53,10 +53,12 @@
 - **What:** paid services that submit broker removals on the user's behalf.
 - **How we relate — COMPLEMENT / contrast:** we are the free, DIY,
   no-data-collected alternative. Study their public broker coverage lists to
-  find gaps in ours; never scrape proprietary data. Optionally, honestly link
-  to them as the "I'd rather pay someone" path (no affiliate links — would
-  violate the no-dark-patterns / no-monetization stance unless explicitly
-  decided otherwise).
+  find gaps in ours; never scrape proprietary data. **Decided: link to them
+  tastefully** as the honest "I'd rather pay someone" path — **no affiliate
+  links**, no preferencing, no urgency, presented as a calm optional aside and
+  clearly labeled as third parties we don't control, paired with the honest note
+  that they require handing the provider your data (the custody tradeoff Errata
+  refuses, see [09](09-removal-feasibility.md)). See [08](08-open-questions.md) Q5.
 
 ---
 

@@ -58,6 +58,10 @@ freshness metadata + community PRs is the durable answer.
     "email": null,
     "mailingAddress": null,
     "requiresId": false,
+    // Opt-out paradox (R13): does the request itself force disclosing the
+    // current<->deadname linkage to this (untrustworthy) custodian?
+    "optOutExposesLinkage": true,
+    "leaveItGuidance": "Low-reach listing; if your linkage isn't already here, opting out reveals it. Consider leaving it and monitoring.",
     "steps": [
       "Find your listing via the search URL.",
       "Copy the profile URL.",
@@ -100,10 +104,16 @@ freshness metadata + community PRs is the durable answer.
 
 ### Law framing (jurisdiction-scoped, informational only)
 
+Law records are **region-scoped** (`us-CA`, `us-TX`, …), not just `us`, because
+deletion rights are sub-national. A record applies only where its `region`
+matches (or, for genuinely national rights, where it is marked `appliesNationally`).
+A `us-TX` user must **never** be shown CCPA framing they cannot invoke.
+
 ```jsonc
-// /content/law/us/ccpa.json
+// /content/law/us-CA/ccpa.json
 {
-  "jurisdiction": "us",
+  "jurisdiction": { "country": "us", "region": "CA" },
+  "appliesNationally": false,
   "key": "ccpa-cpra",
   "title": "California (CCPA/CPRA) deletion & opt-out rights",
   "summary": "California residents can request deletion and opt out of sale/share...",
@@ -141,6 +151,49 @@ freshness metadata + community PRs is the durable answer.
 }
 ```
 
+### Records-class guide (deadname in institutional / public records)
+
+First-class because the **legal name-change / court record is often the largest,
+most permanent deadname source** — public petitions, publication requirements,
+and the indexed order tying old↔new name. Region-scoped (sealing rules vary).
+
+```jsonc
+// /content/records/us-CA/name-change-court.json  (authored; illustrative)
+{
+  "slug": "name-change-court",
+  "jurisdiction": { "country": "us", "region": "CA" },
+  "class": "court-record",
+  "exposesDeadnameRisk": "high",
+  "permanence": "high",              // drives the no-dead-end "monitor" framing
+  "whatItIs": "The name-change petition/order is a public court record indexed by brokers and search engines.",
+  "actions": [
+    "Check whether your state offers a sealed/confidential name-change for safety-at-risk petitioners.",
+    "Request sealing/redaction of the existing record where permitted.",
+    "Suppress downstream copies (search 'Results about you', broker opt-outs, archive removal requests)."
+  ],
+  "sealedPetitionAvailable": true,
+  "disclaimer": "Informational only — not legal advice; sealing rules vary by court.",
+  "lastVerified": "2026-06-20"
+}
+```
+
+### Archive / cache removal (so "permanent" still carries an action)
+
+```jsonc
+// /content/records/global/web-archive.json
+{
+  "slug": "web-archive",
+  "class": "archive",
+  "permanence": "high",
+  "actions": [
+    "Submit the Wayback Machine content-removal request for the specific URL.",
+    "Use Google 'Remove outdated content' once the source is down.",
+    "If nothing removes it, mark monitor-only — never leave it as a silent dead-end."
+  ],
+  "lastVerified": "2026-06-20"
+}
+```
+
 ### Templates (opt-out output; locale-translated)
 
 ```jsonc
@@ -160,12 +213,24 @@ identity input (and only persisted if the user opted in — see [04](04-data-mod
 
 ## Resolution rules (locale × jurisdiction)
 
-- **Brokers & law:** selected strictly by `jurisdiction`. **No cross-
-  jurisdiction fallback** — never show US law to a CO user.
+- **Brokers, law & records:** selected by hierarchical `jurisdiction`
+  (`country` + optional `region`). **No cross-*country* fallback** — never show
+  US law to a CO user. Within a country, a region (`us-CA`) may inherit records
+  marked `appliesNationally`, but **state-specific rights never fall back to a
+  region that lacks them** — a `us-TX` user must not see CCPA framing.
 - **Platform guides & templates:** selected by `jurisdiction` where relevant
   (templates cite the applicable law), translated by `locale` with fallback to
   the base locale (`en`) for missing strings only.
 - **UI strings:** `next-intl` catalogs, `en` base with `es` overlay.
+
+## Content rule: no dead-end records
+
+Every broker/record/platform entry must resolve to **at least one action**, or
+carry `permanence: "high"` + a `monitor`-framed note so the UI can demote it to a
+footnote rather than present it as an unfinishable task (see
+[09](09-removal-feasibility.md) and the `actionable` field in
+[04](04-data-model.md)). Schema-validation CI should **fail** on a content record
+that has neither an action nor an explicit monitor-only marker.
 
 ## Maintenance cadence (realistic for one person)
 

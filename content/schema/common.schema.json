@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://errata.tools/schema/common.schema.json",
+  "title": "Errata shared definitions",
+  "description": "Reusable $defs for all Errata content types. See scope/docs/05-content-sourcing.md.",
+  "$defs": {
+    "jurisdiction": {
+      "type": "object",
+      "description": "Hierarchical jurisdiction. Rights are sub-national in the US.",
+      "properties": {
+        "country": { "enum": ["us", "co"] },
+        "region": {
+          "type": "string",
+          "description": "Sub-national code, e.g. US state 'CA', 'TX'. Omit for nationwide.",
+          "pattern": "^[A-Z]{2}$"
+        }
+      },
+      "required": ["country"],
+      "additionalProperties": false
+    },
+    "isoDate": {
+      "type": "string",
+      "format": "date",
+      "description": "ISO date (YYYY-MM-DD), e.g. lastVerified."
+    },
+    "url": { "type": "string", "format": "uri" },
+    "riskLevel": { "enum": ["high", "medium", "low"] },
+    "permanence": {
+      "enum": ["high", "medium", "low"],
+      "description": "How hard the exposure is to remove. 'high' permits monitor-only treatment under the no-dead-end rule."
+    },
+    "provenance": {
+      "type": "object",
+      "description": "Freshness + sourcing metadata, surfaced in-app (R5).",
+      "properties": {
+        "lastVerified": { "$ref": "#/$defs/isoDate" },
+        "sourceUrl": { "$ref": "#/$defs/url" },
+        "attribution": { "type": "string" }
+      },
+      "required": ["lastVerified"],
+      "additionalProperties": false
+    }
+  }
+}

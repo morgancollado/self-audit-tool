@@ -27,7 +27,12 @@ interface AuditState {
   schemaVersion: number;            // for migrations
   createdAt: string;                // ISO; coarse, no time-of-day precision needed
   updatedAt: string;
-  jurisdiction: "us" | "co";
+  // Hierarchical jurisdiction — rights are sub-national in the US.
+  // country drives broker set; region drives which rights/mechanisms apply.
+  jurisdiction: {
+    country: "us" | "co";
+    region?: string;                // e.g. "CA", "TX" — gates CCPA/CPRA/DROP etc.
+  };
   // Optional, off-by-default identity (see warning above)
   identity?: {
     rememberNames: boolean;         // mirrors the toggle
@@ -48,6 +53,11 @@ interface Finding {
   exposesDeadname: boolean;         // first-class flag — the differentiator
   priority: "high" | "medium" | "low";
   status: "found" | "in_progress" | "resolved" | "wont_fix";
+  // No-dead-end rule: every finding either resolves to an action or is
+  // honestly marked unremediable (monitor-only). The UI must never render a
+  // finding with neither. `actionable:false` items are demoted to a footnote.
+  actionable: boolean;
+  harmReduction?: string;           // shown when !actionable (e.g., rotate password)
   notes?: string;
   createdAt: string;
 }
@@ -82,16 +92,19 @@ Notes:
 
 ## Export / import
 
-- **Export:** serializes `AuditState` to a single JSON file
-  (`self-audit-backup-YYYY-MM-DD.json`) the user downloads. Includes
-  `schemaVersion`. Contains whatever the user chose to save (so if
+- **Export:** serializes `AuditState` and writes a backup the user downloads.
+  Includes `schemaVersion`. Contains whatever the user chose to save (so if
   `rememberNames` is off, names aren't in the file).
-- **Import:** validates `schemaVersion` (run migrations if older), then either
+- **Encrypted by default (revised — was a `Could`, now a Must):** the export is
+  **passphrase-encrypted by default** (e.g. WebCrypto AES-GCM + a strong KDF).
+  The backup can contain the deadname, and a downloaded file typically lands in
+  a **Downloads folder that auto-syncs to iCloud/Google Drive** — i.e. the exact
+  cloud exposure the architecture forbids. A plaintext export is available only
+  as an explicit, warned opt-out. See [06](06-risk-register.md) R14.
+- **Import:** detects encrypted vs plaintext; prompts for the passphrase if
+  needed; validates `schemaVersion` (run migrations if older), then either
   **replaces** or **merges** (offer the choice; default replace for
-  predictability). Reject malformed files with a calm error.
-- **No encryption in v1**, but the export screen warns that the backup is
-  plaintext and should be stored somewhere the user controls. (Optional
-  passphrase-encrypted export is a **Could** — see [02](02-features-moscow.md).)
+  predictability). Reject malformed/undecryptable files with a calm error.
 
 ## Wipe semantics
 
@@ -122,3 +135,41 @@ Even with all of the above, **device access defeats local-only storage**. The
 mitigations are: ephemeral mode, panic-delete, off-by-default name retention,
 and explicit warnings — not a promise of secrecy against someone holding the
 unlocked device. The data model is honest about this; the UI must be too.
+
+### Panic-delete's honest scope (state it where the button lives)
+
+`wipeAll()` clears *our* state. It **cannot** clear browser history, the DNS
+cache, form autofill, an already-downloaded export file, or the fact that the
+site was visited. Panic-delete that implies a full trace-wipe gives false
+confidence in the exact moment a user is most at risk. The control's copy must
+scope what it does and does not cover, and point to ephemeral mode as the
+proactive counterpart (nothing is ever written, so there is nothing — and no
+trace in *our* storage — to wipe).
+
+## Storage durability (the "resume later" promise has platform limits)
+
+The resumable-progress promise quietly fails on some browsers:
+
+- **iOS Safari evicts IndexedDB (and other site storage) after ~7 days of no
+  interaction** with the site. A user who paces themselves over weeks — exactly
+  the trauma-informed model we want — can return to find the findings log gone,
+  silently.
+- Private/incognito modes wipe on close; storage quotas and eviction policies
+  differ across browsers.
+
+**Mitigation:** detect storage persistence where possible
+(`navigator.storage.persist()`), surface an honest per-platform note, and
+**nudge an (encrypted) export as the durable backup** rather than implying
+local storage is permanent. The "resume later" copy must not over-promise.
+
+## A data-shape note on the opt-out paradox
+
+Getting a broker to suppress a deadname often requires *telling* that broker the
+current name maps to the deadname (and sometimes sending ID) — handing a fresh
+`current ↔ dead` linkage to an untrustworthy custodian (see
+[06](06-risk-register.md) R13). The model supports an informed choice rather than
+blind submission: brokers carry an `optOutExposesLinkage` / `requiresId` flag in
+the content layer ([05](05-content-sourcing.md)), and a finding's
+`status: "wont_fix"` is a **legitimate, first-class outcome** — sometimes the
+safest remediation is to leave a low-reach listing alone. The UI must present
+"leave it" as a real option, not a failure state.

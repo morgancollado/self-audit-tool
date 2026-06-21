@@ -1,0 +1,11 @@
+{
+  "key": "deadname-plain",
+  "label": "Deadname (exact)",
+  "engine": "duckduckgo",
+  "template": "\"{{deadname}}\"",
+  "placeholders": [
+    "deadname"
+  ],
+  "deadnameAware": true,
+  "notes": "A broad sweep. Try it in more than one search engine and in image search — results differ."
+}

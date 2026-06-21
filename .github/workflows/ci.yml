@@ -1,0 +1,45 @@
+name: CI
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+
+      # Safety/quality gates (scope/docs/12-app-foundations.md)
+      - name: No trackers (blocks @vercel/analytics & friends)
+        run: npm run audit:no-tracker
+      - name: Content schema + no-dead-end rule
+        run: npm run validate:content
+      - name: Unit tests (storage, panic-delete, report URL)
+        run: npm test
+
+      # Build both delivery modes; the static build also exercises CSP hashing.
+      # (Dynamic build runs first so it generates next-env.d.ts for typecheck.)
+      - name: Build (dynamic)
+        run: npm run build
+      - name: Typecheck
+        run: npm run typecheck
+      - name: Build (static export + CSP hashes)
+        run: npm run build:static
+
+      # Prove the static export actually RUNS under its own enforced CSP (a green
+      # build only proves hashes were injected). Loads ./out in real Chromium
+      # under the <meta> CSP and asserts: no CSP violations, the app hydrates, and
+      # first load leaves no pre-consent storage trace. Guards the strict-dynamic
+      # self-block and the start-session-only guarantee from regressing.
+      - name: Install Chromium for the CSP smoke test
+        run: npx playwright install --with-deps chromium
+      - name: CSP smoke test (static export hydrates under its own CSP)
+        run: node scripts/csp-smoke.mjs
+

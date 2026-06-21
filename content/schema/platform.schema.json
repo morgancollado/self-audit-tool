@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://errata.tools/schema/platform.schema.json",
+  "title": "Platform hardening + deadname-removal guide (locale-translated, jurisdiction-agnostic)",
+  "type": "object",
+  "properties": {
+    "slug": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+    "name": { "type": "string", "minLength": 1 },
+    "deadnameRemoval": {
+      "type": "object",
+      "properties": {
+        "supported": { "type": "boolean" },
+        "tool": { "type": "string" },
+        "url": { "$ref": "common.schema.json#/$defs/url" },
+        "steps": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "limits": { "type": "string" },
+        "escalation": { "type": "string" }
+      },
+      "required": ["supported", "steps"],
+      "additionalProperties": false
+    },
+    "hardening": {
+      "type": "object",
+      "properties": {
+        "steps": { "type": "array", "items": { "type": "string", "minLength": 1 }, "minItems": 1 }
+      },
+      "required": ["steps"],
+      "additionalProperties": false
+    },
+    "difficulty": { "$ref": "common.schema.json#/$defs/riskLevel" },
+    "lastVerified": { "$ref": "common.schema.json#/$defs/isoDate" }
+  },
+  "required": ["slug", "name", "hardening", "lastVerified"],
+  "additionalProperties": false
+}

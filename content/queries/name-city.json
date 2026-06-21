@@ -1,0 +1,9 @@
+{
+  "key": "name-city",
+  "label": "Your name + city",
+  "engine": "google",
+  "template": "\"{{name}}\" \"{{city}}\"",
+  "placeholders": ["name", "city"],
+  "deadnameAware": false,
+  "notes": "Baseline: what shows up for your current name where you live."
+}

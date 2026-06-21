@@ -11,22 +11,40 @@ risk get extended treatment because they are the load-bearing ones.
 | R3 | **Hostile party with physical/account access to the device reads local state** | Med × High | Ephemeral mode; panic-delete; off-by-default name save; explicit shared/monitored-device warnings; no "remember me" | Cannot fully defend an unlocked device — stated honestly in UI |
 | R4 | **Unauthorized practice of law / harmful legal misinformation** | Med × High | "Informational, not legal advice" disclaimers; cite primary sources; frame rights/options, never advise a specific situation; per-jurisdiction review | Law changes between reviews (R5) |
 | R5 | **Data staleness (broker URLs/steps, platform flows, law) rot** | High × Med | `lastVerified` + `sourceUrl` per record, visibly surfaced; "may be out of date" flagging; community PRs; quarterly upstream sync | Some records always lag |
-| R6 | **Supply-chain: a dependency phones home / injects a tracker** | Med × High | Minimal deps; CI "no-tracker" audit fails the build; strict CSP; no third-party scripts; lockfile review | New transitive deps need vigilance |
+| R6 | **Supply-chain: a dependency phones home / injects a tracker** | Med × High | Minimal deps; CI "no-tracker" audit fails the build — **`@vercel/analytics` + `@vercel/speed-insights` blocklisted by name** (the likely accidental reintroduction on Vercel); strict CSP; no third-party scripts; lockfile review | New transitive deps need vigilance |
 | R7 | **User sends too much ID to a broker that demands it** | Med × Med | Flag `requiresId` brokers; redaction guidance; "send the minimum" framing | User choice |
 | R8 | **Subpoena/legal compulsion of project infrastructure** | Low × High | There is nothing to compel — no user data at rest anywhere; proxy keeps no logs; static host has only access logs (IP), mitigated by self-host/offline options | Host-level IP logs outside our control |
-| R9 | **Hosting/CDN access logs (IP) deanonymize a visit** | Med × Low/Med | Self-hostable; offline/PWA mode (run with network off); no first-party logging; recommend privacy-respecting host | Cannot control third-party host logs |
+| R9 | **Hosting/CDN access logs (IP) deanonymize a visit** | Med × Low/Med | Self-hostable; offline/PWA mode (run with network off); no first-party logging; **on Vercel, minimize log retention/observability** and add nothing on top | Vercel platform request/edge logs (IP) are outside our control — inherent to any host |
 | R10 | **Re-traumatization from discovery content** | Med × Med | Content warnings before discovery steps; calm copy; user-paced; crisis resources (Trans Lifeline, Access Now) in footer | Inherent to the task; minimized |
 | R11 | **Colombia/LatAm content wrong because authored without local expertise** | Med × High | Treat `es-CO` as needing local review before release; ship behind a clear "beta/region" label until reviewed; community contribution | Until reviewed, risk is real — gate the milestone |
 | R12 | **Accessibility regressions exclude disabled users in distress** | Med × Med | axe in CI; manual screen-reader pass per release; keyboard-first design | Continuous vigilance |
+| R13 | **Opt-out paradox: remediation deepens the very linkage it targets** | High × High | Per-broker `optOutExposesLinkage`/`requiresId` flags; "sometimes leave it" path as a first-class outcome; redaction guidance; informed-choice UI, not blind submission | User must still judge each case |
+| R14 | **Plaintext export honeypot on the user's own disk / cloud-synced Downloads** | Med × High | **Encrypted-by-default export** (WebCrypto); plaintext only as a warned opt-out; warn that Downloads often auto-syncs to iCloud/Drive | User can still mishandle the passphrase/file |
+| R15 | **Dual-use: the Discover flow is also a doxxing recipe against a third party** | High × Med/High | Conscious framing; decline to spell out the most operational targeting steps; the techniques are already public; position strictly as self-audit; no "search someone else" affordances | Cannot prevent misuse of public knowledge |
+| R16 | **Adversary is a state actor (records demand, hostile AG), not just a doxxer** | Med × High | Privacy-route defaults (no project infra in the path by default, see R2); nothing to compel (R8); ephemeral mode; honest "this won't shield you from legal process" framing; route to expert help (Access Now, legal aid) | The legal/political climate is outside our control |
+| R17 | **Solo-dev bus factor on safety-critical, fast-rotting content** | Med × High | `lastVerified` flagging; community PR culture; **a continuity plan** — co-maintainers / an org home / an explicit "this may be stale" honesty banner if maintenance lapses; everything self-hostable so a fork can carry on | A single maintainer is a real fragility |
+| R18 | **iOS/storage eviction silently drops "resume later" progress** | Med × Low/Med | `navigator.storage.persist()`; honest per-platform durability note; nudge an encrypted export as the durable backup | Browser storage policies outside our control |
 
 ## Extended: the breach-check egress decision (R2) and its resolution
 
-**Decision:** ship the client-side **password** check unconditionally; provide
-**email** breach checks through a **thin stateless serverless proxy**, which is
-the one consciously accepted relaxation of "no backend." For best experience the
-project **operates a shared, OHTTP-fronted instance as the default** path, with
-self-hosted-proxy and deep-link fallbacks — accepting the operator-trust cost
-because OHTTP removes the IP↔query correlation that made it dangerous.
+**Decision (revised — privacy route):** ship the client-side **password** check
+unconditionally; provide **email** breach checks through a **thin stateless
+serverless proxy**, the one consciously accepted relaxation of "no backend."
+**The default is the path that routes the user through *no* project
+infrastructure — the deep-link.** The self-hosted proxy is the integrated
+opt-in. The project's shared OHTTP-fronted instance is **not shipped in v1.** We
+reversed the earlier "shared proxy as default" call: for a population whose
+premise is "the architecture is the safety feature," and whose adversary may
+have subpoena power (R16), routing users through project-operated infrastructure
+is the wrong instinct. The integrated experience is available to anyone who
+self-hosts; no one is routed through project infrastructure at all.
+
+> **OHTTP caveat (why the shared rung is deferred, not just demoted):** the
+> "no single party sees IP + prefix" guarantee holds **only if the relay and
+> gateway are run by separate, non-colluding parties.** With no independent
+> relay partner, the project would run both and it collapses to "trust me not to
+> log" — so the shared rung is dropped for v1 and revisited only if such a
+> partner appears. See [08](08-open-questions.md) Q2.
 
 **What the proxy MUST guarantee (acceptance criteria):**
 - Receives **only** the first 6 hex chars of `SHA-1(normalized email)` — never

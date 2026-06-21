@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://errata.tools/schema/record.schema.json",
+  "title": "Records-class guide (deadname in institutional / public records, incl. legal name-change)",
+  "description": "Enforces the no-dead-end rule: a record must carry at least one action, OR be high-permanence and explicitly monitor-only.",
+  "type": "object",
+  "properties": {
+    "slug": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+    "jurisdiction": { "$ref": "common.schema.json#/$defs/jurisdiction" },
+    "class": {
+      "enum": ["court-record", "name-change", "school", "licensing-board", "byline", "archive", "search-cache", "breach", "other"]
+    },
+    "exposesDeadnameRisk": { "$ref": "common.schema.json#/$defs/riskLevel" },
+    "permanence": { "$ref": "common.schema.json#/$defs/permanence" },
+    "whatItIs": { "type": "string", "minLength": 1 },
+    "actions": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "description": "Concrete actions the user can take. The no-dead-end rule (below) requires this be non-empty UNLESS monitorOnly is true."
+    },
+    "monitorOnly": {
+      "type": "boolean",
+      "description": "True only for genuinely unremediable exposures. Demotes the item to a 'monitor — can't remove' footnote instead of a task."
+    },
+    "harmReduction": {
+      "type": "string",
+      "description": "Required when monitorOnly is true: what still reduces the harm."
+    },
+    "sealedPetitionAvailable": { "type": "boolean" },
+    "disclaimer": { "type": "string" },
+    "lastVerified": { "$ref": "common.schema.json#/$defs/isoDate" }
+  },
+  "required": ["slug", "class", "permanence", "whatItIs", "lastVerified"],
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "$comment": "NO-DEAD-END RULE (scope/docs/09-removal-feasibility.md): either provide actions, or be an explicit high-permanence monitor-only item with harm-reduction.",
+      "anyOf": [
+        {
+          "properties": { "actions": { "type": "array", "minItems": 1 } },
+          "required": ["actions"]
+        },
+        {
+          "properties": {
+            "monitorOnly": { "const": true },
+            "permanence": { "const": "high" },
+            "harmReduction": { "type": "string", "minLength": 1 }
+          },
+          "required": ["monitorOnly", "permanence", "harmReduction"]
+        }
+      ]
+    }
+  ]
+}

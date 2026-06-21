@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://errata.tools/schema/discovery-step.schema.json",
+  "title": "Discovery checklist step (Phase 1)",
+  "description": "A guided, resumable step for finding your exposure the way a hostile actor would. Jurisdiction is optional: omit for global steps (search/platform), set it for jurisdiction-scoped steps (brokers).",
+  "type": "object",
+  "properties": {
+    "slug": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+    "jurisdiction": { "$ref": "common.schema.json#/$defs/jurisdiction" },
+    "category": { "enum": ["broker", "search", "platform", "records"] },
+    "title": { "type": "string", "minLength": 1 },
+    "why": { "type": "string", "minLength": 1 },
+    "instructions": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "minItems": 1,
+      "description": "The action. Non-empty — a step with nothing to do is a dead-end."
+    },
+    "deadnameAware": { "type": "boolean" },
+    "deadnamePrompts": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+    "queryTemplateKeys": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+    "refIds": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+    "priority": { "$ref": "common.schema.json#/$defs/riskLevel" },
+    "lastVerified": { "$ref": "common.schema.json#/$defs/isoDate" }
+  },
+  "required": ["slug", "category", "title", "why", "instructions", "deadnameAware", "priority", "lastVerified"],
+  "additionalProperties": false
+}

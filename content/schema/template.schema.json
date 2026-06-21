@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://errata.tools/schema/template.schema.json",
+  "title": "Opt-out output template (locale-translated). Placeholders filled in-memory; only persisted if the user opted in.",
+  "type": "object",
+  "properties": {
+    "key": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+    "formats": {
+      "type": "array",
+      "items": { "enum": ["text", "mailto", "letter"] },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "subject": { "type": "string", "minLength": 1 },
+    "body": { "type": "string", "minLength": 1 },
+    "placeholders": {
+      "type": "array",
+      "items": { "enum": ["name", "aliases", "location", "email", "brokerName"] },
+      "uniqueItems": true
+    },
+    "disclaimer": { "type": "string", "minLength": 1 }
+  },
+  "required": ["key", "formats", "subject", "body", "disclaimer"],
+  "additionalProperties": false
+}
