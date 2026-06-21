@@ -202,6 +202,22 @@ action** (no dead-ends).
 > Smoke test now also asserts a comprehensive state (OR) surfaces its own law (not
 > CCPA) and a thin state (NY) shows the honest limited note. **Still gated on legal
 > review before general release; records remain national + CA.**
+>
+> **Update — full 50-state + DC rights coverage; per-state records research
+> begun.** Every US jurisdiction now has an authored rights entry: the 20
+> comprehensive-law states, plus honest "no general deletion right yet" entries for
+> the rest, with notable narrower rights called out by name (WA My Health My Data,
+> NV opt-out-of-sale, VT data-broker registry + vetoed act, IL BIPA, ME ISP law).
+> No state falls back to the generic note anymore. The law import list moved into a
+> dedicated manifest (`lib/content/laws.ts`) to keep the loader clean as the set
+> grew to 52 entries. **Records research has begun per state**: alongside CA,
+> state-specific court-record **sealing / publication-waiver** guidance is now
+> authored for NY, IL, and WA (the latter noting its Address Confidentiality
+> Program) — each region-gated and behind the verify-locally banner. Smoke test
+> asserts a no-comprehensive-law state (AL) is authored (not the fallback) and that
+> NY gains a state records guide. Remaining: records for the rest of the states
+> (deep per-state legal research, gated on review) and the standing legal review of
+> all rights/records prose.
 
 ## M3 — Breach checks (privacy-route default)  *(small–medium)*
 - Client-side **password** k-anonymity check (no proxy).

@@ -1,0 +1,10 @@
+{
+  "jurisdiction": { "country": "us", "region": "WA" },
+  "appliesNationally": false,
+  "key": "us-wa-mhmda",
+  "title": "Washington: no general deletion right, but strong health-data rights",
+  "summary": "Washington has not enacted a comprehensive consumer-privacy law with a general right to delete. But its My Health My Data Act gives a strong right to access and to delete consumer health data held by many businesses — broadly defined, beyond traditional medical records. For general removal, use the data broker's own opt-out (below).",
+  "authorizedAgent": false,
+  "disclaimer": "General information, not legal advice, and not yet independently reviewed. The My Health My Data Act applies to health data specifically; verify scope and process before relying on it.",
+  "lastVerified": "2026-06-01"
+}

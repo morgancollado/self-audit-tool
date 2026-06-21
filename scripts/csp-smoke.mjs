@@ -247,7 +247,14 @@ try {
   await rpage.waitForTimeout(300);
   const nyText = await rpage.locator('section.rights').innerText();
   if (!nyText.includes('New York')) fail('selecting New York did not surface its honest limited-rights note.');
-  console.log('[csp-smoke] /remediate rights: OR→Oregon shown, NY→limited note shown');
+  // Full coverage: a state with no comprehensive law (Alabama) now has its own
+  // honest entry rather than the generic "no guidance yet" fallback.
+  await rpage.getByLabel('Your state').selectOption('AL');
+  await rpage.waitForTimeout(300);
+  const alText = await rpage.locator('section.rights').innerText();
+  if (!alText.includes('Alabama')) fail('Alabama has no authored rights entry (full coverage incomplete).');
+  if (alText.includes('no verified guidance yet')) fail('Alabama still falls back to the generic note.');
+  console.log('[csp-smoke] /remediate rights: OR→Oregon, NY→limited, AL→authored (full coverage)');
 
   await axeFailures(rpage, '/remediate');
   await rctx.close();
@@ -311,11 +318,16 @@ try {
   await recpage.getByLabel('Your state').selectOption('TX');
   await recpage.waitForTimeout(300);
   const txRecords = await recpage.locator('section.record').count();
+  // A newly-researched state (New York) also gains a state-specific sealing guide.
+  await recpage.getByLabel('Your state').selectOption('NY');
+  await recpage.waitForTimeout(300);
+  const nyRecords = await recpage.locator('section.record').count();
   const recviol = await recpage.evaluate(() => window.__csp || []);
-  console.log(`[csp-smoke] /records: intro-gated=${recIntroGate}, base=${baseRecords}, CA=${caRecords}, TX=${txRecords}`);
+  console.log(`[csp-smoke] /records: intro-gated=${recIntroGate}, base=${baseRecords}, CA=${caRecords}, TX=${txRecords}, NY=${nyRecords}`);
   if (recviol.length) fail('/records violated its CSP.');
   if (baseRecords === 0) fail('/records rendered no record guides after the safety intro.');
   if (!(caRecords > txRecords)) fail('a California user did not gain the state-specific court-record guide.');
+  if (!(nyRecords > txRecords)) fail('a New York user did not gain the state-specific sealing guide.');
   await axeFailures(recpage, '/records');
   await recctx.close();
 

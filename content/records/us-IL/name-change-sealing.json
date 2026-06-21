@@ -1,0 +1,16 @@
+{
+  "slug": "name-change-sealing-il",
+  "jurisdiction": { "country": "us", "region": "IL" },
+  "class": "court-record",
+  "exposesDeadnameRisk": "high",
+  "permanence": "high",
+  "whatItIs": "In Illinois, a name-change order is a public court record, and the process has historically required publishing notice in a newspaper. Recent changes eased this: Illinois courts can waive publication and impound (seal) the record where publication would put the petitioner at risk.",
+  "actions": [
+    "When you file, ask the court to waive the publication requirement and to impound the record on safety grounds — a legal-aid or LGBTQ legal org can help you show why you qualify.",
+    "If your order is already public, ask the clerk about impounding it after the fact.",
+    "Then suppress the downstream copies: broker opt-outs, Google 'Results about you', and the web-archive and search-cache removals."
+  ],
+  "sealedPetitionAvailable": true,
+  "disclaimer": "Informational only — not legal advice, and not yet reviewed by a lawyer. Illinois practice varies by county and judge and changes over time; verify with the court or a legal-aid org before filing.",
+  "lastVerified": "2026-06-01"
+}

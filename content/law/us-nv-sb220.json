@@ -1,0 +1,10 @@
+{
+  "jurisdiction": { "country": "us", "region": "NV" },
+  "appliesNationally": false,
+  "key": "us-nv-sb220",
+  "title": "Nevada: opt out of sale, but no general deletion right",
+  "summary": "Nevada has no comprehensive consumer-privacy law, but a narrower law lets you tell certain website and online-service operators not to sell your covered personal information. It does not provide a general right to delete. For removal, use the data broker's own opt-out (below).",
+  "authorizedAgent": false,
+  "disclaimer": "General information, not legal advice, and not yet independently reviewed. Nevada's right is limited to opting out of sale by covered operators — verify before relying on it.",
+  "lastVerified": "2026-06-01"
+}
