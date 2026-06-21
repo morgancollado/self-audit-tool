@@ -59,6 +59,10 @@ export default function RemediatePage() {
         ))}
       </div>
 
+      <p className="discover-next">
+        Listed on platforms too? <Link href="/harden">Harden your accounts & remove your former name →</Link>
+      </p>
+
       <RemediationTracker />
     </>
   );

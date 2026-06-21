@@ -200,11 +200,41 @@ try {
   if (txLeaksCcpa) fail('a Texas user was shown CCPA framing (implies a right TX does not grant).');
   await rctx.close();
 
+  // ---- /harden: safety gate + platform guides render, no dead-ends (M2) ----
+  const hctx = await browser.newContext();
+  const hpage = await hctx.newPage();
+  await hpage.addInitScript(() => {
+    window.__csp = [];
+    document.addEventListener('securitypolicyviolation', (e) =>
+      window.__csp.push(`${e.effectiveDirective || e.violatedDirective} ${e.blockedURI || 'inline'}`));
+  });
+  await hpage.goto(base + 'harden', { waitUntil: 'networkidle' });
+
+  let hIntroGate = false;
+  try {
+    await hpage.getByText('Before you start').waitFor({ timeout: 8000 });
+    hIntroGate = true;
+  } catch { /* intro not shown */ }
+  if (!hIntroGate) fail('/harden did not show the safety intro for a fresh visitor (deep-link bypass).');
+
+  await hpage.getByRole('button', { name: /session-only/i }).click();
+  await hpage.getByText('Harden the account', { exact: false }).first().waitFor({ timeout: 8000 });
+  const guideCount = await hpage.locator('section.platform').count();
+  const hviol = await hpage.evaluate(() => window.__csp || []);
+  // Reddit can't change a username — but the no-dead-end rule means it must still
+  // offer steps, never a bare "can't".
+  const redditSteps = await hpage.locator('section.platform:has(#platform-reddit) .platform-steps li').count().catch(() => 0);
+  console.log(`[csp-smoke] /harden: intro-gated=${hIntroGate}, platform guides=${guideCount}, reddit steps=${redditSteps}`);
+  if (hviol.length) fail('/harden violated its CSP.');
+  if (guideCount === 0) fail('/harden rendered no platform guides after the safety intro.');
+  if (redditSteps === 0) fail('Reddit (no direct username change) offered no steps — a dead-end.');
+  await hctx.close();
+
   if (!process.exitCode) {
     console.log('[csp-smoke] OK — static export runs under its CSP, leaves no pre-consent trace,');
-    console.log('[csp-smoke]      gates /discover & /remediate behind the safety intro, routes deadname');
-    console.log('[csp-smoke]      searches to DuckDuckGo, omits the former name from opt-outs by default,');
-    console.log('[csp-smoke]      surfaces CA DROP, and never shows CCPA to a non-CA user.');
+    console.log('[csp-smoke]      gates /discover, /remediate & /harden behind the safety intro, routes');
+    console.log('[csp-smoke]      deadname searches to DuckDuckGo, omits the former name from opt-outs by');
+    console.log('[csp-smoke]      default, surfaces CA DROP, and never shows CCPA to a non-CA user.');
   }
 } finally {
   await browser.close();

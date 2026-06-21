@@ -175,6 +175,21 @@ button.safety-intro-primary { font-weight: 600; }
 .priority-low { background: var(--cream); color: var(--slate); border: 1px solid var(--slate); }
 .badge-deadname { background: var(--ink); color: var(--paper); }
 
+/* Platform hardening + deadname removal */
+.platform-list { margin: 1rem 0; }
+.platform { background: var(--cream); border-radius: var(--radius); padding: 1rem 1.25rem; margin: 1rem 0; }
+.platform-head { display: flex; align-items: baseline; justify-content: space-between; gap: 0.75rem; }
+.platform-head h3 { margin: 0.2rem 0; }
+.platform-deadname { border-left: 3px solid var(--marker); padding: 0.5rem 0 0.5rem 0.9rem; margin: 0.75rem 0; }
+.platform-subhead { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; flex-wrap: wrap; }
+.platform-subhead h4, .platform-hardening h4 { margin: 0.3rem 0; font-family: var(--serif); }
+.platform-hardening { margin-top: 1rem; border-top: 1px solid var(--paper); padding-top: 0.5rem; }
+.platform-steps { padding-left: 1.2rem; font-size: 0.95rem; }
+.platform-steps li { margin: 0.25rem 0; }
+.platform-note { color: var(--slate); font-size: 0.92rem; }
+.platform-limits, .platform-escalation { color: var(--slate); font-size: 0.88rem; margin: 0.35rem 0; }
+.platform-escalation { font-style: italic; }
+
 /* State-aware rights */
 .rights { margin: 1.5rem 0; }
 .rights-state { display: flex; flex-direction: column; gap: 0.25rem; font-weight: 600; max-width: 18rem; }

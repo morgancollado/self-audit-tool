@@ -1,0 +1,26 @@
+{
+  "slug": "instagram",
+  "name": "Instagram (Meta)",
+  "difficulty": "low",
+  "deadnameRemoval": {
+    "supported": true,
+    "tool": "Profile name & username change; untag",
+    "url": "https://www.instagram.com/accounts/edit/",
+    "steps": [
+      "Edit Profile → change Name and Username to your current name (the username can change once every 14 days).",
+      "Profile → Tags: remove yourself from posts that show your former name.",
+      "For posts by other people that name you, message the poster to ask for an edit, or report content that targets you.",
+      "If your Facebook is linked, repeat on Facebook: Settings → Name."
+    ],
+    "limits": "You control your own profile and tags, not other people's captions. An old username can still appear in others' screenshots or cached pages.",
+    "escalation": "Report harassment or impersonation through Meta's reporting flow if someone keeps using your former name."
+  },
+  "hardening": {
+    "steps": [
+      "Settings → Privacy: set the account to private if you want to limit who sees your posts.",
+      "Review login activity and remove old devices and sessions.",
+      "Search your former name and old handles to find forgotten linked or tagged content."
+    ]
+  },
+  "lastVerified": "2026-06-01"
+}

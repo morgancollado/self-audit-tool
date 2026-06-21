@@ -1,0 +1,25 @@
+{
+  "slug": "tiktok",
+  "name": "TikTok",
+  "difficulty": "low",
+  "deadnameRemoval": {
+    "supported": true,
+    "tool": "Username & nickname change",
+    "url": "https://www.tiktok.com/setting",
+    "steps": [
+      "Profile → Edit profile: change Name (nickname) and Username to your current name (the username can change once every 30 days).",
+      "Delete, or set to private, old videos that show your former name.",
+      "Review your bio and any linked accounts for the former name."
+    ],
+    "limits": "The username can only change every 30 days, and an old @handle may be reused by someone else.",
+    "escalation": "Use the report flow for harassment, or for content others posted about you."
+  },
+  "hardening": {
+    "steps": [
+      "Settings → Privacy: set the account to private if you want.",
+      "Limit who can comment, duet, or download your videos.",
+      "Turn off “Suggest your account to others”."
+    ]
+  },
+  "lastVerified": "2026-06-01"
+}

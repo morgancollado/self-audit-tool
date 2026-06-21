@@ -35,6 +35,10 @@ export default function HomePage() {
             Already know where you’re listed?{' '}
             <Link href="/remediate">Go straight to removal requests →</Link>
           </p>
+          <p>
+            Want to clean up your accounts?{' '}
+            <Link href="/harden">Harden platforms & remove your former name →</Link>
+          </p>
           <StorageModeToggle />
         </>
       )}

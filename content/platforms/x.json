@@ -1,0 +1,26 @@
+{
+  "slug": "x",
+  "name": "X (formerly Twitter)",
+  "difficulty": "low",
+  "deadnameRemoval": {
+    "supported": true,
+    "tool": "Display name & username (@handle) change",
+    "url": "https://twitter.com/settings/profile",
+    "steps": [
+      "Settings → Your account → Account information: change your username (@handle) and display name to your current name.",
+      "Edit your bio and any pinned posts that reference your former name.",
+      "Delete or archive old posts that show your former name (a bulk-delete tool you run yourself can help).",
+      "Deactivate abandoned old accounts that still carry your former name."
+    ],
+    "limits": "Changing your @handle frees the old one for someone else to take, and old links or screenshots may still show it.",
+    "escalation": "Report targeted misgendering or harassment under X's policies; outcomes vary."
+  },
+  "hardening": {
+    "steps": [
+      "Settings → Privacy and safety: protect your posts if you want them visible only to approved followers.",
+      "Turn off “let others find you by your email or phone number”.",
+      "Review connected apps and remove ones you don't use."
+    ]
+  },
+  "lastVerified": "2026-06-01"
+}

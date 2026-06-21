@@ -106,12 +106,25 @@ action** (no dead-ends).
 > (and syncs an existing audit doc) without force-creating storage. The smoke test
 > now asserts CA→DROP and that a non-CA user never sees CCPA.
 >
-> Remaining M2 (subsequent slices): **platform hardening + deadname-removal
-> flows** (Google, Meta/IG, X, LinkedIn, TikTok, Reddit); **legal name-change /
-> court-record flow** (research + scaffolding, gated on legal review);
-> consolidated **deadname-removal playbook**; **encrypted-by-default
-> export/import**; linking findings directly to their prepared remediation in the
-> ledger; authoring the remaining states toward full coverage.
+> **Update — platform hardening + deadname-removal flows landed.** A new
+> `/harden` route (gated behind the safety intro, like `/discover` and
+> `/remediate`) carries content-driven, click-by-click guides for Google,
+> Instagram/Meta, X, LinkedIn, TikTok, and Reddit. Each leads with **former-name
+> removal**, then account hardening; actions feed the shared remediation tracker
+> (pillars `deadname` / `platform`). The **no-dead-end rule** is enforced in
+> content validation: a platform's deadname-removal block must carry steps even
+> when the platform can't change the thing directly — Reddit (usernames can't be
+> changed) offers edit-before-delete + reporting rather than a bare "can't." The
+> smoke test now asserts the `/harden` gate, that all guides render, and that
+> Reddit still offers steps. Guides are jurisdiction-agnostic; platform UIs drift,
+> so each carries `lastVerified` for the staleness surface.
+>
+> Remaining M2 (subsequent slices): **legal name-change / court-record flow**
+> (research + scaffolding, gated on legal review) + archive/cache removal;
+> consolidated **deadname-removal playbook** cross-linking the pillars;
+> **encrypted-by-default export/import**; linking findings directly to their
+> prepared remediation in the ledger; authoring the remaining states toward full
+> coverage.
 
 ## M3 — Breach checks (privacy-route default)  *(small–medium)*
 - Client-side **password** k-anonymity check (no proxy).

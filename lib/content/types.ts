@@ -79,6 +79,24 @@ export interface SpecialMechanism {
   url?: string;
 }
 
+export interface PlatformDeadnameRemoval {
+  supported: boolean;
+  tool?: string;
+  url?: string;
+  steps: string[];
+  limits?: string;
+  escalation?: string;
+}
+
+export interface Platform {
+  slug: string;
+  name: string;
+  deadnameRemoval?: PlatformDeadnameRemoval;
+  hardening: { steps: string[] };
+  difficulty?: Priority;
+  lastVerified: string;
+}
+
 export interface Law {
   jurisdiction: Jurisdiction;
   /** If false, the right is region-specific and must NOT be shown to other regions. */

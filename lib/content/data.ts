@@ -3,10 +3,17 @@
 // a generated manifest can replace this when the dataset grows.
 
 import { Country, Jurisdiction } from '../model/types';
-import { Broker, DiscoveryStep, Law, OptOutTemplate, QueryTemplate } from './types';
+import { Broker, DiscoveryStep, Law, OptOutTemplate, Platform, QueryTemplate } from './types';
 import { selectLaws } from '../remediate/rights';
 
 import optoutDeletionGeneric from '../../content/templates/optout-deletion-generic.json';
+
+import pGoogle from '../../content/platforms/google.json';
+import pInstagram from '../../content/platforms/instagram.json';
+import pX from '../../content/platforms/x.json';
+import pLinkedin from '../../content/platforms/linkedin.json';
+import pTiktok from '../../content/platforms/tiktok.json';
+import pReddit from '../../content/platforms/reddit.json';
 
 import lawBrokerOptout from '../../content/law/us-data-broker-optout.json';
 import lawCaCcpa from '../../content/law/us-ca-ccpa.json';
@@ -58,7 +65,11 @@ const LAWS = [
   lawTxTdpsa,
 ] as unknown as Law[];
 
+const PLATFORMS = [pGoogle, pInstagram, pX, pLinkedin, pTiktok, pReddit] as unknown as Platform[];
+
 const PRIORITY_ORDER = { high: 0, medium: 1, low: 2 } as const;
+// Easy wins first — encourage momentum (the inverse of priority order).
+const DIFFICULTY_ORDER = { low: 0, medium: 1, high: 2 } as const;
 
 /** Brokers for a country (no cross-country fallback). */
 export function getBrokers(country: Country): Broker[] {
@@ -100,4 +111,17 @@ export function getOptOutTemplate(key: string): OptOutTemplate | undefined {
  */
 export function getLaws(jurisdiction: Jurisdiction): Law[] {
   return selectLaws(LAWS, jurisdiction);
+}
+
+/** Platform hardening + deadname-removal guides (jurisdiction-agnostic). */
+export function getPlatforms(): Platform[] {
+  return [...PLATFORMS].sort(
+    (a, b) =>
+      (DIFFICULTY_ORDER[a.difficulty ?? 'medium'] ?? 1) -
+      (DIFFICULTY_ORDER[b.difficulty ?? 'medium'] ?? 1),
+  );
+}
+
+export function getPlatform(slug: string): Platform | undefined {
+  return PLATFORMS.find((p) => p.slug === slug);
 }
