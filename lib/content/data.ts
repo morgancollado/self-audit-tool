@@ -30,9 +30,7 @@ import pLinkedin from '../../content/platforms/linkedin.json';
 import pTiktok from '../../content/platforms/tiktok.json';
 import pReddit from '../../content/platforms/reddit.json';
 
-import spokeo from '../../content/brokers/us/spokeo.json';
-import whitepages from '../../content/brokers/us/whitepages.json';
-import beenverified from '../../content/brokers/us/beenverified.json';
+import { BROKERS } from './brokers';
 
 import dBrokersPeopleSearch from '../../content/discovery/us/brokers-people-search.json';
 import dSearchEngines from '../../content/discovery/global/search-engines.json';
@@ -44,8 +42,6 @@ import qDeadnameCity from '../../content/queries/deadname-city.json';
 import qDeadnameEmployer from '../../content/queries/deadname-employer.json';
 import qNameOrDeadname from '../../content/queries/name-or-deadname.json';
 import qDeadnamePlain from '../../content/queries/deadname-plain.json';
-
-const BROKERS = [spokeo, whitepages, beenverified] as unknown as Broker[];
 
 const DISCOVERY_STEPS = [
   dBrokersPeopleSearch,

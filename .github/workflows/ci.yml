@@ -19,8 +19,12 @@ jobs:
       # Safety/quality gates (scope/docs/12-app-foundations.md)
       - name: No trackers (blocks @vercel/analytics & friends)
         run: npm run audit:no-tracker
+      - name: Broker manifest is committed & up to date
+        run: npm run check:content-manifest
       - name: Content schema + no-dead-end rule
         run: npm run validate:content
+      - name: Staleness report (warn-only; surfaces aging lastVerified)
+        run: npm run report:staleness
       - name: Unit tests (storage, panic-delete, report URL)
         run: npm test
 
