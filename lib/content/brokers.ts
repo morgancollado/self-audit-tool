@@ -5,9 +5,11 @@
 import { Broker } from './types';
 
 import b0 from '../../content/brokers/us/beenverified.json';
-import b1 from '../../content/brokers/us/spokeo.json';
-import b2 from '../../content/brokers/us/whitepages.json';
+import b1 from '../../content/brokers/us/checkpeople.json';
+import b2 from '../../content/brokers/us/infotracer.json';
+import b3 from '../../content/brokers/us/spokeo.json';
+import b4 from '../../content/brokers/us/whitepages.json';
 
 // Cast at the single chokepoint: the CI content validator (lib/content/validate.mjs)
 // is the real schema gate; a data-integrity unit test asserts the safety invariants.
-export const BROKERS = [b0, b1, b2] as unknown as Broker[];
+export const BROKERS = [b0, b1, b2, b3, b4] as unknown as Broker[];
