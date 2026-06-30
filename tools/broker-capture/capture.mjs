@@ -45,9 +45,8 @@ const TARGETS = [
   { slug: 'zabasearch',       name: 'ZabaSearch',        category: 'people-search',    url: 'https://www.intelius.com/opt-out/',        portal: 'peopleconnect', find: true, note: 'PeopleConnect brand; opt out via the shared suppression portal.' },
   { slug: 'addresses',        name: 'Addresses.com',     category: 'people-search',    url: 'https://www.intelius.com/opt-out/',        portal: 'peopleconnect', find: true, note: 'PeopleConnect brand; opt out via the shared suppression portal.' },
   { slug: 'anywho',           name: 'AnyWho',            category: 'people-search',    url: 'https://www.anywho.com/optout' },
-  { slug: 'peoplelooker',     name: 'PeopleLooker',      category: 'background-check', url: 'https://www.peoplelooker.com/f/optout-search', find: true },
-  { slug: 'neighborwho',      name: 'NeighborWho',       category: 'people-search',    url: 'https://www.neighborwho.com/optout', find: true },
-  { slug: 'ownerly',          name: 'Ownerly',           category: 'other',            url: 'https://www.ownerly.com/optout', find: true },
+  // BeenVerified family shares the /svc/optout/search/optouts opt-out path.
+  { slug: 'peoplelooker',     name: 'PeopleLooker',      category: 'background-check', url: 'https://www.peoplelooker.com/svc/optout/search/optouts', find: true },
   { slug: 'radaris',          name: 'Radaris',           category: 'people-search',    url: 'https://radaris.com/control/privacy' },
   { slug: 'mylife',           name: 'MyLife',            category: 'people-search',    url: 'https://www.mylife.com/ccpa', find: true, note: 'Removal historically requires emailing/calling; confirm current route.' },
   { slug: 'peekyou',          name: 'PeekYou',           category: 'people-search',    url: 'https://www.peekyou.com/about/optout', find: true },
