@@ -17,7 +17,8 @@ page, never earlier.
 
 ## Status
 
-**Verified & shipped (5):**
+**Verified & shipped (14)** — each confirmed against its live opt-out page (browser
+capture on the date shown), none authored from a guess.
 
 | Broker | Category | Opt-out | Notes |
 |---|---|---|---|
@@ -26,37 +27,47 @@ page, never earlier.
 | BeenVerified | background-check | web-form | linkage-exposing → leave-it guidance |
 | CheckPeople | people-search | web-form (email suppression) | email-only, no linkage forced |
 | InfoTracer | background-check | web-form + privacy email | single-name removal, no linkage forced |
+| Intelius | people-search | web-form (PeopleConnect portal) | email-only suppression, no linkage forced |
+| TruthFinder | background-check | web-form (PeopleConnect portal) | " |
+| Instant Checkmate | background-check | web-form (PeopleConnect portal) | " |
+| US Search | people-search | web-form (PeopleConnect portal) | " |
+| ZabaSearch | people-search | web-form (PeopleConnect portal) | covered by the shared suppression |
+| Addresses.com | people-search | web-form (PeopleConnect portal) | covered by the shared suppression |
+| NeighborWho | people-search | web-form (BeenVerified family) | select-existing-record, no linkage forced |
+| Ownerly | other (property) | web-form (BeenVerified family) | medium deadname risk |
+| PeopleLooker | background-check | web-form (BeenVerified family) | select-existing-record, no linkage forced |
 
-**Remaining target set (~20).** Status is from the verification sweep on
-2026-06-22; treat every URL as needing a live re-check regardless.
+**Two verified shared flows did the heavy lifting:**
+- **PeopleConnect Suppression Center** (`suppression.peopleconnect.us`) — one
+  email-only suppression covers Intelius, TruthFinder, Instant Checkmate, US Search,
+  ZabaSearch and Addresses.com. (PeopleSmart has pivoted to a B2B sales-data product
+  and no longer exposes a consumer opt-out here; AnyWho is likely in this family but
+  was not confirmed.)
+- **BeenVerified family** — `/svc/optout/search/optouts`: search → select your
+  record → email verification link → confirm. Covers NeighborWho, Ownerly,
+  PeopleLooker (and BeenVerified itself, via its own `/app/optout/search`).
 
-| Broker | Best-known opt-out URL | Sweep | Family / note |
-|---|---|---|---|
-| Intelius | `https://www.intelius.com/opt-out/` | 403 | PeopleConnect |
-| TruthFinder | `https://www.truthfinder.com/opt-out/` | 403 | PeopleConnect |
-| Instant Checkmate | `https://www.instantcheckmate.com/opt-out/` | 403 | PeopleConnect |
-| US Search | `https://www.ussearch.com/opt-out/` | 403 | PeopleConnect |
-| PeopleSmart | (was `/optout-go`) | **drifted → /help/** | PeopleConnect — find current URL |
-| ZabaSearch | `https://www.zabasearch.com/block_records/` | 403 | Intelius/PeopleConnect |
-| Addresses.com | `https://www.addresses.com/optout.php` | 403 | Intelius/PeopleConnect |
-| AnyWho | `https://www.anywho.com/optout` | 403 | Intelius/PeopleConnect |
-| PeopleLooker | (was `/f/optout/search`) | **404 drifted** | BeenVerified family |
-| NeighborWho | (was `/optout-search`) | **404 drifted** | BeenVerified family |
-| Ownerly | (was `/about/optout/`) | **404 drifted** | BeenVerified family (property data — lower deadname risk) |
-| Radaris | `https://radaris.com/control/privacy` | 403 | independent |
-| MyLife | `https://www.mylife.com/ccpa/index.pubview` | 403 | independent — historically phone/email; check `requiresId` |
-| PeekYou | (was `/about/contact/optout/`) | **drifted → home** | independent |
-| Nuwber | `https://nuwber.com/removal/link` | 403 | independent |
-| ClustrMaps | `https://clustrmaps.com/bl/opt-out` | conn refused | independent |
-| USPhoneBook | `https://www.usphonebook.com/opt-out` | 403 | independent |
-| TruePeopleSearch | `https://www.truepeoplesearch.com/removal` | 403 | independent |
-| FastPeopleSearch | `https://www.fastpeoplesearch.com/removal` | 403 | independent |
-| SearchPeopleFree | `https://www.searchpeoplefree.com/opt-out` | 403 | independent |
+**Remaining target set (~10), with the *actual* blocker** (from residential-browser
+runs on 2026-06-30, not the build sandbox). These are the genuinely hard ones; the
+easily-verifiable set is done.
 
-**Batch by family.** PeopleConnect (Intelius, TruthFinder, Instant Checkmate, US
-Search, PeopleSmart, ZabaSearch, Addresses, AnyWho) often share one suppression
-portal; BeenVerified's siblings (PeopleLooker, NeighborWho, Ownerly) share its
-flow. Verify the parent once, then confirm each sibling's entry point.
+| Broker | Blocker | Path to verify |
+|---|---|---|
+| USPhoneBook | Cloudflare **terminal hard-block** ("you have been blocked") — hits even a clean residential browser once the IP is flagged | retry from a different network (mobile data) / after the flag clears, then screenshot |
+| Nuwber | Cloudflare challenge/hard-block | same |
+| TruePeopleSearch | Cloudflare challenge/hard-block | same |
+| FastPeopleSearch | Cloudflare challenge/hard-block | same |
+| SearchPeopleFree | Cloudflare challenge/hard-block | same |
+| PeekYou | `NAME_NOT_RESOLVED` — a privacy DNS resolver (NextDNS/Pi-hole/AdGuard) is blocking the domain | point the browser at normal DNS (1.1.1.1), then capture |
+| ClustrMaps | `NAME_NOT_RESOLVED` — same DNS block | same |
+| Radaris | the `/control/privacy` URL redirects to a privacy-**scan upsell**, not the removal flow | capture by hand: search your name on radaris.com → open your profile → "Control Information" (phone/email verify) |
+| MyLife | removal is phone/email, not a simple web form; the site shows a profile page, not an opt-out | find the current CCPA/opt-out page by hand; set `requiresId` from what it asks |
+| AnyWho | 403 | likely covered by the PeopleConnect suppression portal — confirm |
+
+**How to pick these off:** they don't need a bulk run. When you do your own removal
+and reach one of these pages in a normal session, screenshot it (as was done for
+NeighborWho / Ownerly / PeopleLooker) and it becomes a broker file in minutes.
+Fighting a Cloudflare hard-block from a flagged IP is not worth a dedicated sitting.
 
 ## Per-broker workflow
 
@@ -120,20 +131,22 @@ For **each** broker:
 If `optOutExposesLinkage` is `true`, add a `leaveItGuidance` string inside `optOut`
 (otherwise the content validator fails the build — by design).
 
-## Licensing — one-time maintainer decision
+## Licensing — resolved (dual-licensed)
 
 The seed data comes from the **Big-Ass Data Broker Opt-Out List**, licensed
-**CC BY-NC-SA 4.0**. Each broker file already carries `attribution` + `sourceUrl`.
-Two obligations to confirm before public release:
+**CC BY-NC-SA 4.0**. That conflicts with a blanket MIT, so the repo is dual-licensed:
 
-- **BY** — attribution is preserved per entry (done). Consider a top-level
-  `NOTICE` crediting the source list.
-- **NC + SA** — NonCommercial means Errata must stay non-commercial; ShareAlike
-  means our derived broker content should be offered under CC BY-NC-SA. Confirm the
-  repo's overall license is compatible (or dual-license the `content/brokers/`
-  tree). Independently-authored steps (verified from the broker's own page rather
-  than copied from the list) are facts and carry less entanglement, but keeping the
-  attribution is the safe default.
+- **Code** (everything outside `content/`) — MIT, in [`/LICENSE`](../../LICENSE).
+- **`content/brokers/**`** — CC BY-NC-SA 4.0, in
+  [`/content/brokers/LICENSE`](../../content/brokers/LICENSE). ShareAlike: our
+  derived broker content inherits the license. NonCommercial: Errata stays a free,
+  non-commercial tool and any fork must too.
+- Attribution (**BY**) is preserved per entry (`attribution` + `sourceUrl`) and
+  collectively in [`/NOTICE.md`](../../NOTICE.md).
+- `package.json` declares `SEE LICENSE IN NOTICE.md` so the split isn't mis-read as
+  plain MIT.
+
+See [`/NOTICE.md`](../../NOTICE.md) for the full statement.
 
 ## What "done" looks like
 

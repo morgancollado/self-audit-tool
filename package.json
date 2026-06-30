@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "description": "Errata — find and correct your online exposure. Client-side, no accounts, no tracking.",
-  "license": "MIT",
+  "license": "SEE LICENSE IN NOTICE.md",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

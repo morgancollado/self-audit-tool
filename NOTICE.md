@@ -18,7 +18,8 @@ which is licensed **CC BY-NC-SA 4.0**
 Because that license is **ShareAlike**, our derived broker content inherits it.
 Therefore:
 
-- The contents of `content/brokers/**` are licensed **CC BY-NC-SA 4.0**, not MIT.
+- The contents of `content/brokers/**` are licensed **CC BY-NC-SA 4.0**, not MIT
+  (see [`content/brokers/LICENSE`](./content/brokers/LICENSE)).
 - Attribution is preserved per-entry in each broker file's `attribution` and
   `sourceUrl` fields, and collectively here.
 - **NonCommercial:** this content may not be used for commercial purposes. Errata
