@@ -6,7 +6,6 @@
 // harm-reduction (enforced in content). Acting is tracked locally under the
 // deadname pillar.
 
-import { useState } from 'react';
 import { useStorage } from '@/lib/storage/StorageProvider';
 import { DeadnameRecord, RecordClass } from '@/lib/content/types';
 
@@ -23,10 +22,14 @@ const CLASS_LABEL: Record<RecordClass, string> = {
 };
 
 export function RecordGuide({ record }: { record: DeadnameRecord }) {
-  const { addRemediation } = useStorage();
-  const [tracked, setTracked] = useState(false);
+  const { state, addRemediation } = useStorage();
   const monitorOnly = record.monitorOnly === true;
   const label = CLASS_LABEL[record.class];
+  // Derive "tracked" from the shared tracker (keyed by pillar+refId), not local
+  // state — so removing the row in the tracker re-renders the button here.
+  const tracked = (state?.remediations ?? []).some(
+    (r) => r.pillar === 'deadname' && r.refId === record.slug,
+  );
 
   const track = async () => {
     await addRemediation({
@@ -36,7 +39,6 @@ export function RecordGuide({ record }: { record: DeadnameRecord }) {
       action: `Records: ${label}`,
       state: 'sent',
     });
-    setTracked(true);
   };
 
   return (

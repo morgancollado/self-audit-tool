@@ -24,14 +24,18 @@ export function OptOutGenerator({
   vars: OptOutVars;
   findingId?: string;
 }) {
-  const { addRemediation } = useStorage();
+  const { state, addRemediation } = useStorage();
   const exposesLinkage = broker.optOut.optOutExposesLinkage ?? false;
   const [listedUnder, setListedUnder] = useState<ListedUnder>('current');
   // The other name is the linkage disclosure in both directions — default OFF
   // ALWAYS, never keyed off exposesLinkage (a broker that simply forgot the flag
   // must not become the one place a deadname leaks by default).
   const [includeOtherName, setIncludeOtherName] = useState(false);
-  const [tracked, setTracked] = useState(false);
+  // Derive "tracked" from the shared tracker (keyed by pillar+refId), not local
+  // state — so removing the row in the tracker re-renders the button here.
+  const tracked = (state?.remediations ?? []).some(
+    (r) => r.pillar === 'optout' && r.refId === broker.slug,
+  );
 
   const template = broker.optOut.templateKey ? getOptOutTemplate(broker.optOut.templateKey) : undefined;
   const gen = template ? generateOptOut(broker, template, vars, { listedUnder, includeOtherName }) : undefined;
@@ -47,7 +51,6 @@ export function OptOutGenerator({
 
   const track = async (action: string) => {
     await addRemediation({ findingId, pillar: 'optout', refId: broker.slug, action, state: 'sent' });
-    setTracked(true);
   };
 
   return (

@@ -7,20 +7,23 @@
 // helps rather than a bare "can't". Acting is tracked locally via the shared
 // remediation tracker.
 
-import { useState } from 'react';
 import { useStorage } from '@/lib/storage/StorageProvider';
 import { Platform } from '@/lib/content/types';
 
 export function PlatformGuide({ platform }: { platform: Platform }) {
-  const { addRemediation } = useStorage();
-  const [tracked, setTracked] = useState<Set<string>>(new Set());
+  const { state, addRemediation } = useStorage();
   const dr = platform.deadnameRemoval;
 
-  const track = async (pillar: 'deadname' | 'platform', action: string, key: string) => {
+  // Derive "tracked" from the shared tracker (keyed by pillar+refId), not local
+  // state — so removing the row in the tracker re-renders the button here.
+  const remediations = state?.remediations ?? [];
+  const deadnameTracked = remediations.some((r) => r.pillar === 'deadname' && r.refId === platform.slug);
+  const hardeningTracked = remediations.some((r) => r.pillar === 'platform' && r.refId === platform.slug);
+
+  const track = async (pillar: 'deadname' | 'platform', action: string) => {
     // Platform actions are self-completed, not mailed to a custodian — record them
     // as 'confirmed' (done), not 'sent', which is the broker-opt-out state.
     await addRemediation({ findingId: undefined, pillar, refId: platform.slug, action, state: 'confirmed' });
-    setTracked((prev) => new Set(prev).add(key));
   };
 
   return (
@@ -59,10 +62,10 @@ export function PlatformGuide({ platform }: { platform: Platform }) {
           )}
           {dr.limits && <p className="platform-limits">Limits: {dr.limits}</p>}
           {dr.escalation && <p className="platform-escalation">If it resists: {dr.escalation}</p>}
-          {tracked.has('deadname') ? (
+          {deadnameTracked ? (
             <span className="optout-tracked">Tracked ✓</span>
           ) : (
-            <button type="button" onClick={() => track('deadname', `Removed former name on ${platform.name}`, 'deadname')}>
+            <button type="button" onClick={() => track('deadname', `Removed former name on ${platform.name}`)}>
               Mark former-name removal done
             </button>
           )}
@@ -76,10 +79,10 @@ export function PlatformGuide({ platform }: { platform: Platform }) {
             <li key={i}>{s}</li>
           ))}
         </ol>
-        {tracked.has('hardening') ? (
+        {hardeningTracked ? (
           <span className="optout-tracked">Tracked ✓</span>
         ) : (
-          <button type="button" onClick={() => track('platform', `Hardened ${platform.name}`, 'hardening')}>
+          <button type="button" onClick={() => track('platform', `Hardened ${platform.name}`)}>
             Mark hardening done
           </button>
         )}
