@@ -21,6 +21,10 @@
           "key": { "type": "string" },
           "title": { "type": "string" },
           "summary": { "type": "string" },
+          "status": {
+            "type": "string",
+            "description": "Operational status, e.g. when a not-yet-live mechanism actually begins processing."
+          },
           "url": { "$ref": "common.schema.json#/$defs/url" }
         },
         "required": ["key", "title", "summary"],

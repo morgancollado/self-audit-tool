@@ -1,0 +1,10 @@
+{
+  "jurisdiction": { "country": "us" },
+  "appliesNationally": true,
+  "key": "us-data-broker-optout",
+  "title": "Data-broker opt-out (available in every state)",
+  "summary": "Most people-search and data-broker sites let anyone request removal of their listing, regardless of where you live — this is the broker's own policy, not a statutory right. It's the baseline path Errata prepares for you above, and it works even in states that grant no deletion right.",
+  "authorizedAgent": false,
+  "disclaimer": "General information, not legal advice. A voluntary opt-out is honored at the broker's discretion and a listing can reappear later — re-check periodically.",
+  "lastVerified": "2026-06-01"
+}

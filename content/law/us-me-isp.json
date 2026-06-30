@@ -1,0 +1,10 @@
+{
+  "jurisdiction": { "country": "us", "region": "ME" },
+  "appliesNationally": false,
+  "key": "us-me-isp",
+  "title": "Maine: no general deletion right (ISP privacy only)",
+  "summary": "Maine has not enacted a comprehensive consumer-privacy law with a general right to delete; its main privacy law restricts what internet service providers can do with customer data. For removal of broker listings, use the data broker's own opt-out (below).",
+  "authorizedAgent": false,
+  "disclaimer": "General information, not legal advice, and not yet independently reviewed. Maine's law focuses on internet providers — verify whether broader rights have since been enacted.",
+  "lastVerified": "2026-06-01"
+}

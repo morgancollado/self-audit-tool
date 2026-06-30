@@ -1,0 +1,30 @@
+Data-broker opt-out content — CC BY-NC-SA 4.0
+=============================================
+
+The files in this directory (`content/brokers/**`) are licensed under the
+Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License
+(CC BY-NC-SA 4.0), NOT the MIT license that covers the rest of the source code.
+
+  Human-readable summary: https://creativecommons.org/licenses/by-nc-sa/4.0/
+  Full legal code:        https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
+
+Why
+---
+This content is derived in part from the "Big Ass Data Broker Opt-Out List" by
+Yael Grauer and contributors (https://github.com/yaelwrites/Big-Ass-Data-Broker-Opt-Out-List),
+which is licensed CC BY-NC-SA 4.0. Because that license is ShareAlike, our
+derived broker content inherits it.
+
+What this means
+---------------
+- Attribution (BY): each broker file preserves an `attribution` and `sourceUrl`
+  field crediting the source; keep them on any redistribution.
+- NonCommercial (NC): this content may not be used for commercial purposes.
+- ShareAlike (SA): redistributions and adaptations must be licensed CC BY-NC-SA 4.0.
+
+Broker entries independently authored from a broker's own opt-out page (rather
+than copied from the list) consist largely of facts (URLs, steps) that are not
+themselves copyrightable, but they are contributed under CC BY-NC-SA 4.0 too so
+that this entire directory shares one clear license.
+
+See ../../NOTICE.md for the repository-wide statement.

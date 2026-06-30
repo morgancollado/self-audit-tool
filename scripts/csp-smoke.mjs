@@ -20,6 +20,7 @@ import http from 'node:http';
 import { readFileSync, existsSync, statSync } from 'node:fs';
 import { join, extname } from 'node:path';
 import { chromium } from 'playwright';
+import { AxeBuilder } from '@axe-core/playwright';
 
 const OUT = 'out';
 const TYPES = {
@@ -31,6 +32,27 @@ const TYPES = {
 function fail(msg) {
   console.error(`[csp-smoke] FAIL — ${msg}`);
   process.exitCode = 1;
+}
+
+// Accessibility scan for a loaded route. We fail the gate on the structural a11y
+// axe can prove — missing labels/names, invalid ARIA, duplicate ids, AND
+// color-contrast — at serious/critical impact, which is exactly what the M2 form
+// surfaces must get right. (The design tokens are additionally pinned to AA by
+// lib/design/contrast.test.ts; keeping color-contrast in the live scan catches a
+// regression in a specific rendered pairing the token math doesn't enumerate.)
+// Only the structural landmark rules the root-layout shell owns are excluded.
+const AXE_IGNORE = new Set(['region', 'landmark-one-main', 'page-has-heading-one']);
+async function axeFailures(page, label) {
+  const { violations } = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa']).analyze();
+  const serious = violations.filter(
+    (v) => !AXE_IGNORE.has(v.id) && (v.impact === 'serious' || v.impact === 'critical'),
+  );
+  if (serious.length) {
+    for (const v of serious.slice(0, 12)) console.error(`    • [${label}] ${v.id} (${v.impact}): ${v.help}`);
+    fail(`${label} has ${serious.length} serious/critical accessibility violation(s).`);
+  } else {
+    console.log(`[csp-smoke] ${label}: no serious/critical axe violations.`);
+  }
 }
 
 if (!existsSync(join(OUT, 'index.html'))) {
@@ -144,11 +166,241 @@ try {
   if (runHrefs.length === 0) fail('/discover produced no run links after a deadname was entered.');
   if (toGoogle.length > 0) fail(`a deadname "Run" link points at Google: ${toGoogle[0]}`);
   if (!runHrefs.every((h) => h && h.includes('duckduckgo.com'))) fail('a deadname "Run" link is not routed to DuckDuckGo.');
+  await axeFailures(dpage, '/discover');
   await dctx.close();
+
+  // ---- /remediate: safety gate + opt-out paradox default (M2) ----
+  const rctx = await browser.newContext();
+  const rpage = await rctx.newPage();
+  await rpage.addInitScript(() => {
+    window.__csp = [];
+    document.addEventListener('securitypolicyviolation', (e) =>
+      window.__csp.push(`${e.effectiveDirective || e.violatedDirective} ${e.blockedURI || 'inline'}`));
+  });
+  await rpage.goto(base + 'remediate', { waitUntil: 'networkidle' });
+
+  // Same deep-link rule as /discover: a fresh visitor meets the safety intro, not
+  // the former-name input.
+  let rIntroGate = false;
+  try {
+    await rpage.getByText('Before you start').waitFor({ timeout: 8000 });
+    rIntroGate = true;
+  } catch { /* intro not shown */ }
+  const rDeadnameBefore = await rpage.getByLabel('Former name (deadname)').count();
+  if (!rIntroGate) fail('/remediate did not show the safety intro for a fresh visitor (deep-link bypass).');
+  if (rDeadnameBefore > 0) fail('/remediate exposed the former-name input before the safety intro was acknowledged.');
+
+  // Acknowledge → enter a former name → the prepared requests must NOT contain it
+  // by default (opt-out paradox, R13: the linkage is opt-in per broker).
+  await rpage.getByRole('button', { name: /session-only/i }).click();
+  await rpage.getByLabel('Former name (deadname)').waitFor({ timeout: 8000 });
+  await rpage.getByLabel('Former name (deadname)').fill('Deadname McTest');
+  await rpage.getByLabel('Current name', { exact: true }).fill('Alex Real');
+  await rpage.waitForTimeout(300);
+  const bodies = await rpage.locator('pre.optout-body').allInnerTexts();
+  const rviol = await rpage.evaluate(() => window.__csp || []);
+  const leaks = bodies.filter((b) => b.includes('Deadname McTest'));
+  console.log(`[csp-smoke] /remediate: intro-gated=${rIntroGate}, prepared requests=${bodies.length}, leaking former name=${leaks.length}`);
+  if (rviol.length) fail('/remediate violated its CSP.');
+  if (bodies.length === 0) fail('/remediate produced no prepared requests after a name was entered.');
+  if (leaks.length > 0) fail('a prepared opt-out request included the former name by default (opt-out paradox violated).');
+
+  // INVERSE PARADOX (R13, both directions): mark the first broker's listing as
+  // filed under the FORMER name. The request must then carry the former name (to
+  // match the record) but must NOT disclose the current name unless opted in.
+  const firstOptout = rpage.locator('section.optout').first();
+  await firstOptout.getByRole('radio', { name: 'My former name' }).check();
+  await rpage.waitForTimeout(200);
+  const firstBody = await firstOptout.locator('pre.optout-body').innerText();
+  console.log(`[csp-smoke] /remediate inverse-paradox body: ${JSON.stringify(firstBody.slice(0, 80))}`);
+  if (!firstBody.includes('Deadname McTest')) {
+    fail('a former-name listing did not key the request on the former name.');
+  }
+  if (firstBody.includes('Alex Real')) {
+    fail('a former-name listing leaked the current name without opt-in (inverse opt-out paradox).');
+  }
+
+  // State-aware rights (M2): selecting California surfaces DROP; selecting a state
+  // with different rights must NEVER show CCPA framing (the core sub-national
+  // safety rule — implying rights a state doesn't grant is a real-world harm).
+  await rpage.getByLabel('Your state').selectOption('CA');
+  let caShowsDrop = false;
+  try {
+    await rpage.getByText('DROP', { exact: false }).first().waitFor({ timeout: 8000 });
+    caShowsDrop = true;
+  } catch { /* DROP not shown */ }
+  await rpage.getByLabel('Your state').selectOption('TX');
+  await rpage.waitForTimeout(300);
+  const txText = (await rpage.locator('section.rights').innerText()).toUpperCase();
+  const txLeaksCcpa = txText.includes('CCPA');
+  console.log(`[csp-smoke] /remediate rights: CA→DROP=${caShowsDrop}, TX→shows CCPA=${txLeaksCcpa}`);
+  if (!caShowsDrop) fail('selecting California did not surface DROP (the hero removal feature).');
+  if (txLeaksCcpa) fail('a Texas user was shown CCPA framing (implies a right TX does not grant).');
+
+  // A newly-authored comprehensive state (Oregon) surfaces its own law, not CA's.
+  await rpage.getByLabel('Your state').selectOption('OR');
+  await rpage.waitForTimeout(300);
+  const orText = await rpage.locator('section.rights').innerText();
+  if (!orText.includes('Oregon')) fail('selecting Oregon did not surface Oregon-specific rights.');
+  if (orText.toUpperCase().includes('CCPA')) fail('an Oregon user was shown CCPA framing.');
+  // A genuinely thin state (New York) shows the honest "no general deletion right"
+  // card rather than implying a right that doesn't exist.
+  await rpage.getByLabel('Your state').selectOption('NY');
+  await rpage.waitForTimeout(300);
+  const nyText = await rpage.locator('section.rights').innerText();
+  if (!nyText.includes('New York')) fail('selecting New York did not surface its honest limited-rights note.');
+  // Full coverage: a state with no comprehensive law (Alabama) now has its own
+  // honest entry rather than the generic "no guidance yet" fallback.
+  await rpage.getByLabel('Your state').selectOption('AL');
+  await rpage.waitForTimeout(300);
+  const alText = await rpage.locator('section.rights').innerText();
+  if (!alText.includes('Alabama')) fail('Alabama has no authored rights entry (full coverage incomplete).');
+  if (alText.includes('no verified guidance yet')) fail('Alabama still falls back to the generic note.');
+  console.log('[csp-smoke] /remediate rights: OR→Oregon, NY→limited, AL→authored (full coverage)');
+
+  await axeFailures(rpage, '/remediate');
+  await rctx.close();
+
+  // ---- /harden: safety gate + platform guides render, no dead-ends (M2) ----
+  const hctx = await browser.newContext();
+  const hpage = await hctx.newPage();
+  await hpage.addInitScript(() => {
+    window.__csp = [];
+    document.addEventListener('securitypolicyviolation', (e) =>
+      window.__csp.push(`${e.effectiveDirective || e.violatedDirective} ${e.blockedURI || 'inline'}`));
+  });
+  await hpage.goto(base + 'harden', { waitUntil: 'networkidle' });
+
+  let hIntroGate = false;
+  try {
+    await hpage.getByText('Before you start').waitFor({ timeout: 8000 });
+    hIntroGate = true;
+  } catch { /* intro not shown */ }
+  if (!hIntroGate) fail('/harden did not show the safety intro for a fresh visitor (deep-link bypass).');
+
+  await hpage.getByRole('button', { name: /session-only/i }).click();
+  await hpage.getByText('Harden the account', { exact: false }).first().waitFor({ timeout: 8000 });
+  const guideCount = await hpage.locator('section.platform').count();
+  const hviol = await hpage.evaluate(() => window.__csp || []);
+  // Reddit can't change a username — but the no-dead-end rule means it must still
+  // offer steps, never a bare "can't".
+  const redditSteps = await hpage.locator('section.platform:has(#platform-reddit) .platform-steps li').count().catch(() => 0);
+  console.log(`[csp-smoke] /harden: intro-gated=${hIntroGate}, platform guides=${guideCount}, reddit steps=${redditSteps}`);
+  if (hviol.length) fail('/harden violated its CSP.');
+  if (guideCount === 0) fail('/harden rendered no platform guides after the safety intro.');
+  if (redditSteps === 0) fail('Reddit (no direct username change) offered no steps — a dead-end.');
+  await axeFailures(hpage, '/harden');
+  await hctx.close();
+
+  // ---- /records: safety gate + region-gated records, no dead-ends (M2) ----
+  const recctx = await browser.newContext();
+  const recpage = await recctx.newPage();
+  await recpage.addInitScript(() => {
+    window.__csp = [];
+    document.addEventListener('securitypolicyviolation', (e) =>
+      window.__csp.push(`${e.effectiveDirective || e.violatedDirective} ${e.blockedURI || 'inline'}`));
+  });
+  await recpage.goto(base + 'records', { waitUntil: 'networkidle' });
+
+  let recIntroGate = false;
+  try {
+    await recpage.getByText('Before you start').waitFor({ timeout: 8000 });
+    recIntroGate = true;
+  } catch { /* intro not shown */ }
+  if (!recIntroGate) fail('/records did not show the safety intro for a fresh visitor (deep-link bypass).');
+
+  await recpage.getByRole('button', { name: /session-only/i }).click();
+  await recpage.locator('section.record').first().waitFor({ timeout: 8000 });
+  const baseRecords = await recpage.locator('section.record').count();
+  // Region-gated: states with authored court-record guidance gain it; a state
+  // without one (Wyoming) stays at the national/global baseline — and never sees
+  // another state's guide (same sub-national rule as rights).
+  await recpage.getByLabel('Your state').selectOption('WY');
+  await recpage.waitForTimeout(300);
+  const wyRecords = await recpage.locator('section.record').count();
+  await recpage.getByLabel('Your state').selectOption('CA');
+  await recpage.waitForTimeout(300);
+  const caRecords = await recpage.locator('section.record').count();
+  // A newly-researched state (Texas) also gains a state-specific sealing guide.
+  await recpage.getByLabel('Your state').selectOption('TX');
+  await recpage.waitForTimeout(300);
+  const txRecords = await recpage.locator('section.record').count();
+  const recviol = await recpage.evaluate(() => window.__csp || []);
+  console.log(`[csp-smoke] /records: intro-gated=${recIntroGate}, base=${baseRecords}, WY=${wyRecords}, CA=${caRecords}, TX=${txRecords}`);
+  if (recviol.length) fail('/records violated its CSP.');
+  if (baseRecords === 0) fail('/records rendered no record guides after the safety intro.');
+  if (!(caRecords > wyRecords)) fail('a California user did not gain the state-specific court-record guide.');
+  if (!(txRecords > wyRecords)) fail('a Texas user did not gain the newly-authored state records guide.');
+  await axeFailures(recpage, '/records');
+  await recctx.close();
+
+  // ---- /playbook: safety gate + the four stages render, axe-clean (M2) ----
+  const pbctx = await browser.newContext();
+  const pbpage = await pbctx.newPage();
+  await pbpage.addInitScript(() => {
+    window.__csp = [];
+    document.addEventListener('securitypolicyviolation', (e) =>
+      window.__csp.push(`${e.effectiveDirective || e.violatedDirective} ${e.blockedURI || 'inline'}`));
+  });
+  await pbpage.goto(base + 'playbook', { waitUntil: 'networkidle' });
+
+  let pbIntroGate = false;
+  try {
+    await pbpage.getByText('Before you start').waitFor({ timeout: 8000 });
+    pbIntroGate = true;
+  } catch { /* intro not shown */ }
+  if (!pbIntroGate) fail('/playbook did not show the safety intro for a fresh visitor (deep-link bypass).');
+
+  await pbpage.getByRole('button', { name: /session-only/i }).click();
+  await pbpage.locator('ol.playbook li.playbook-stage').first().waitFor({ timeout: 8000 });
+  const stageCount = await pbpage.locator('ol.playbook li.playbook-stage').count();
+  const pbviol = await pbpage.evaluate(() => window.__csp || []);
+  console.log(`[csp-smoke] /playbook: intro-gated=${pbIntroGate}, stages=${stageCount}`);
+  if (pbviol.length) fail('/playbook violated its CSP.');
+  if (stageCount !== 4) fail(`/playbook should cross-link all four pillars; rendered ${stageCount}.`);
+  await axeFailures(pbpage, '/playbook');
+  await pbctx.close();
+
+  // ---- /settings: safety gate + encrypted backup downloads under the CSP (M2) ----
+  const setctx = await browser.newContext({ acceptDownloads: true });
+  const setpage = await setctx.newPage();
+  await setpage.addInitScript(() => {
+    window.__csp = [];
+    document.addEventListener('securitypolicyviolation', (e) =>
+      window.__csp.push(`${e.effectiveDirective || e.violatedDirective} ${e.blockedURI || 'inline'}`));
+  });
+  await setpage.goto(base + 'settings', { waitUntil: 'networkidle' });
+
+  let setIntroGate = false;
+  try {
+    await setpage.getByText('Before you start').waitFor({ timeout: 8000 });
+    setIntroGate = true;
+  } catch { /* intro not shown */ }
+  if (!setIntroGate) fail('/settings did not show the safety intro for a fresh visitor (deep-link bypass).');
+
+  await setpage.getByRole('button', { name: /session-only/i }).click();
+  await setpage.getByText('Backup & restore', { exact: false }).waitFor({ timeout: 8000 });
+  // Encrypted-by-default export: enter a passphrase and download. The blob
+  // download must succeed under the strict CSP (default-src 'self', no blob:).
+  await setpage.getByLabel('Passphrase', { exact: true }).fill('a-strong-passphrase');
+  const [download] = await Promise.all([
+    setpage.waitForEvent('download', { timeout: 15000 }),
+    setpage.getByRole('button', { name: 'Download backup' }).click(),
+  ]);
+  const fname = download.suggestedFilename();
+  const setviol = await setpage.evaluate(() => window.__csp || []);
+  console.log(`[csp-smoke] /settings: intro-gated=${setIntroGate}, download=${JSON.stringify(fname)}`);
+  if (setviol.length) fail('/settings violated its CSP (the backup download was blocked).');
+  if (!/^errata-backup-.*\.json$/.test(fname)) fail(`unexpected backup filename: ${fname}`);
+  await axeFailures(setpage, '/settings');
+  await setctx.close();
 
   if (!process.exitCode) {
     console.log('[csp-smoke] OK — static export runs under its CSP, leaves no pre-consent trace,');
-    console.log('[csp-smoke]      gates /discover behind the safety intro, and routes deadname searches to DuckDuckGo.');
+    console.log('[csp-smoke]      gates every Phase-2 route behind the safety intro, routes deadname');
+    console.log('[csp-smoke]      searches to DuckDuckGo, omits the former name from opt-outs by default,');
+    console.log('[csp-smoke]      surfaces CA DROP, region-gates state records, never shows CCPA to a');
+    console.log('[csp-smoke]      non-CA user, and downloads an encrypted backup under the strict CSP.');
   }
 } finally {
   await browser.close();

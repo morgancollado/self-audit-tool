@@ -1,0 +1,10 @@
+{
+  "jurisdiction": { "country": "us", "region": "UT" },
+  "appliesNationally": false,
+  "key": "us-ut-ucpa",
+  "title": "Utah: Utah Consumer Privacy Act (UCPA) — narrower rights",
+  "summary": "Utah residents can opt out of the sale of personal data and targeted advertising, and can delete data they provided to a business. Utah's deletion right is narrower than California's — it doesn't clearly reach data a business obtained from other sources — and Utah does not mandate a universal opt-out signal. The UCPA took effect on December 31, 2023.",
+  "authorizedAgent": false,
+  "disclaimer": "General information, not legal advice, and not yet independently reviewed. Because Utah's deletion right is limited, the broker's own opt-out (below) is often the more effective route — verify before relying on either.",
+  "lastVerified": "2026-06-01"
+}

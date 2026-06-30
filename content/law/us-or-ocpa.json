@@ -1,0 +1,10 @@
+{
+  "jurisdiction": { "country": "us", "region": "OR" },
+  "appliesNationally": false,
+  "key": "us-or-ocpa",
+  "title": "Oregon: Oregon Consumer Privacy Act (OCPA) deletion & opt-out",
+  "summary": "Oregon residents can request deletion of the personal data a business holds and opt out of its sale and targeted advertising, including through a recognized universal opt-out signal. Oregon also lets you request a list of the specific third parties that received your data — useful for finding where to follow up. The OCPA took effect on July 1, 2024.",
+  "authorizedAgent": true,
+  "disclaimer": "General information, not legal advice, and not yet independently reviewed — verify the current process and your eligibility before relying on it.",
+  "lastVerified": "2026-06-01"
+}

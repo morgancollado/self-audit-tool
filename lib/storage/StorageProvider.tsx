@@ -6,10 +6,11 @@
 // the app behaves as ephemeral and the panic button still works.
 
 import { createContext, useContext, useEffect, useState, useCallback, ReactNode } from 'react';
-import { AuditState, Finding, Preferences, StorageMode, DEFAULT_PREFERENCES } from '../model/types';
-import { NewFindingInput, newFinding } from '../model/factory';
+import { AuditState, Finding, Jurisdiction, Remediation, Preferences, StorageMode, SCHEMA_VERSION, DEFAULT_PREFERENCES } from '../model/types';
+import { NewFindingInput, newFinding, NewRemediationInput, newRemediation, newAuditState, today } from '../model/factory';
 import { StorageManager, memoryBackends } from './manager';
 import { createDefaultStorage, requestPersistentStorage } from './browser';
+import { ImportMode, mergeAudit, parseBackup, serializeBackup } from './backup';
 
 interface StorageContextValue {
   ready: boolean;
@@ -20,12 +21,21 @@ interface StorageContextValue {
   setMode: (mode: StorageMode, opts?: { wipeExisting?: boolean }) => Promise<void>;
   savePreferences: (next: Preferences) => Promise<void>;
   acknowledgeSafetyIntro: () => Promise<void>;
+  /** Set the user's jurisdiction (state). Drives state-aware rights surfacing. */
+  setJurisdiction: (jurisdiction: Jurisdiction) => Promise<void>;
   // Findings ledger (Phase 1)
   addFinding: (input: NewFindingInput) => Promise<Finding>;
   updateFinding: (id: string, patch: Partial<Finding>) => Promise<void>;
   removeFinding: (id: string) => Promise<void>;
+  // Remediation tracker (Phase 2)
+  addRemediation: (input: NewRemediationInput) => Promise<Remediation>;
+  updateRemediation: (id: string, patch: Partial<Remediation>) => Promise<void>;
+  removeRemediation: (id: string) => Promise<void>;
   // Resumable discovery progress
   setStepDone: (stepId: string, done: boolean) => Promise<void>;
+  // Encrypted-by-default backup (export/import)
+  exportBackup: (opts: { passphrase?: string }) => Promise<string>;
+  importBackup: (text: string, opts: { passphrase?: string; mode: ImportMode }) => Promise<void>;
   /** PANIC: wipe everything and reload to a neutral screen. */
   panic: () => Promise<void>;
 }
@@ -102,6 +112,24 @@ export function StorageProvider({ children }: { children: ReactNode }) {
     [manager],
   );
 
+  const setJurisdiction = useCallback(
+    async (jurisdiction: Jurisdiction) => {
+      const next = { ...(await manager.loadPreferences()), jurisdiction };
+      await manager.savePreferences(next);
+      setPreferences(next);
+      // Keep an existing audit doc in sync, but don't force-create one — picking a
+      // state shouldn't write persisted state before the user does anything else.
+      const existing = await manager.audit.load();
+      if (existing) {
+        const updated = await manager.audit.update((d) => {
+          d.jurisdiction = jurisdiction;
+        });
+        setState(updated);
+      }
+    },
+    [manager],
+  );
+
   const acknowledgeSafetyIntro = useCallback(async () => {
     const next = { ...(await manager.loadPreferences()), safetyIntroAcknowledged: true };
     await manager.savePreferences(next);
@@ -150,6 +178,53 @@ export function StorageProvider({ children }: { children: ReactNode }) {
     [mutate],
   );
 
+  const addRemediation = useCallback(
+    async (input: NewRemediationInput): Promise<Remediation> => {
+      let result: Remediation = newRemediation(input);
+      await mutate((d) => {
+        // Dedupe by (pillar, refId): the same broker/platform action shouldn't
+        // accrete duplicate tracker rows if the user re-mounts the page and clicks
+        // "track it" again. Update the existing row in place instead.
+        const existing = input.refId
+          ? d.remediations.find((r) => r.pillar === input.pillar && r.refId === input.refId)
+          : undefined;
+        if (existing) {
+          existing.action = input.action;
+          existing.state = input.state ?? existing.state;
+          if (input.findingId) existing.findingId = input.findingId;
+          existing.updatedAt = today();
+          result = existing;
+        } else {
+          d.remediations.unshift(result);
+        }
+      });
+      return result;
+    },
+    [mutate],
+  );
+
+  const updateRemediation = useCallback(
+    async (id: string, patch: Partial<Remediation>) => {
+      await mutate((d) => {
+        const r = d.remediations.find((x) => x.id === id);
+        if (r) {
+          Object.assign(r, patch);
+          r.updatedAt = today();
+        }
+      });
+    },
+    [mutate],
+  );
+
+  const removeRemediation = useCallback(
+    async (id: string) => {
+      await mutate((d) => {
+        d.remediations = d.remediations.filter((x) => x.id !== id);
+      });
+    },
+    [mutate],
+  );
+
   const setStepDone = useCallback(
     async (stepId: string, done: boolean) => {
       await mutate((d) => {
@@ -160,6 +235,44 @@ export function StorageProvider({ children }: { children: ReactNode }) {
       });
     },
     [mutate],
+  );
+
+  const exportBackup = useCallback(
+    async (opts: { passphrase?: string }): Promise<string> => {
+      const prefs = await manager.loadPreferences();
+      // Export whatever exists; if nothing's saved yet, export a valid empty doc
+      // rather than failing — a backup the user can grow into.
+      const current = (await manager.audit.load()) ?? newAuditState(prefs.jurisdiction ?? { country: 'us' });
+      return serializeBackup(current, opts);
+    },
+    [manager],
+  );
+
+  const importBackup = useCallback(
+    async (text: string, opts: { passphrase?: string; mode: ImportMode }): Promise<void> => {
+      const { state: incoming } = await parseBackup(text, opts.passphrase);
+      const prefs = await manager.loadPreferences();
+      let next: AuditState;
+      if (opts.mode === 'merge') {
+        const current =
+          (await manager.audit.load()) ?? newAuditState(prefs.jurisdiction ?? { country: 'us' });
+        next = mergeAudit(current, incoming);
+      } else {
+        next = incoming;
+      }
+      next.updatedAt = today();
+      next.schemaVersion = SCHEMA_VERSION;
+      await manager.audit.save(next);
+      setState(next);
+      // On a full replace, reflect the imported jurisdiction in prefs so rights and
+      // records match the restored data.
+      if (opts.mode === 'replace') {
+        const np = { ...prefs, jurisdiction: incoming.jurisdiction };
+        await manager.savePreferences(np);
+        setPreferences(np);
+      }
+    },
+    [manager],
   );
 
   const panic = useCallback(async () => {
@@ -183,10 +296,16 @@ export function StorageProvider({ children }: { children: ReactNode }) {
         setMode,
         savePreferences,
         acknowledgeSafetyIntro,
+        setJurisdiction,
         addFinding,
         updateFinding,
         removeFinding,
+        addRemediation,
+        updateRemediation,
+        removeRemediation,
         setStepDone,
+        exportBackup,
+        importBackup,
         panic,
       }}
     >

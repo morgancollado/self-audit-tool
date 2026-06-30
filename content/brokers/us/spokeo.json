@@ -19,7 +19,7 @@
       "Submit it on the opt-out page with your email.",
       "Confirm via the verification email."
     ],
-    "templateKey": "ccpa-deletion-generic"
+    "templateKey": "optout-deletion-generic"
   },
   "notes": "Re-check in ~6 months; brokers often re-list.",
   "attribution": "Derived from Big-Ass Data Broker Opt-Out List (CC BY-NC-SA).",

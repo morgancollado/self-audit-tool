@@ -1,0 +1,10 @@
+{
+  "jurisdiction": { "country": "us", "region": "IL" },
+  "appliesNationally": false,
+  "key": "us-il-bipa",
+  "title": "Illinois: no general deletion right, but strong biometric protection",
+  "summary": "Illinois has not enacted a comprehensive consumer-privacy law with a general right to delete. But its Biometric Information Privacy Act (BIPA) strongly regulates how businesses collect and keep biometric identifiers such as faceprints and fingerprints, including a private right to sue. For general removal, use the data broker's own opt-out (below).",
+  "authorizedAgent": false,
+  "disclaimer": "General information, not legal advice, and not yet independently reviewed. BIPA covers biometric data specifically; verify scope before relying on it.",
+  "lastVerified": "2026-06-01"
+}

@@ -1,0 +1,26 @@
+{
+  "slug": "google",
+  "name": "Google Search",
+  "difficulty": "medium",
+  "deadnameRemoval": {
+    "supported": true,
+    "tool": "Results about you / content removal",
+    "url": "https://myactivity.google.com/results-about-you",
+    "steps": [
+      "Sign in and open Google's “Results about you” tool.",
+      "Submit the URLs of search results that show your former name.",
+      "Pick the reason — use the personal-info/doxxing option for contact details, or the “outdated content” tool once the source page itself has changed.",
+      "Track each request's status in the tool; Google emails you the outcome."
+    ],
+    "limits": "Google can drop a result from its index, but the page still exists on the original site — opt out or request removal at the source too. Legitimate news and public-record pages are often refused.",
+    "escalation": "If a result is refused and it puts you at risk, re-submit citing personal safety, and pursue removal directly at the source site."
+  },
+  "hardening": {
+    "steps": [
+      "Open the “Results about you” dashboard and turn on alerts so new results for your name and former name surface early.",
+      "In your Google Account → Data & privacy, turn off Web & App Activity if you don't want it retained.",
+      "Set your Google profile / About-me name to your current name."
+    ]
+  },
+  "lastVerified": "2026-06-01"
+}

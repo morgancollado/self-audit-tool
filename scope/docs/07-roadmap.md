@@ -76,6 +76,158 @@ action** (no dead-ends).
 - **Exit criteria:** a complete US Discover → Remediate loop, fully static, with
   no dead-end findings anywhere. **This is the credible public v1.**
 
+> **Status: M2 in progress — opt-out generation core landed.** The per-broker
+> opt-out generator is live at `/remediate` (gated behind the safety intro, same
+> as `/discover`). It prepares each request **in-memory** from transient identity
+> and the user presses send (the 95% rule, enforced in code: there is no path
+> that transmits). Formats: copyable text + printable letter always; `mailto:`
+> when the broker accepts email. The **opt-out paradox (R13)** is first-class —
+> including the former name is **opt-in per broker, defaulted OFF** wherever the
+> opt-out itself discloses the linkage, with the broker's "leave it" guidance
+> surfaced as a real outcome; `requiresId` brokers carry a minimize-disclosure
+> warning. A **remediation tracker** (todo/sent/confirmed/blocked + re-check date)
+> records what was sent, all local. Content: `template` schema wired with one
+> generic `optout-deletion-generic` template; validation now enforces
+> broker→template cross-refs and template placeholder integrity. The browser
+> smoke test guards the `/remediate` safety gate and asserts no prepared request
+> leaks the former name by default. All gates green; both builds pass.
+>
+> **Update — state-aware rights + California DROP landed.** `/remediate` now opens
+> with a state selector that drives rights surfacing through a pure, region-gated
+> selector (`lib/remediate/rights.ts`): region-specific rights surface ONLY to an
+> exact region match, never cross-country, and never invented — a Texas user is
+> never shown CCPA framing. **California DROP is the hero**, gated on CA and
+> surfaced as a distinct callout (the state runs it; we hold nothing). Authored
+> law content for the v1 priority subset (CA + the national voluntary-opt-out
+> baseline, CO, CT, VA, TX), each carrying the required not-legal-advice
+> disclaimer and a standing **not-yet-reviewed / verify-locally** banner (R4/R11);
+> states without authored guidance get an honest "no verified guidance yet" note
+> plus the universal opt-out (no dead-end). `setJurisdiction` persists the state
+> (and syncs an existing audit doc) without force-creating storage. The smoke test
+> now asserts CA→DROP and that a non-CA user never sees CCPA.
+>
+> **Update — platform hardening + deadname-removal flows landed.** A new
+> `/harden` route (gated behind the safety intro, like `/discover` and
+> `/remediate`) carries content-driven, click-by-click guides for Google,
+> Instagram/Meta, X, LinkedIn, TikTok, and Reddit. Each leads with **former-name
+> removal**, then account hardening; actions feed the shared remediation tracker
+> (pillars `deadname` / `platform`). The **no-dead-end rule** is enforced in
+> content validation: a platform's deadname-removal block must carry steps even
+> when the platform can't change the thing directly — Reddit (usernames can't be
+> changed) offers edit-before-delete + reporting rather than a bare "can't." The
+> smoke test now asserts the `/harden` gate, that all guides render, and that
+> Reddit still offers steps. Guides are jurisdiction-agnostic; platform UIs drift,
+> so each carries `lastVerified` for the staleness surface.
+>
+> **Update — adversarial-review hardening (PR #2).** Findings from the review,
+> all fixed and gated:
+> - **Inverse opt-out paradox (R13, both directions):** the generator now keys
+>   each request on *which name the listing is filed under* (a per-broker choice),
+>   and the user's *other* name is opt-in and **OFF by default everywhere** — never
+>   keyed off `optOutExposesLinkage` anymore, so a broker that simply omits the flag
+>   can't become the one place a name leaks. A listing under the former name no
+>   longer forces disclosure of the current name. Guarded in the smoke test.
+> - **Findings-driven remediation:** `/remediate` now leads with the brokers
+>   Discover actually flagged, ties each prepared request back to its finding, and
+>   carries a "only my findings" toggle + name filter so the list scales; it still
+>   shows the full set (no dead-end) when there are no findings, with a nudge to
+>   Discover first.
+> - **Tracker:** de-duplicates by (pillar, refId) so re-mounting can't accrete
+>   duplicate rows; platform actions record as `confirmed` (done), not `sent`.
+> - **Accessibility:** an **axe scan** (WCAG 2 A/AA, serious/critical) now runs in
+>   the browser smoke test across `/discover`, `/remediate`, `/harden`; live-region
+>   announcements for the state swap, the include-name toggle, and copy results.
+> - **Honesty surfaces:** `lastVerified` is shown on broker/law/platform cards, and
+>   DROP carries an explicit **availability** note (processing required from
+>   2026-08-01) rather than reading as already-live. Empty-details state prompts the
+>   user to fill in their name. `buildMailto` leaves the address verbatim.
+>
+> **Update — legal name-change / court-record + archive/cache removal landed.** A
+> new `/records` route (gated behind the safety intro like the other Phase 2
+> flows) covers the deadname's most permanent homes: the legal name-change process
+> (publication requirement + **sealed/confidential petition** routes flagged
+> *before* filing), the indexed court order, web archives (Wayback exclusion), and
+> search caches (remove-outdated-content + Results-about-you). Region-gated through
+> a pure selector (`lib/remediate/records.ts`): global records apply everywhere, a
+> region-specific court-record surfaces ONLY on an exact region match (a CA user
+> gains it; a TX user doesn't) — never cross-country. No-dead-end enforced by the
+> record schema (actions, or explicit monitor-only + harm-reduction). Carries the
+> standing not-yet-reviewed / verify-locally banner since name-change/sealing
+> content is gated on legal review (R4/R11). A reusable `StateSelect` drives the
+> region. Smoke test now gates `/records`, asserts CA gains the state record, and
+> runs the axe scan there too.
+>
+> **Update — consolidated deadname-removal playbook landed.** A new `/playbook`
+> route (gated behind the safety intro) cross-links the four pillars in the order
+> that works best — Discover → brokers → platforms → records — as a single guided
+> path, and reflects the user's own local progress at each stage (findings +
+> deadname findings, and per-pillar action counts) via a pure summary
+> (`lib/remediate/progress.ts`). It's read-only over the audit state: it sends and
+> stores nothing of its own. The home page now leads with it, and each pillar
+> breadcrumb links back to it as the hub. Smoke test gates `/playbook`, asserts all
+> four stages render, and runs the axe scan there too.
+>
+> **Update — encrypted-by-default export/import landed.** A new `/settings` route
+> (gated behind the safety intro) hosts storage mode + **backup & restore**. Export
+> is **encrypted by default** (AES-256-GCM, PBKDF2-SHA-256 at 310k iterations,
+> `lib/storage/crypto.ts`); plaintext is an explicit, warned opt-out. Import
+> detects encrypted vs plaintext, prompts for the passphrase, runs schema
+> migrations, validates shape, and rejects malformed/newer-version/wrong-passphrase
+> files calmly — with **replace (default) or merge** (union by id, no duplicates).
+> The download is a same-origin blob `a[download]`, verified to work under the
+> strict CSP (`default-src 'self'`, no `blob:`) by the smoke test, which also
+> performs a real encrypted download and runs the axe scan on `/settings`. Unit
+> tests cover the crypto round-trip, wrong-passphrase rejection, "the deadname is
+> never readable in an encrypted backup," plaintext round-trip, and merge.
+>
+> **M2 deliverables are complete.** The full US Discover → Remediate loop is in
+> place — brokers (both-directions opt-out paradox), state-aware rights + CA DROP,
+> platform hardening + deadname removal, public records / name-change, the
+> consolidated playbook, and an encrypted-by-default backup — fully static, no
+> dead-ends, no trackers, axe-clean. Remaining before a credible public v1 is
+> **content depth, not architecture**: authoring the rest of the states (records +
+> rights) toward full coverage, and the **legal review** that gates general
+> release of the rights/records prose (it ships behind the verify-locally banner
+> until then).
+>
+> **Update — state rights coverage expanded (Q9).** The rights layer now covers
+> 21 states: the priority subset (CA, CO, CT, VA, TX) plus the comprehensive-law
+> states in effect by mid-2026 (OR, MT, DE, NH, NJ, NE, MN, MD, TN, IN, KY, RI),
+> the two narrower laws called out honestly (UT, IA), and the two remaining
+> priority states that are genuinely weak — FL (applies only to ~$1B+ companies,
+> so most brokers fall outside it) and NY (no general deletion right yet) — each
+> routed to the universal broker opt-out so there's no dead-end. Unauthored states
+> still degrade gracefully to the national baseline + an honest "no verified
+> guidance yet" note. Every card carries the not-reviewed / verify-locally banner.
+> Smoke test now also asserts a comprehensive state (OR) surfaces its own law (not
+> CCPA) and a thin state (NY) shows the honest limited note. **Still gated on legal
+> review before general release; records remain national + CA.**
+>
+> **Update — full 50-state + DC rights coverage; per-state records research
+> begun.** Every US jurisdiction now has an authored rights entry: the 20
+> comprehensive-law states, plus honest "no general deletion right yet" entries for
+> the rest, with notable narrower rights called out by name (WA My Health My Data,
+> NV opt-out-of-sale, VT data-broker registry + vetoed act, IL BIPA, ME ISP law).
+> No state falls back to the generic note anymore. The law import list moved into a
+> dedicated manifest (`lib/content/laws.ts`) to keep the loader clean as the set
+> grew to 52 entries. **Records research has begun per state**: alongside CA,
+> state-specific court-record **sealing / publication-waiver** guidance is now
+> authored for NY, IL, and WA (the latter noting its Address Confidentiality
+> Program) — each region-gated and behind the verify-locally banner. Smoke test
+> asserts a no-comprehensive-law state (AL) is authored (not the fallback) and that
+> NY gains a state records guide. Remaining: records for the rest of the states
+> (deep per-state legal research, gated on review) and the standing legal review of
+> all rights/records prose.
+>
+> **Update — per-state records extended to 12 states.** Court-record sealing /
+> publication-waiver guidance now covers CA, NY, IL, WA, plus TX, PA, MA, MI, NJ —
+> with honest framing where the option is narrower. Each is region-gated and behind
+> the verify-locally banner; states without an authored record still fall back to
+> the national name-change guide (which already prompts "ask your court about
+> sealed/confidential petitions"). Smoke test uses WY as the no-record baseline and
+> asserts CA and TX each gain their state guide. Remaining records states are
+> further per-state legal research, still gated on review.
+
 ## M3 — Breach checks (privacy-route default)  *(small–medium)*
 - Client-side **password** k-anonymity check (no proxy).
 - Email check: **deep-link is the default** (no project infra in the path).

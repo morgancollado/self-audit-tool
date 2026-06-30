@@ -1,0 +1,19 @@
+{
+  "jurisdiction": { "country": "us", "region": "CA" },
+  "appliesNationally": false,
+  "key": "us-ca-ccpa",
+  "title": "California: CCPA / CPRA deletion & opt-out rights",
+  "summary": "California residents can require businesses to delete the personal information they hold and to stop selling or sharing it, and may appoint an authorized agent to make those requests. People-search brokers operating in California are generally covered.",
+  "authorizedAgent": true,
+  "specialMechanisms": [
+    {
+      "key": "ca-drop",
+      "title": "DROP — delete from every registered data broker in one request",
+      "summary": "California's DELETE Act created DROP, the Delete Request and Opt-out Platform: a single verified request that every data broker registered with the state must honor. It is the closest thing to one-button removal — and the state, not Errata, operates it, so we hold nothing.",
+      "status": "Registered brokers are required to begin processing DROP deletion requests on August 1, 2026. Until then the platform may not yet remove your data — check the CPPA site for the live request flow and current dates before relying on it.",
+      "url": "https://cppa.ca.gov/"
+    }
+  ],
+  "disclaimer": "General information, not legal advice, and not yet independently reviewed — verify the current process and your eligibility before relying on it. DROP is run by the California Privacy Protection Agency; check the CPPA site for the live request flow and current dates.",
+  "lastVerified": "2026-06-01"
+}

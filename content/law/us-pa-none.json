@@ -1,0 +1,13 @@
+{
+  "jurisdiction": {
+    "country": "us",
+    "region": "PA"
+  },
+  "appliesNationally": false,
+  "key": "us-pa-none",
+  "title": "Pennsylvania: no general deletion right yet",
+  "summary": "As of mid-2026, Pennsylvania has not enacted a comprehensive consumer-privacy law granting a general right to delete personal data held by data brokers. For removal, rely on the data broker's own opt-out (below), which works regardless of where you live.",
+  "authorizedAgent": false,
+  "disclaimer": "General information, not legal advice, and not yet independently reviewed. State privacy laws change quickly — verify whether your state has enacted new rights before relying on this.",
+  "lastVerified": "2026-06-01"
+}

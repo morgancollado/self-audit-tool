@@ -1,0 +1,10 @@
+{
+  "jurisdiction": { "country": "us", "region": "NE" },
+  "appliesNationally": false,
+  "key": "us-ne-ndpa",
+  "title": "Nebraska: Nebraska Data Privacy Act (NDPA) deletion & opt-out",
+  "summary": "Nebraska residents can request deletion of the personal data a business holds and opt out of its sale and targeted advertising, including through a recognized universal opt-out signal. The NDPA took effect on January 1, 2025.",
+  "authorizedAgent": true,
+  "disclaimer": "General information, not legal advice, and not yet independently reviewed — verify the current process and your eligibility before relying on it.",
+  "lastVerified": "2026-06-01"
+}

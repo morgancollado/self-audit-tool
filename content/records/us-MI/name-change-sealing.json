@@ -1,0 +1,16 @@
+{
+  "slug": "name-change-sealing-mi",
+  "jurisdiction": { "country": "us", "region": "MI" },
+  "class": "court-record",
+  "exposesDeadnameRisk": "high",
+  "permanence": "high",
+  "whatItIs": "In Michigan, a name change is normally published and becomes a public court record. A court can waive publication and keep the record confidential for good cause — including a risk to the petitioner's safety.",
+  "actions": [
+    "When you file, ask the court to waive publication and keep the record confidential for good cause on safety grounds — a legal-aid or LGBTQ legal org can help you show good cause.",
+    "If your order is already public, ask the clerk what options exist to restrict it after the fact.",
+    "Then suppress the downstream copies: broker opt-outs, Google 'Results about you', and the web-archive and search-cache removals."
+  ],
+  "sealedPetitionAvailable": true,
+  "disclaimer": "Informational only — not legal advice, and not yet reviewed by a lawyer. Michigan practice varies by county and judge and changes over time; verify with the court or a legal-aid org before filing.",
+  "lastVerified": "2026-06-01"
+}

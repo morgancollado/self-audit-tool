@@ -1,0 +1,27 @@
+{
+  "slug": "checkpeople",
+  "jurisdiction": { "country": "us" },
+  "name": "CheckPeople",
+  "category": "people-search",
+  "exposesDeadnameRisk": "high",
+  "searchUrl": "https://checkpeople.com/",
+  "optOut": {
+    "methods": ["web-form"],
+    "webFormUrl": "https://checkpeople.com/opt-out",
+    "email": null,
+    "mailingAddress": null,
+    "requiresId": false,
+    "optOutExposesLinkage": false,
+    "steps": [
+      "Open the Suppression Center at the opt-out URL.",
+      "Enter your email address and agree to the terms.",
+      "Click Continue.",
+      "Open the verification email and click the link to confirm the suppression."
+    ],
+    "templateKey": "optout-deletion-generic"
+  },
+  "notes": "Email-based suppression: you submit only an email, so the opt-out itself doesn't force disclosing your name history. Support: support@checkpeople.com / 1-800-267-2122. Re-check periodically; people-search sites re-list.",
+  "attribution": "Derived from Big-Ass Data Broker Opt-Out List (CC BY-NC-SA).",
+  "sourceUrl": "https://github.com/yaelwrites/Big-Ass-Data-Broker-Opt-Out-List",
+  "lastVerified": "2026-06-22"
+}

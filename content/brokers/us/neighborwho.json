@@ -1,0 +1,28 @@
+{
+  "slug": "neighborwho",
+  "jurisdiction": { "country": "us" },
+  "name": "NeighborWho",
+  "category": "people-search",
+  "exposesDeadnameRisk": "high",
+  "searchUrl": "https://www.neighborwho.com/",
+  "optOut": {
+    "methods": ["web-form"],
+    "webFormUrl": "https://www.neighborwho.com/svc/optout/search/optouts",
+    "email": null,
+    "mailingAddress": null,
+    "requiresId": false,
+    "optOutExposesLinkage": false,
+    "steps": [
+      "Open the opt-out search page (link below) and search your name.",
+      "Select your record from the results.",
+      "Enter your email to receive a verification link.",
+      "Click the link in the verification email to confirm the removal.",
+      "The online form removes one record at a time; to remove more than one, email privacy@neighborwho.com."
+    ],
+    "templateKey": "optout-deletion-generic"
+  },
+  "notes": "BeenVerified-family people-search; you select an existing listing, so the opt-out itself doesn't disclose your name history. Property Search has a separate opt-out. Covered persons (Daniel's Law) can email privacy@neighborwho.com. Re-check periodically.",
+  "attribution": "Derived from Big-Ass Data Broker Opt-Out List (CC BY-NC-SA); flow verified against the live opt-out page.",
+  "sourceUrl": "https://github.com/yaelwrites/Big-Ass-Data-Broker-Opt-Out-List",
+  "lastVerified": "2026-06-30"
+}

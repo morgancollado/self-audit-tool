@@ -27,9 +27,28 @@ export default function HomePage() {
         <>
           <p>You’re set up.</p>
           <p>
-            <Link className="cta" href="/discover">
-              Start discovering →
+            <Link className="cta" href="/playbook">
+              Follow the full playbook →
             </Link>
+          </p>
+          <p>Or jump straight to a step:</p>
+          <p>
+            <Link href="/discover">Discover what’s out there →</Link>
+          </p>
+          <p>
+            Already know where you’re listed?{' '}
+            <Link href="/remediate">Go straight to removal requests →</Link>
+          </p>
+          <p>
+            Want to clean up your accounts?{' '}
+            <Link href="/harden">Harden platforms & remove your former name →</Link>
+          </p>
+          <p>
+            Deadname in court records or archives?{' '}
+            <Link href="/records">Tackle public records & name change →</Link>
+          </p>
+          <p>
+            <Link href="/settings">Settings — storage & encrypted backup →</Link>
           </p>
           <StorageModeToggle />
         </>

@@ -1,0 +1,8 @@
+{
+  "key": "optout-deletion-generic",
+  "formats": ["text", "mailto", "letter"],
+  "subject": "Request to delete and suppress my personal information — {{brokerName}}",
+  "body": "To whom it may concern,\n\nI am writing to ask {{brokerName}} to delete and suppress all personal information you hold about me, and to stop selling or sharing it, to the fullest extent of any applicable data-protection or privacy law.\n\nName: {{name}}\nAlso listed under: {{aliases}}\nLocation: {{location}}\nReply to: {{email}}\n\nPlease confirm in writing once this is done, do not re-list this information, and request no more identification from me than is strictly necessary to process this request.\n\nThank you.",
+  "placeholders": ["name", "aliases", "location", "email", "brokerName"],
+  "disclaimer": "This is general information, not legal advice. Your exact rights depend on your state — verify the broker's current process before you send, and never include more identifying information than is strictly required."
+}

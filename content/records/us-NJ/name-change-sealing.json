@@ -1,0 +1,16 @@
+{
+  "slug": "name-change-sealing-nj",
+  "jurisdiction": { "country": "us", "region": "NJ" },
+  "class": "court-record",
+  "exposesDeadnameRisk": "high",
+  "permanence": "high",
+  "whatItIs": "In New Jersey, a name change has historically required publishing notice and is a public court record. Court rules let you ask to waive publication and seal the record where publication would jeopardize your safety, and New Jersey has streamlined name changes tied to gender identity.",
+  "actions": [
+    "When you file, ask the court to waive publication and seal the record on safety grounds — a legal-aid or LGBTQ legal org can help.",
+    "If your order is already public, ask the clerk about sealing it after the fact.",
+    "Then suppress the downstream copies: broker opt-outs, Google 'Results about you', and the web-archive and search-cache removals."
+  ],
+  "sealedPetitionAvailable": true,
+  "disclaimer": "Informational only — not legal advice, and not yet reviewed by a lawyer. New Jersey practice varies by court and judge and changes over time; verify with the court or a legal-aid org before filing.",
+  "lastVerified": "2026-06-01"
+}

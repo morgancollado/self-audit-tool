@@ -1,0 +1,10 @@
+{
+  "jurisdiction": { "country": "us", "region": "IA" },
+  "appliesNationally": false,
+  "key": "us-ia-icdpa",
+  "title": "Iowa: Iowa Consumer Data Protection Act (ICDPA) — narrower rights",
+  "summary": "Iowa residents can opt out of the sale of personal data and request deletion of data they provided to a business. Iowa's law is among the narrowest of the state privacy laws: deletion is limited to data you gave the business, there is no standalone opt-out of targeted advertising, and no universal opt-out signal. The ICDPA took effect on January 1, 2025.",
+  "authorizedAgent": false,
+  "disclaimer": "General information, not legal advice, and not yet independently reviewed. Because Iowa's rights are limited, the broker's own opt-out (below) is often the more effective route — verify before relying on either.",
+  "lastVerified": "2026-06-01"
+}

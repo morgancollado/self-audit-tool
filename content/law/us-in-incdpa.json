@@ -1,0 +1,10 @@
+{
+  "jurisdiction": { "country": "us", "region": "IN" },
+  "appliesNationally": false,
+  "key": "us-in-incdpa",
+  "title": "Indiana: Indiana Consumer Data Protection Act (INCDPA) deletion & opt-out",
+  "summary": "Indiana residents can request deletion of the personal data a business holds and opt out of its sale and targeted advertising. The INCDPA took effect on January 1, 2026.",
+  "authorizedAgent": true,
+  "disclaimer": "General information, not legal advice, and not yet independently reviewed — verify the current process and your eligibility before relying on it.",
+  "lastVerified": "2026-06-01"
+}

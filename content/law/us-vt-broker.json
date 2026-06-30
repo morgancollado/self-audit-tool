@@ -1,0 +1,10 @@
+{
+  "jurisdiction": { "country": "us", "region": "VT" },
+  "appliesNationally": false,
+  "key": "us-vt-broker",
+  "title": "Vermont: data-broker registry, but no general deletion right",
+  "summary": "Vermont's comprehensive privacy bill was passed but vetoed, so there is no general state deletion right. Vermont does, however, run a data-broker registry: brokers operating there must register, and the public registry can help you find who holds your data and how to opt out. For removal, use the data broker's own opt-out (below).",
+  "authorizedAgent": false,
+  "disclaimer": "General information, not legal advice, and not yet independently reviewed. The registry helps you locate brokers; it does not itself delete your data — verify before relying on this.",
+  "lastVerified": "2026-06-01"
+}

@@ -32,6 +32,18 @@ export interface DiscoveryStep {
   lastVerified: string;
 }
 
+export type OptOutFormat = 'text' | 'mailto' | 'letter';
+export type TemplateVar = 'name' | 'aliases' | 'location' | 'email' | 'brokerName';
+
+export interface OptOutTemplate {
+  key: string;
+  formats: OptOutFormat[];
+  subject: string;
+  body: string;
+  placeholders?: TemplateVar[];
+  disclaimer: string;
+}
+
 export interface BrokerOptOut {
   methods: ('web-form' | 'email' | 'mail' | 'phone')[];
   webFormUrl?: string | null;
@@ -59,3 +71,75 @@ export interface Broker {
 }
 
 export type { Country };
+
+export interface SpecialMechanism {
+  key: string;
+  title: string;
+  summary: string;
+  /** Operational status, e.g. when a not-yet-live mechanism actually starts. */
+  status?: string;
+  url?: string;
+}
+
+export interface PlatformDeadnameRemoval {
+  supported: boolean;
+  tool?: string;
+  url?: string;
+  steps: string[];
+  limits?: string;
+  escalation?: string;
+}
+
+export interface Platform {
+  slug: string;
+  name: string;
+  deadnameRemoval?: PlatformDeadnameRemoval;
+  hardening: { steps: string[] };
+  difficulty?: Priority;
+  lastVerified: string;
+}
+
+export type RecordClass =
+  | 'court-record'
+  | 'name-change'
+  | 'school'
+  | 'licensing-board'
+  | 'byline'
+  | 'archive'
+  | 'search-cache'
+  | 'breach'
+  | 'other';
+
+/**
+ * A deadname appearing in an institutional / public record (named DeadnameRecord
+ * to avoid clashing with the TS built-in `Record`). No-dead-end rule: either
+ * `actions` is non-empty, or it's an explicit high-permanence `monitorOnly` item
+ * with `harmReduction` (enforced by record.schema.json + content validation).
+ */
+export interface DeadnameRecord {
+  slug: string;
+  jurisdiction?: Jurisdiction;
+  class: RecordClass;
+  exposesDeadnameRisk?: Priority;
+  permanence: Priority;
+  whatItIs: string;
+  actions?: string[];
+  monitorOnly?: boolean;
+  harmReduction?: string;
+  sealedPetitionAvailable?: boolean;
+  disclaimer?: string;
+  lastVerified: string;
+}
+
+export interface Law {
+  jurisdiction: Jurisdiction;
+  /** If false, the right is region-specific and must NOT be shown to other regions. */
+  appliesNationally: boolean;
+  key: string;
+  title: string;
+  summary: string;
+  authorizedAgent?: boolean;
+  specialMechanisms?: SpecialMechanism[];
+  disclaimer: string;
+  lastVerified: string;
+}

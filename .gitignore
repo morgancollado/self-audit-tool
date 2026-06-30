@@ -13,3 +13,6 @@ next-env.d.ts
 
 # local env (never commit secrets; the HIBP key lives only in the proxy deploy)
 .env*.local
+
+# Local broker opt-out capture output (maintainer tool; may contain a test search)
+broker-captures/

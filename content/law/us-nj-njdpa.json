@@ -1,0 +1,10 @@
+{
+  "jurisdiction": { "country": "us", "region": "NJ" },
+  "appliesNationally": false,
+  "key": "us-nj-njdpa",
+  "title": "New Jersey: data privacy law deletion & opt-out",
+  "summary": "New Jersey residents can request deletion of the personal data a business holds and opt out of its sale and targeted advertising, including through a recognized universal opt-out signal. New Jersey's comprehensive privacy law took effect in January 2025.",
+  "authorizedAgent": true,
+  "disclaimer": "General information, not legal advice, and not yet independently reviewed — verify the current process and your eligibility before relying on it.",
+  "lastVerified": "2026-06-01"
+}

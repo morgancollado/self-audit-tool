@@ -1,0 +1,16 @@
+{
+  "slug": "name-change-sealing-ny",
+  "jurisdiction": { "country": "us", "region": "NY" },
+  "class": "court-record",
+  "exposesDeadnameRisk": "high",
+  "permanence": "high",
+  "whatItIs": "In New York, a granted name-change order is normally a public court record, and the law usually requires publishing notice in a newspaper — both of which tie your former and current name together. New York courts can, however, seal the record and waive publication where publication would jeopardize the applicant's personal safety.",
+  "actions": [
+    "When you file, ask the court to seal the record and to dispense with the publication requirement on personal-safety grounds — New York courts have authority to do both; a legal-aid or LGBTQ legal org can help you make the request.",
+    "If your order is already public, ask the clerk about sealing it after the fact and about removing the published notice from the newspaper's site.",
+    "Then suppress the downstream copies: broker opt-outs, Google 'Results about you', and the web-archive and search-cache removals."
+  ],
+  "sealedPetitionAvailable": true,
+  "disclaimer": "Informational only — not legal advice, and not yet reviewed by a lawyer. New York sealing and publication-waiver practice varies by court and judge and changes over time; verify with the court or a legal-aid org before filing.",
+  "lastVerified": "2026-06-01"
+}

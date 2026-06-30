@@ -1,0 +1,28 @@
+{
+  "slug": "infotracer",
+  "jurisdiction": { "country": "us" },
+  "name": "InfoTracer",
+  "category": "background-check",
+  "exposesDeadnameRisk": "high",
+  "searchUrl": "https://infotracer.com/",
+  "optOut": {
+    "methods": ["web-form", "email"],
+    "webFormUrl": "https://infotracer.com/optout/",
+    "email": "privacy@infotracer.com",
+    "mailingAddress": null,
+    "requiresId": false,
+    "optOutExposesLinkage": false,
+    "steps": [
+      "Open the opt-out page at the search URL below.",
+      "Enter the first name, last name, state, and city on the listing you want removed.",
+      "Submit the removal request.",
+      "If you live in a state with deletion rights, you can instead use the privacy form at https://members.infotracer.com/privacyform.",
+      "Covered persons (judges, prosecutors, law enforcement and immediate family under the Daniel Anderl Act) can email privacy@infotracer.com with the subject 'Attention Covered Person Removal Request'."
+    ],
+    "templateKey": "optout-deletion-generic"
+  },
+  "notes": "General removal keys on a single name plus city/state, so removing a deadname listing doesn't by itself tie it to your current name. A state-rights privacy form and a covered-person email route also exist. Re-check periodically.",
+  "attribution": "Derived from Big-Ass Data Broker Opt-Out List (CC BY-NC-SA).",
+  "sourceUrl": "https://github.com/yaelwrites/Big-Ass-Data-Broker-Opt-Out-List",
+  "lastVerified": "2026-06-22"
+}

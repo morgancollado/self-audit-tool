@@ -1,0 +1,25 @@
+{
+  "slug": "reddit",
+  "name": "Reddit",
+  "difficulty": "high",
+  "deadnameRemoval": {
+    "supported": false,
+    "tool": "New account (usernames can't be changed)",
+    "url": "https://www.reddit.com/settings/",
+    "steps": [
+      "Reddit usernames cannot be changed. If your username is or contains your former name, the only fix is to create a new account and stop using the old one.",
+      "On the old account, edit the text of posts and comments that reveal your former name BEFORE deleting them — deletion alone can leave the text behind.",
+      "Then consider deleting the old account (Settings → Delete account)."
+    ],
+    "limits": "Edited or deleted content is often preserved by third-party archives and caches outside Reddit's control.",
+    "escalation": "Report content others posted that targets you with your former name under Reddit's harassment policy."
+  },
+  "hardening": {
+    "steps": [
+      "Edit sensitive old comments before deleting them (deletion alone may leave the text).",
+      "Settings → Privacy: limit who can see your profile and turn off personalization.",
+      "Going forward, choose a username that doesn't reveal your identity."
+    ]
+  },
+  "lastVerified": "2026-06-01"
+}

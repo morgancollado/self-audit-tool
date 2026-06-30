@@ -1,0 +1,26 @@
+{
+  "slug": "linkedin",
+  "name": "LinkedIn",
+  "difficulty": "medium",
+  "deadnameRemoval": {
+    "supported": true,
+    "tool": "Name & public profile URL change",
+    "url": "https://www.linkedin.com/public-profile/settings",
+    "steps": [
+      "FIRST turn off activity broadcasts (Settings → Visibility → “Share profile updates with your network”) so the change isn't announced to your contacts.",
+      "Edit your profile Name to your current name.",
+      "Change your public profile URL — it often still contains the old name: Edit public profile & URL → edit the custom URL.",
+      "Update past job titles, your headline, and descriptions that include the former name."
+    ],
+    "limits": "Search engines may cache your old public-profile URL for a while; request a Google refresh after you change it.",
+    "escalation": "Contact LinkedIn support to clear a cached old profile if it persists."
+  },
+  "hardening": {
+    "steps": [
+      "Set who can see your connections and your profile photo.",
+      "Turn off profile discovery via your email or phone number if you prefer.",
+      "Review third-party apps with access and revoke unused ones."
+    ]
+  },
+  "lastVerified": "2026-06-01"
+}
