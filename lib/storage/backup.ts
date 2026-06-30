@@ -35,6 +35,21 @@ export function isEncryptedBackup(text: string): boolean {
   }
 }
 
+/** Shape-check an encrypted envelope before we hand it to the crypto layer, so a
+ *  file that *claims* to be encrypted but is missing/garbled fails as a calm,
+ *  specific error instead of an uncaught throw deep inside decryptJson. */
+function isEncryptedEnvelope(o: unknown): o is EncryptedEnvelope {
+  const e = o as Partial<EncryptedEnvelope> | null;
+  return (
+    !!e &&
+    typeof e === 'object' &&
+    typeof e.salt === 'string' &&
+    typeof e.iv === 'string' &&
+    typeof e.ciphertext === 'string' &&
+    typeof e.iterations === 'number'
+  );
+}
+
 function assertAuditShape(o: unknown): asserts o is AuditState {
   const x = o as Partial<AuditState> | null;
   if (
@@ -68,10 +83,13 @@ export async function parseBackup(
   let wasEncrypted = false;
   if (parsed && parsed.encrypted === true) {
     wasEncrypted = true;
+    if (!isEncryptedEnvelope(parsed.envelope)) {
+      throw new Error('This backup says it’s encrypted, but its contents are missing or unreadable.');
+    }
     if (!passphrase || passphrase.trim() === '') {
       throw new Error('This backup is encrypted — enter its passphrase to import it.');
     }
-    raw = await decryptJson(parsed.envelope as EncryptedEnvelope, passphrase);
+    raw = await decryptJson(parsed.envelope, passphrase);
   } else if (parsed && parsed.encrypted === false && parsed.state) {
     raw = parsed.state;
   } else {

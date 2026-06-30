@@ -11,6 +11,11 @@
   --proof: #b23a2e;
   --marker: #2f5d62;
   --marker-ink: #0f2a2d;
+  /* Text/iconography placed ON a --marker fill. Distinct from --marker-ink
+     (which is emphasis text on a light card): on a medium-teal fill the text
+     must be light to clear AA, so this flips with the theme while --marker-ink
+     stays the dark emphasis ink. */
+  --on-marker: #fbfaf7;
 
   --maxw: 42rem;
   --radius: 6px;
@@ -26,9 +31,13 @@
     --paper: #15140f;
     --cream: #211f18;
     --slate: #b8b2a6;
-    --proof: #c75a4e;
+    /* Lightened from #c75a4e so proof clears AA both as a fill (dark text on it)
+       and as warn text on the dark paper/cream cards (was 3.9–4.4:1). */
+    --proof: #d8685b;
     --marker: #7fb2b8;
     --marker-ink: #0f2a2d;
+    /* On the light dark-mode teal, text on a --marker fill is the dark ink. */
+    --on-marker: #0f2a2d;
   }
 }
 
@@ -101,7 +110,7 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 1.5rem 1.25rem 4rem; }
 
 button {
   font: inherit;
-  color: var(--marker-ink);
+  color: var(--on-marker);
   background: var(--marker);
   border: none;
   border-radius: var(--radius);
@@ -156,7 +165,7 @@ button.safety-intro-primary { font-weight: 600; }
 .query-row code { font-family: var(--mono); font-size: 0.9rem; word-break: break-word; }
 .query-deadname code { font-weight: 700; }
 .query-actions { display: flex; gap: 0.6rem; align-items: center; }
-.copy-button { background: var(--marker); color: var(--marker-ink); border: 1px solid var(--marker); padding: 0.25rem 0.6rem; font-weight: 600; }
+.copy-button { background: var(--marker); color: var(--on-marker); border: 1px solid var(--marker); padding: 0.25rem 0.6rem; font-weight: 600; }
 .query-run { font-size: 0.9rem; }
 .query-privacy-note { color: var(--slate); font-size: 0.9rem; background: var(--cream); border-radius: var(--radius); padding: 0.5rem 0.75rem; margin: 0.5rem 0; }
 
@@ -171,7 +180,7 @@ button.safety-intro-primary { font-weight: 600; }
 /* Badges */
 .badge { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; padding: 0.15rem 0.45rem; border-radius: 999px; white-space: nowrap; }
 .priority-high { background: var(--proof); color: var(--paper); }
-.priority-medium { background: var(--marker); color: var(--marker-ink); }
+.priority-medium { background: var(--marker); color: var(--on-marker); }
 .priority-low { background: var(--cream); color: var(--slate); border: 1px solid var(--slate); }
 .badge-deadname { background: var(--ink); color: var(--paper); }
 
@@ -184,7 +193,7 @@ button.safety-intro-primary { font-weight: 600; }
 .backup-mode { border: 1px solid var(--slate); border-radius: var(--radius); padding: 0.5rem 0.75rem; margin: 0.75rem 0; }
 .backup-mode legend { padding: 0 0.4rem; font-weight: 600; }
 .backup-mode label { display: flex; align-items: center; gap: 0.4rem; }
-.backup-ok { color: var(--marker-ink); font-weight: 600; }
+.backup-ok { color: var(--marker); font-weight: 600; }
 .backup-err { color: var(--proof); font-weight: 600; }
 .backup input[type="file"] { font: inherit; }
 
@@ -196,7 +205,7 @@ button.safety-intro-primary { font-weight: 600; }
 .playbook-stage.playbook-done { border-left: 4px solid var(--marker); }
 .playbook-stage-head { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; }
 .playbook-stage-head h2 { margin: 0.2rem 0; font-size: 1.25rem; }
-.playbook-num { display: inline-flex; align-items: center; justify-content: center; width: 1.8rem; height: 1.8rem; border-radius: 999px; background: var(--marker); color: var(--marker-ink); font-weight: 700; font-family: var(--serif); flex: none; }
+.playbook-num { display: inline-flex; align-items: center; justify-content: center; width: 1.8rem; height: 1.8rem; border-radius: 999px; background: var(--marker); color: var(--on-marker); font-weight: 700; font-family: var(--serif); flex: none; }
 .playbook-blurb { color: var(--slate); margin: 0.5rem 0; }
 .playbook-status { font-weight: 600; margin: 0.3rem 0; }
 
@@ -232,11 +241,11 @@ button.safety-intro-primary { font-weight: 600; }
 .rights-banner { border-left: 3px solid var(--proof); background: var(--cream); padding: 0.6rem 0.9rem; border-radius: var(--radius); font-size: 0.9rem; color: var(--slate); margin: 0.75rem 0; }
 .law-card { border: 1px solid var(--cream); border-radius: var(--radius); padding: 0.75rem 1rem; margin: 0.75rem 0; }
 .law-card h3 { margin: 0.2rem 0; }
-.law-agent { font-size: 0.92rem; color: var(--marker-ink); }
+.law-agent { font-size: 0.92rem; color: var(--marker); }
 .law-mechanism { background: var(--cream); border-radius: var(--radius); padding: 0.75rem 1rem; margin: 0.6rem 0; }
 .law-mechanism h4 { margin: 0.2rem 0; font-family: var(--serif); }
-.law-mechanism-hero { background: var(--marker); color: var(--marker-ink); border: 2px solid var(--marker-ink); }
-.law-mechanism-hero a { color: var(--marker-ink); font-weight: 700; }
+.law-mechanism-hero { background: var(--marker); color: var(--on-marker); border: 2px solid var(--marker-ink); }
+.law-mechanism-hero a { color: var(--on-marker); font-weight: 700; }
 
 /* Remediate — opt-out generator */
 .discover-next, .optout-legal { margin: 1.5rem 0; }
@@ -258,7 +267,7 @@ button.safety-intro-primary { font-weight: 600; }
 .optout-steps { padding-left: 1.2rem; font-size: 0.95rem; }
 .optout-disclaimer { color: var(--slate); font-size: 0.85rem; margin: 0.6rem 0; }
 .optout-track { margin-top: 0.5rem; }
-.optout-tracked { color: var(--marker-ink); font-weight: 600; }
+.optout-tracked { color: var(--marker); font-weight: 600; }
 
 /* Remediation tracker */
 .tracker { margin: 2rem 0; }
@@ -269,7 +278,7 @@ button.safety-intro-primary { font-weight: 600; }
 .tracker-controls label { display: flex; flex-direction: column; gap: 0.25rem; font-size: 0.85rem; }
 .tracker-controls input[type="date"] { font: inherit; padding: 0.4rem 0.5rem; border: 1px solid var(--slate); border-radius: var(--radius); background: var(--paper); color: var(--ink); }
 .state-todo { background: var(--cream); color: var(--slate); border: 1px solid var(--slate); }
-.state-sent { background: var(--marker); color: var(--marker-ink); }
+.state-sent { background: var(--marker); color: var(--on-marker); }
 .state-confirmed { background: var(--ink); color: var(--paper); }
 .state-blocked { background: var(--proof); color: var(--paper); }
 

@@ -65,6 +65,19 @@ test('malformed input is rejected with a calm error', async () => {
   await assert.rejects(() => parseBackup('{"errataBackup":1,"encrypted":false,"state":{}}'), /recognizable/);
 });
 
+test('decrypt rejects an out-of-band iteration count (no KDF-hang from a hostile file)', async () => {
+  const env = await encryptJson({ secret: 'deadname' }, 'pw');
+  await assert.rejects(() => decryptJson({ ...env, iterations: 5_000_000_000 }, 'pw'), /damaged|different app/);
+  await assert.rejects(() => decryptJson({ ...env, iterations: 1 }, 'pw'), /damaged|different app/);
+});
+
+test('an encrypted backup with a missing/garbled envelope is rejected calmly', async () => {
+  const noEnvelope = JSON.stringify({ errataBackup: 1, encrypted: true });
+  await assert.rejects(() => parseBackup(noEnvelope, 'pw'), /missing or unreadable/);
+  const garbled = JSON.stringify({ errataBackup: 1, encrypted: true, envelope: { salt: 'not-base64-!!' } });
+  await assert.rejects(() => parseBackup(garbled, 'pw'), /missing or unreadable/);
+});
+
 test('a newer-schema backup is refused (no silent data loss)', async () => {
   const text = await serializeBackup({ ...state, schemaVersion: 999 }, {});
   await assert.rejects(() => parseBackup(text), /newer version/);

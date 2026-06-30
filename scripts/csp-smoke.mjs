@@ -34,12 +34,14 @@ function fail(msg) {
   process.exitCode = 1;
 }
 
-// Accessibility scan for a loaded route. We own color/structure via the design
-// tokens and the layout shell (AA-claimed; landmarks live in the root layout) and
-// track those separately; here we fail the gate on the structural a11y axe can
-// prove — missing labels/names, invalid ARIA, duplicate ids — at serious/critical
-// impact, which is exactly what the M2 form surfaces must get right.
-const AXE_IGNORE = new Set(['color-contrast', 'region', 'landmark-one-main', 'page-has-heading-one']);
+// Accessibility scan for a loaded route. We fail the gate on the structural a11y
+// axe can prove — missing labels/names, invalid ARIA, duplicate ids, AND
+// color-contrast — at serious/critical impact, which is exactly what the M2 form
+// surfaces must get right. (The design tokens are additionally pinned to AA by
+// lib/design/contrast.test.ts; keeping color-contrast in the live scan catches a
+// regression in a specific rendered pairing the token math doesn't enumerate.)
+// Only the structural landmark rules the root-layout shell owns are excluded.
+const AXE_IGNORE = new Set(['region', 'landmark-one-main', 'page-has-heading-one']);
 async function axeFailures(page, label) {
   const { violations } = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa']).analyze();
   const serious = violations.filter(
