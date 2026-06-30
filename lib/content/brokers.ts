@@ -4,12 +4,18 @@
 
 import { Broker } from './types';
 
-import b0 from '../../content/brokers/us/beenverified.json';
-import b1 from '../../content/brokers/us/checkpeople.json';
-import b2 from '../../content/brokers/us/infotracer.json';
-import b3 from '../../content/brokers/us/spokeo.json';
-import b4 from '../../content/brokers/us/whitepages.json';
+import b0 from '../../content/brokers/us/addresses.json';
+import b1 from '../../content/brokers/us/beenverified.json';
+import b2 from '../../content/brokers/us/checkpeople.json';
+import b3 from '../../content/brokers/us/infotracer.json';
+import b4 from '../../content/brokers/us/instantcheckmate.json';
+import b5 from '../../content/brokers/us/intelius.json';
+import b6 from '../../content/brokers/us/spokeo.json';
+import b7 from '../../content/brokers/us/truthfinder.json';
+import b8 from '../../content/brokers/us/ussearch.json';
+import b9 from '../../content/brokers/us/whitepages.json';
+import b10 from '../../content/brokers/us/zabasearch.json';
 
 // Cast at the single chokepoint: the CI content validator (lib/content/validate.mjs)
 // is the real schema gate; a data-integrity unit test asserts the safety invariants.
-export const BROKERS = [b0, b1, b2, b3, b4] as unknown as Broker[];
+export const BROKERS = [b0, b1, b2, b3, b4, b5, b6, b7, b8, b9, b10] as unknown as Broker[];
