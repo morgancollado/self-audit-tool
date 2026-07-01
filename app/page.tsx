@@ -21,6 +21,10 @@ export default function HomePage() {
       <h1>Errata</h1>
       <p>Find what’s published about you, and correct the record — without anyone holding your data.</p>
 
+      <p>
+        <Link href="/how-it-works">How this works &amp; your privacy →</Link>
+      </p>
+
       <SafetyIntro />
 
       {preferences.safetyIntroAcknowledged && (
