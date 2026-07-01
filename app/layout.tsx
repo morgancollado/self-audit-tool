@@ -6,6 +6,7 @@ import { headers } from 'next/headers';
 import './globals.css';
 import { StorageProvider } from '@/lib/storage/StorageProvider';
 import { PanicButton } from '@/components/PanicButton';
+import { Footer } from '@/components/Footer';
 
 export const metadata = {
   title: 'Errata',
@@ -32,6 +33,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
             <PanicButton />
           </header>
           <main id="main">{children}</main>
+          <Footer />
         </StorageProvider>
         {nonce ? <span data-nonce={nonce} hidden /> : null}
       </body>

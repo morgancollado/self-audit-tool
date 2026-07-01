@@ -104,6 +104,13 @@ export default function HowItWorksPage() {
         know how, open your browser’s network tools while you use it: you’ll see it isn’t sending your
         information anywhere.
       </p>
+      <p>
+        Read the full source on{' '}
+        <a href="https://github.com/morgancollado/self-audit-tool" target="_blank" rel="noreferrer">
+          GitHub
+        </a>
+        .
+      </p>
 
       <h2>A note on the legal information</h2>
       <p className="optout-disclaimer">

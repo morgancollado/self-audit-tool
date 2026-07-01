@@ -132,6 +132,18 @@ button.safety-intro-primary { font-weight: 600; }
 .report-broken-hint { color: var(--slate); font-size: 0.9rem; }
 .report-broken-optional { color: var(--slate); font-weight: 400; }
 
+/* Site-wide footer */
+.site-footer {
+  max-width: var(--maxw);
+  margin: 0 auto;
+  padding: 1.5rem 1.25rem 2.5rem;
+  border-top: 1px solid var(--cream);
+  color: var(--slate);
+  font-size: 0.9rem;
+}
+.site-footer nav { display: flex; flex-wrap: wrap; gap: 0.5rem 1.25rem; margin-bottom: 0.5rem; }
+.site-footer-note { margin: 0.3rem 0 0; }
+
 /* Navigation */
 .breadcrumb { font-size: 0.95rem; }
 .cta { font-weight: 600; font-size: 1.1rem; }
