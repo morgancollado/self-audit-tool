@@ -24,7 +24,8 @@
   "network": {
     "key": "beenverified-family",
     "name": "BeenVerified family (The Lifetime Value Co.)",
-    "note": "These sites share one search engine and opt-out backbone; start with BeenVerified and re-check the siblings."
+    "note": "These sites share one search engine and a privacy contact at The Lifetime Value Co.",
+    "coverage": "shared-backbone"
   },
   "notes": "BeenVerified-family people-search; you select an existing listing, so the opt-out itself doesn't disclose your name history. Property Search has a separate opt-out. Covered persons (Daniel's Law) can email privacy@neighborwho.com. Re-check periodically.",
   "attribution": "Derived from Big-Ass Data Broker Opt-Out List (CC BY-NC-SA); flow verified against the live opt-out page.",

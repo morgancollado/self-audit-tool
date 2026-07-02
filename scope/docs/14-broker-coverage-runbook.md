@@ -149,12 +149,28 @@ suppression center, the BeenVerified family), add a top-level `network` object s
 "network": {
   "key": "<lowercase-hyphenated backbone key>",
   "name": "<display name shown as the task title>",
-  "note": "<one line on what the shared request covers>"
+  "note": "<one line on what the shared request covers>",
+  "coverage": "single-submission | shared-backbone",
+  "representative": true
 }
 ```
 
-Every member of a network must carry the same `key` and `name` (validator-enforced),
-and a network needs at least two members — a one-broker "network" is a mislabel.
+Every member of a network must carry the same `key`, `name`, and `coverage`, a
+network needs at least two members — a one-broker "network" is a mislabel — and
+exactly one member must be flagged `"representative": true` (all
+validator-enforced). The representative's opt-out route (form/email/template) is
+the one the grouped card uses.
+
+`coverage` is an honesty declaration, so pick it the same way as `lastVerified`:
+
+- `single-submission` — you have **verified** that one submission removes every
+  member (e.g. the PeopleConnect suppression center). Tracking marks every
+  member `sent`.
+- `shared-backbone` — the sites share data and a privacy contact, but one
+  submission's family-wide effect is **not verified**. Tracking marks only the
+  representative `sent`; the siblings become re-check to-dos. Never claim
+  `single-submission` on published-policy research alone.
+
 Grouping is presentation only: remediations stay keyed by broker slug.
 
 ## Licensing — resolved (dual-licensed)

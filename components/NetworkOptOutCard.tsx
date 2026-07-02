@@ -3,10 +3,13 @@
 // One opt-out task per distinct backbone (user-testing feedback: several broker
 // sites front the same engine, and walking them one by one is exhausting). A
 // network group renders a single card — one prepared request, sent once — while
-// listing every sibling site it covers. Tracking stays per-broker underneath.
+// listing every sibling site it covers. Tracking stays per-broker underneath,
+// and is honest about coverage: a 'shared-backbone' network's siblings become
+// re-check to-dos, never "sent" (see groupTrackInputs).
 
 import { OptOutVars } from '@/lib/remediate/optout';
-import { BrokerGroup } from '@/lib/remediate/networks';
+import { Broker } from '@/lib/content/types';
+import { BrokerGroup, groupTrackInputs } from '@/lib/remediate/networks';
 import { OptOutGenerator } from './OptOutGenerator';
 
 export function NetworkOptOutCard({
@@ -24,19 +27,32 @@ export function NetworkOptOutCard({
     return <OptOutGenerator broker={rep} vars={vars} findingId={findingBySlug.get(rep.slug)} />;
   }
 
+  const siblings = group.members.filter((m) => m.slug !== rep.slug);
+  const memberList = (members: Broker[]) =>
+    members.map((m, i) => (
+      <span key={m.slug}>
+        {i > 0 && ', '}
+        {m.name}
+        {findingBySlug.has(m.slug) && <strong> (in your findings)</strong>}
+      </span>
+    ));
+
   const intro = (
     <div className="optout-network">
       {group.note && <p className="name-inputs-note">{group.note}</p>}
-      <p className="optout-network-covers">
-        One request covers:{' '}
-        {group.members.map((m, i) => (
-          <span key={m.slug}>
-            {i > 0 && ', '}
-            {m.name}
-            {findingBySlug.has(m.slug) && <strong> (in your findings)</strong>}
-          </span>
-        ))}
-      </p>
+      {group.coverage === 'single-submission' ? (
+        <p className="optout-network-covers">
+          One request covers: {memberList(group.members)}. Tracking it marks every site sent.
+        </p>
+      ) : (
+        // Shared backbone, unverified family-wide removal: promise only what one
+        // submission is known to do, and say what tracking will actually record.
+        <p className="optout-network-covers">
+          One request to this family’s privacy contact asks for removal from all of them, but only{' '}
+          <strong>{rep.name}</strong>’s own removal is verified. Tracking it marks {rep.name} sent
+          and adds {memberList(siblings)} as re-check to-dos.
+        </p>
+      )}
       <details className="optout-network-members">
         <summary>Site-by-site links</summary>
         <ul>
@@ -72,7 +88,7 @@ export function NetworkOptOutCard({
       vars={vars}
       heading={group.name}
       intro={intro}
-      trackTargets={group.members.map((m) => ({ broker: m, findingId: findingBySlug.get(m.slug) }))}
+      trackInputs={groupTrackInputs(group, findingBySlug)}
     />
   );
 }

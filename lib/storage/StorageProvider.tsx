@@ -31,6 +31,11 @@ interface StorageContextValue {
   addRemediation: (input: NewRemediationInput) => Promise<Remediation>;
   updateRemediation: (id: string, patch: Partial<Remediation>) => Promise<void>;
   removeRemediation: (id: string) => Promise<void>;
+  // Batch variants for grouped rows (network cards / tracker groups): one
+  // storage write covers the whole set.
+  addRemediations: (inputs: NewRemediationInput[]) => Promise<void>;
+  updateRemediations: (ids: string[], patch: Partial<Remediation>) => Promise<void>;
+  removeRemediations: (ids: string[]) => Promise<void>;
   // Resumable discovery progress
   setStepDone: (stepId: string, done: boolean) => Promise<void>;
   // Encrypted-by-default backup (export/import)
@@ -178,27 +183,42 @@ export function StorageProvider({ children }: { children: ReactNode }) {
     [mutate],
   );
 
+  // Dedupe by (pillar, refId): the same broker/platform action shouldn't accrete
+  // duplicate tracker rows if the user re-mounts the page and clicks "track it"
+  // again. Update the existing row in place instead.
+  const upsertRemediation = (d: AuditState, input: NewRemediationInput): Remediation => {
+    const existing = input.refId
+      ? d.remediations.find((r) => r.pillar === input.pillar && r.refId === input.refId)
+      : undefined;
+    if (existing) {
+      existing.action = input.action;
+      existing.state = input.state ?? existing.state;
+      if (input.findingId) existing.findingId = input.findingId;
+      existing.updatedAt = today();
+      return existing;
+    }
+    const fresh = newRemediation(input);
+    d.remediations.unshift(fresh);
+    return fresh;
+  };
+
   const addRemediation = useCallback(
     async (input: NewRemediationInput): Promise<Remediation> => {
       let result: Remediation = newRemediation(input);
       await mutate((d) => {
-        // Dedupe by (pillar, refId): the same broker/platform action shouldn't
-        // accrete duplicate tracker rows if the user re-mounts the page and clicks
-        // "track it" again. Update the existing row in place instead.
-        const existing = input.refId
-          ? d.remediations.find((r) => r.pillar === input.pillar && r.refId === input.refId)
-          : undefined;
-        if (existing) {
-          existing.action = input.action;
-          existing.state = input.state ?? existing.state;
-          if (input.findingId) existing.findingId = input.findingId;
-          existing.updatedAt = today();
-          result = existing;
-        } else {
-          d.remediations.unshift(result);
-        }
+        result = upsertRemediation(d, input);
       });
       return result;
+    },
+    [mutate],
+  );
+
+  const addRemediations = useCallback(
+    async (inputs: NewRemediationInput[]) => {
+      if (inputs.length === 0) return;
+      await mutate((d) => {
+        for (const input of inputs) upsertRemediation(d, input);
+      });
     },
     [mutate],
   );
@@ -220,6 +240,33 @@ export function StorageProvider({ children }: { children: ReactNode }) {
     async (id: string) => {
       await mutate((d) => {
         d.remediations = d.remediations.filter((x) => x.id !== id);
+      });
+    },
+    [mutate],
+  );
+
+  const updateRemediations = useCallback(
+    async (ids: string[], patch: Partial<Remediation>) => {
+      if (ids.length === 0) return;
+      const idSet = new Set(ids);
+      await mutate((d) => {
+        for (const r of d.remediations) {
+          if (idSet.has(r.id)) {
+            Object.assign(r, patch);
+            r.updatedAt = today();
+          }
+        }
+      });
+    },
+    [mutate],
+  );
+
+  const removeRemediations = useCallback(
+    async (ids: string[]) => {
+      if (ids.length === 0) return;
+      const idSet = new Set(ids);
+      await mutate((d) => {
+        d.remediations = d.remediations.filter((x) => !idSet.has(x.id));
       });
     },
     [mutate],
@@ -303,6 +350,9 @@ export function StorageProvider({ children }: { children: ReactNode }) {
         addRemediation,
         updateRemediation,
         removeRemediation,
+        addRemediations,
+        updateRemediations,
+        removeRemediations,
         setStepDone,
         exportBackup,
         importBackup,

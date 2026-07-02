@@ -92,6 +92,14 @@ Notes:
 - Broker **networks** (shared opt-out backbones) are derived presentation: the UI
   groups by the content-side `network.key`, but remediations are still written
   one row per broker slug — no network identifiers enter user state.
+- Network `coverage` decides what those rows say. `single-submission` (one
+  request verifiably removes every member) marks every member `sent`;
+  `shared-backbone` (family-wide removal unverified) marks only the
+  `representative` member `sent` and the siblings `todo` as re-check tasks — a
+  false "sent" would leave a deadname up while the user believes it handled.
+- Audit-state writes are **serialized** in `AuditStore.update` (read-modify-write
+  behind a promise chain), so multi-row batch actions and concurrent callers
+  can't lose each other's updates.
 
 ## Export / import
 

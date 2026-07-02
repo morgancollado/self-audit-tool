@@ -47,7 +47,7 @@ function groupRows(remediations: Remediation[]): TrackerGroup[] {
 }
 
 export function RemediationTracker() {
-  const { state, updateRemediation, removeRemediation } = useStorage();
+  const { state, updateRemediations, removeRemediations } = useStorage();
   const remediations = state?.remediations ?? [];
 
   if (remediations.length === 0) {
@@ -69,30 +69,51 @@ export function RemediationTracker() {
       <h2 id="tracker-title">Your tracker</h2>
       <ul className="tracker-list">
         {groups.map((g) => {
-          // Grouped rows are only ever written through these shared controls, so
-          // the first row is representative; looping keeps stragglers in sync.
           const lead = g.rows[0];
+          const ids = g.rows.map((r) => r.id);
+          // Grouped rows can legitimately diverge (a shared-backbone network
+          // tracks its representative 'sent' and siblings 'todo'), so never show
+          // one row's state as the group's: badge it "Mixed" and put each site's
+          // own state in the covers line. The shared controls still write all
+          // rows at once — one batch write, no per-row races.
+          const uniform = g.rows.every((r) => r.state === lead.state);
           const setAll = (patch: Partial<Pick<Remediation, 'state' | 'recheckAt'>>) =>
-            g.rows.forEach((r) => updateRemediation(r.id, patch));
-          const removeAll = () => g.rows.forEach((r) => removeRemediation(r.id));
+            updateRemediations(ids, patch);
+          const removeAll = () => removeRemediations(ids);
           return (
             <li key={g.key} className="tracker-item">
               <div className="tracker-head">
                 <strong>{g.heading ?? lead.action}</strong>
-                <span className={`badge state-${lead.state}`}>{STATE_LABEL[lead.state]}</span>
+                {uniform ? (
+                  <span className={`badge state-${lead.state}`}>{STATE_LABEL[lead.state]}</span>
+                ) : (
+                  <span className="badge state-mixed">Mixed</span>
+                )}
               </div>
               {g.heading && (
                 <p className="name-inputs-note">
-                  Covers {g.rows.map((r) => (r.refId && getBroker(r.refId)?.name) || r.refId).join(', ')}.
+                  Covers{' '}
+                  {g.rows
+                    .map((r) => {
+                      const name = (r.refId && getBroker(r.refId)?.name) || r.refId;
+                      return uniform ? name : `${name} (${STATE_LABEL[r.state].toLowerCase()})`;
+                    })
+                    .join(', ')}
+                  .
                 </p>
               )}
               <div className="tracker-controls">
                 <label>
                   Status
                   <select
-                    value={lead.state}
+                    value={uniform ? lead.state : 'mixed'}
                     onChange={(e) => setAll({ state: e.target.value as RemediationState })}
                   >
+                    {!uniform && (
+                      <option value="mixed" disabled>
+                        Mixed — pick one to set all
+                      </option>
+                    )}
                     <option value="todo">To do</option>
                     <option value="sent">Sent</option>
                     <option value="confirmed">Confirmed</option>

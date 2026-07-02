@@ -24,7 +24,8 @@
   "network": {
     "key": "peopleconnect",
     "name": "PeopleConnect Suppression Center",
-    "note": "One suppression-center request covers every PeopleConnect site listed here."
+    "note": "One suppression-center request covers every PeopleConnect site listed here.",
+    "coverage": "single-submission"
   },
   "notes": "Intelius is a PeopleConnect brand: one suppression at suppression.peopleconnect.us covers all PeopleConnect people-search sites (Intelius, TruthFinder, Instant Checkmate, US Search, ZabaSearch, Addresses.com). Email-only entry, so the opt-out itself doesn't disclose your name history. Re-check periodically.",
   "attribution": "Derived from Big-Ass Data Broker Opt-Out List (CC BY-NC-SA); flow verified against the live PeopleConnect Suppression Center.",

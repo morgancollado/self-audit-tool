@@ -52,7 +52,7 @@ test('counts findings, deadname findings, and per-pillar / per-state remediation
 });
 
 test('countGroupsTracked: a group counts only when every member has an optout row', () => {
-  const mk = (slug: string, network?: { key: string; name: string }): Broker => ({
+  const mk = (slug: string, network?: Broker['network']): Broker => ({
     slug,
     jurisdiction: { country: 'us' },
     name: slug,
@@ -62,7 +62,7 @@ test('countGroupsTracked: a group counts only when every member has an optout ro
     network,
     lastVerified: '2026-01-01',
   });
-  const net = { key: 'shared', name: 'Shared Backbone' };
+  const net = { key: 'shared', name: 'Shared Backbone', coverage: 'single-submission' as const };
   const groups = groupBrokers([mk('a', net), mk('b', net), mk('solo')]);
   const row = (refId: string, pillar: Remediation['pillar'] = 'optout'): Remediation => ({
     id: refId,

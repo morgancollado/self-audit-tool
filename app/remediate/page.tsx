@@ -20,6 +20,7 @@ import { StorageModeToggle } from '@/components/StorageModeToggle';
 import { OptOutInputs } from '@/components/OptOutInputs';
 import { StateRights } from '@/components/StateRights';
 import { NetworkOptOutCard } from '@/components/NetworkOptOutCard';
+import { QuickSendList } from '@/components/QuickSendList';
 import { RemediationTracker } from '@/components/RemediationTracker';
 import { OptOutVars } from '@/lib/remediate/optout';
 import { groupBrokers } from '@/lib/remediate/networks';
@@ -105,6 +106,10 @@ export default function RemediatePage() {
         anyway — brokers have to process it whether or not you saw the report. Each request carries
         only the one name you choose below, so you’re not handing them anything new.
       </p>
+
+      {/* The tester's own strategy — email everyone in one sweep — as a first-class
+          path instead of a card-by-card slog. */}
+      <QuickSendList groups={allGroups} vars={vars} findingBySlug={findingBySlug} />
 
       {!hasFindings && (
         <p className="name-inputs-note">

@@ -50,9 +50,17 @@
       "properties": {
         "key": { "type": "string", "pattern": "^[a-z0-9-]+$" },
         "name": { "type": "string", "minLength": 1 },
-        "note": { "type": "string" }
+        "note": { "type": "string" },
+        "coverage": {
+          "enum": ["single-submission", "shared-backbone"],
+          "description": "single-submission: one request verifiably removes every member. shared-backbone: only the representative's removal is verified; siblings become re-check to-dos, never 'sent'."
+        },
+        "representative": {
+          "type": "boolean",
+          "description": "This member fronts the shared request. Exactly one per network (validator-enforced)."
+        }
       },
-      "required": ["key", "name"],
+      "required": ["key", "name", "coverage"],
       "additionalProperties": false
     },
     "notes": { "type": "string" },

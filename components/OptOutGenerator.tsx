@@ -13,6 +13,7 @@ import { useState } from 'react';
 import { useStorage } from '@/lib/storage/StorageProvider';
 import { getOptOutTemplate } from '@/lib/content/data';
 import { Broker } from '@/lib/content/types';
+import { NewRemediationInput } from '@/lib/model/factory';
 import {
   GeneratedOptOut,
   ListedUnder,
@@ -21,12 +22,6 @@ import {
   pairSharesContact,
 } from '@/lib/remediate/optout';
 import { CopyButton } from './CopyButton';
-
-/** A broker this card's single send covers (network cards list every member). */
-export interface TrackTarget {
-  broker: Broker;
-  findingId?: string;
-}
 
 type ListedUnderChoice = ListedUnder | 'both';
 
@@ -84,7 +79,7 @@ export function OptOutGenerator({
   findingId,
   heading,
   intro,
-  trackTargets,
+  trackInputs,
 }: {
   broker: Broker;
   vars: OptOutVars;
@@ -93,23 +88,34 @@ export function OptOutGenerator({
   heading?: string;
   /** Extra content under the title (e.g. which sibling sites this request covers). */
   intro?: React.ReactNode;
-  /** All brokers this one request covers; defaults to just this broker. */
-  trackTargets?: TrackTarget[];
+  /**
+   * The tracker rows one send of this card creates (network cards pass a row per
+   * member site via groupTrackInputs); defaults to just this broker.
+   */
+  trackInputs?: NewRemediationInput[];
 }) {
-  const { state, addRemediation } = useStorage();
+  const { state, addRemediations } = useStorage();
   const exposesLinkage = broker.optOut.optOutExposesLinkage ?? false;
   const [listedUnder, setListedUnder] = useState<ListedUnderChoice>('current');
   // The other name is the linkage disclosure in both directions — default OFF
   // ALWAYS, never keyed off exposesLinkage (a broker that simply forgot the flag
   // must not become the one place a deadname leaks by default).
   const [includeOtherName, setIncludeOtherName] = useState(false);
-  const targets: TrackTarget[] = trackTargets ?? [{ broker, findingId }];
+  const inputs: NewRemediationInput[] = trackInputs ?? [
+    {
+      findingId,
+      pillar: 'optout',
+      refId: broker.slug,
+      action: `Opt-out request to ${broker.name}`,
+      state: 'sent',
+    },
+  ];
   // Derive "tracked" from the shared tracker (keyed by pillar+refId), not local
   // state — so removing the row in the tracker re-renders the button here. A
   // network card is tracked only when every covered site has its row.
   const remediations = state?.remediations ?? [];
-  const tracked = targets.every((t) =>
-    remediations.some((r) => r.pillar === 'optout' && r.refId === t.broker.slug),
+  const tracked = inputs.every((t) =>
+    remediations.some((r) => r.pillar === 'optout' && r.refId === t.refId),
   );
 
   const template = broker.optOut.templateKey ? getOptOutTemplate(broker.optOut.templateKey) : undefined;
@@ -135,20 +141,10 @@ export function OptOutGenerator({
 
   const otherLabel = listedUnder === 'current' ? 'former name' : 'current name';
 
-  // One row per covered site: presentation groups them, the tracker's data stays
-  // keyed by broker slug (scope/docs/04-data-model.md). Row labels never carry
-  // the user's names.
-  const track = async () => {
-    for (const t of targets) {
-      await addRemediation({
-        findingId: t.findingId,
-        pillar: 'optout',
-        refId: t.broker.slug,
-        action: `Opt-out request to ${t.broker.name}`,
-        state: 'sent',
-      });
-    }
-  };
+  // One row per covered site, written in a single batch: presentation groups
+  // them, the tracker's data stays keyed by broker slug
+  // (scope/docs/04-data-model.md). Row labels never carry the user's names.
+  const track = () => addRemediations(inputs);
 
   return (
     <section className="optout" aria-labelledby={`optout-${broker.slug}`}>
@@ -256,17 +252,32 @@ export function OptOutGenerator({
                 listing’s name. Send them as two separate messages, ideally not back-to-back, so
                 the broker can’t pair them up.
               </p>
-              {pairSharesContact(vars) && (
+              {pairSharesContact(vars) ? (
                 <p className="optout-warn" role="note">
                   Both requests would carry the same reply-to email — that alone links your names
                   for this broker. Use a different address for the former-name request, or send one
                   of the two through the web form instead.
                 </p>
+              ) : (
+                // Even with no email written into the requests, emailing both from
+                // one mail account links the names by the sender address alone.
+                genPair.current.mailtoUrl && (
+                  <p className="optout-warn" role="note">
+                    If you email both, the sender address links your names all by itself. Send them
+                    from two different addresses, or send one of the two through the web form
+                    instead.
+                  </p>
+                )
               )}
               {(genPair.current.missingPrimaryName || genPair.former.missingPrimaryName) && (
                 <p className="optout-warn" role="note">
-                  Add your {genPair.current.missingPrimaryName ? 'current name' : 'former name'} in
-                  “Your details” above so Errata can fill both requests in.
+                  Add your{' '}
+                  {genPair.current.missingPrimaryName && genPair.former.missingPrimaryName
+                    ? 'current and former names'
+                    : genPair.current.missingPrimaryName
+                      ? 'current name'
+                      : 'former name'}{' '}
+                  in “Your details” above so Errata can fill both requests in.
                 </p>
               )}
               <Artifact broker={broker} gen={genPair.current} label="Request 1 (current-name listing)" />
