@@ -83,6 +83,16 @@ export default function RemediatePage() {
 
       <h2>Prepare your removal requests</h2>
 
+      {/* User-testing feedback: broker paywalls stopped people from even confirming
+          a listing. Sending anyway is legitimate — brokers must process the request
+          whether or not you saw the report. R13 nuance: the request stays keyed on
+          one name, so an unconfirmed send doesn't hand over the linkage. */}
+      <p className="name-inputs-note">
+        Couldn’t confirm a listing because the site wanted payment or a sign-up? Send the request
+        anyway — brokers have to process it whether or not you saw the report. Each request carries
+        only the one name you choose below, so you’re not handing them anything new.
+      </p>
+
       {!hasFindings && (
         <p className="name-inputs-note">
           These are the brokers Errata covers. Tip: <Link href="/discover">run Discover</Link> first to
