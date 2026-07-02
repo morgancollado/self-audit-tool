@@ -23,9 +23,10 @@ import { NetworkOptOutCard } from '@/components/NetworkOptOutCard';
 import { RemediationTracker } from '@/components/RemediationTracker';
 import { OptOutVars } from '@/lib/remediate/optout';
 import { groupBrokers } from '@/lib/remediate/networks';
+import { countGroupsTracked } from '@/lib/remediate/progress';
 
 export default function RemediatePage() {
-  const { ready, preferences, state } = useStorage();
+  const { ready, preferences, state, mode, durable } = useStorage();
   const [vars, setVars] = useState<OptOutVars>({});
   const [onlyFlagged, setOnlyFlagged] = useState(true);
   const [query, setQuery] = useState('');
@@ -60,10 +61,13 @@ export default function RemediatePage() {
   // flagged-first ordering operate on a group's members.
   const q = query.trim().toLowerCase();
   const flagged = (g: { members: { slug: string }[] }) => g.members.some((m) => findingBySlug.has(m.slug));
-  const groups = groupBrokers(allBrokers)
+  const allGroups = groupBrokers(allBrokers);
+  const groups = allGroups
+    .slice()
     .sort((a, b) => Number(flagged(b)) - Number(flagged(a)))
     .filter((g) => (onlyFlagged && hasFindings ? flagged(g) : true))
     .filter((g) => (q ? g.members.some((m) => m.name.toLowerCase().includes(q)) || g.name.toLowerCase().includes(q) : true));
+  const trackedCount = countGroupsTracked(allGroups, state?.remediations ?? []);
 
   return (
     <>
@@ -78,10 +82,19 @@ export default function RemediatePage() {
       </p>
 
       <StorageModeToggle />
+      {mode === 'ephemeral' && durable && (
+        <p className="name-inputs-note">
+          Most people need more than one sitting for this — saving keeps your tracker for next time.
+        </p>
+      )}
       <StateRights />
       <OptOutInputs vars={vars} onChange={setVars} />
 
       <h2>Prepare your removal requests</h2>
+
+      <p className="ledger-summary">
+        {trackedCount} of {allGroups.length} opt-out targets tracked
+      </p>
 
       {/* User-testing feedback: broker paywalls stopped people from even confirming
           a listing. Sending anyway is legitimate — brokers must process the request

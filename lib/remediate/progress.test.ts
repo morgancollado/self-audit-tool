@@ -2,8 +2,10 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { summarizePlaybook } from './progress.ts';
-import { AuditState } from '../model/types.ts';
+import { countGroupsTracked, summarizePlaybook } from './progress.ts';
+import { AuditState, Remediation } from '../model/types.ts';
+import { Broker } from '../content/types.ts';
+import { groupBrokers } from './networks.ts';
 
 const empty: AuditState = {
   schemaVersion: 1,
@@ -47,4 +49,33 @@ test('counts findings, deadname findings, and per-pillar / per-state remediation
   assert.deepEqual(out.byPillar, { optout: 1, platform: 1, breach: 0, deadname: 1 });
   assert.equal(out.byState.sent, 2);
   assert.equal(out.byState.confirmed, 1);
+});
+
+test('countGroupsTracked: a group counts only when every member has an optout row', () => {
+  const mk = (slug: string, network?: { key: string; name: string }): Broker => ({
+    slug,
+    jurisdiction: { country: 'us' },
+    name: slug,
+    category: 'people-search',
+    exposesDeadnameRisk: 'high',
+    optOut: { methods: ['web-form'], webFormUrl: 'https://x/optout', requiresId: false, steps: ['do it'] },
+    network,
+    lastVerified: '2026-01-01',
+  });
+  const net = { key: 'shared', name: 'Shared Backbone' };
+  const groups = groupBrokers([mk('a', net), mk('b', net), mk('solo')]);
+  const row = (refId: string, pillar: Remediation['pillar'] = 'optout'): Remediation => ({
+    id: refId,
+    pillar,
+    refId,
+    action: 'x',
+    state: 'sent',
+    updatedAt: '2026-06-01',
+  });
+
+  assert.equal(countGroupsTracked(groups, []), 0);
+  assert.equal(countGroupsTracked(groups, [row('a')]), 0, 'half-tracked network does not count');
+  assert.equal(countGroupsTracked(groups, [row('a'), row('b')]), 1);
+  assert.equal(countGroupsTracked(groups, [row('a'), row('b'), row('solo')]), 2);
+  assert.equal(countGroupsTracked(groups, [row('solo', 'platform')]), 0, 'only optout rows count');
 });
