@@ -6,19 +6,76 @@
 // the name the listing is actually filed under, and the user's *other* name is
 // opt-in and OFF by default everywhere — so opting out never silently broadcasts
 // either name to a custodian that didn't already hold it. "Leave it" stays a real,
-// first-class outcome.
+// first-class outcome. When listings exist under both names, the safe path is two
+// independent requests — never one request carrying both names.
 
 import { useState } from 'react';
 import { useStorage } from '@/lib/storage/StorageProvider';
 import { getOptOutTemplate } from '@/lib/content/data';
 import { Broker } from '@/lib/content/types';
-import { ListedUnder, OptOutVars, generateOptOut } from '@/lib/remediate/optout';
+import {
+  GeneratedOptOut,
+  ListedUnder,
+  OptOutVars,
+  generateOptOut,
+  pairSharesContact,
+} from '@/lib/remediate/optout';
 import { CopyButton } from './CopyButton';
 
 /** A broker this card's single send covers (network cards list every member). */
 export interface TrackTarget {
   broker: Broker;
   findingId?: string;
+}
+
+type ListedUnderChoice = ListedUnder | 'both';
+
+/** One prepared request: subject, body, and the ways to send it. */
+function Artifact({ broker, gen, label }: { broker: Broker; gen: GeneratedOptOut; label?: string }) {
+  const forLabel = label ? `${label} for ${broker.name}` : `for ${broker.name}`;
+  return (
+    <>
+      <p className="optout-format-note">{label ? `${label} — subject and message:` : 'Subject and message:'}</p>
+
+      <label className="optout-field">
+        Subject
+        <input type="text" readOnly value={gen.subject} aria-label={`Subject ${forLabel}`} />
+      </label>
+      <pre className="optout-body" aria-label={`Request body ${forLabel}`}>{gen.body}</pre>
+
+      {/* The direct email route (user-testing feedback: hunting for it on each
+          site was the time sink). Shown as a visible, copyable address because
+          mailto: links go nowhere for webmail users. */}
+      {gen.mailtoUrl && broker.optOut.email && (
+        <p className="optout-email-route">
+          Email it to <strong>{broker.optOut.email}</strong>{' '}
+          <CopyButton text={broker.optOut.email} label="Copy address" />
+        </p>
+      )}
+
+      <div className="optout-actions">
+        <CopyButton text={gen.body} label="Copy message" />
+        <CopyButton text={gen.subject} label="Copy subject" />
+        {gen.mailtoUrl && (
+          <a className="optout-send" href={gen.mailtoUrl}>
+            Open in email ↗
+          </a>
+        )}
+        {broker.optOut.webFormUrl && (
+          <a className="optout-send" href={broker.optOut.webFormUrl} target="_blank" rel="noopener noreferrer">
+            Open opt-out form ↗
+          </a>
+        )}
+      </div>
+
+      {gen.mailtoUrl && broker.optOut.webFormUrl && (
+        <p className="optout-format-note">
+          If the form errors or won’t show your listing, email them directly instead — the request
+          works either way.
+        </p>
+      )}
+    </>
+  );
 }
 
 export function OptOutGenerator({
@@ -41,7 +98,7 @@ export function OptOutGenerator({
 }) {
   const { state, addRemediation } = useStorage();
   const exposesLinkage = broker.optOut.optOutExposesLinkage ?? false;
-  const [listedUnder, setListedUnder] = useState<ListedUnder>('current');
+  const [listedUnder, setListedUnder] = useState<ListedUnderChoice>('current');
   // The other name is the linkage disclosure in both directions — default OFF
   // ALWAYS, never keyed off exposesLinkage (a broker that simply forgot the flag
   // must not become the one place a deadname leaks by default).
@@ -56,11 +113,22 @@ export function OptOutGenerator({
   );
 
   const template = broker.optOut.templateKey ? getOptOutTemplate(broker.optOut.templateKey) : undefined;
-  const gen = template ? generateOptOut(broker, template, vars, { listedUnder, includeOtherName }) : undefined;
+  const both = listedUnder === 'both';
+  // "Both names" is two INDEPENDENT artifacts — one keyed per name, the other
+  // name omitted from each — never a single request linking the two (R13).
+  const gen = template && !both
+    ? generateOptOut(broker, template, vars, { listedUnder, includeOtherName })
+    : undefined;
+  const genPair = template && both
+    ? {
+        current: generateOptOut(broker, template, vars, { listedUnder: 'current', includeOtherName: false }),
+        former: generateOptOut(broker, template, vars, { listedUnder: 'former', includeOtherName: false }),
+      }
+    : undefined;
 
   // Switching which name the listing is under flips the meaning of "the other
   // name", so reset the opt-in to its safe default whenever it changes.
-  const changeListedUnder = (next: ListedUnder) => {
+  const changeListedUnder = (next: ListedUnderChoice) => {
     setListedUnder(next);
     setIncludeOtherName(false);
   };
@@ -68,7 +136,8 @@ export function OptOutGenerator({
   const otherLabel = listedUnder === 'current' ? 'former name' : 'current name';
 
   // One row per covered site: presentation groups them, the tracker's data stays
-  // keyed by broker slug (scope/docs/04-data-model.md).
+  // keyed by broker slug (scope/docs/04-data-model.md). Row labels never carry
+  // the user's names.
   const track = async () => {
     for (const t of targets) {
       await addRemediation({
@@ -106,7 +175,7 @@ export function OptOutGenerator({
         </p>
       )}
 
-      {gen ? (
+      {gen || genPair ? (
         <>
           <fieldset className="optout-listedunder">
             <legend>Which name is this listing filed under?</legend>
@@ -128,6 +197,15 @@ export function OptOutGenerator({
               />
               My former name
             </label>
+            <label>
+              <input
+                type="radio"
+                name={`listedunder-${broker.slug}`}
+                checked={both}
+                onChange={() => changeListedUnder('both')}
+              />
+              Both names — I found separate listings
+            </label>
           </fieldset>
 
           {listedUnder === 'former' && (
@@ -138,68 +216,62 @@ export function OptOutGenerator({
             </p>
           )}
 
-          <label className="optout-aliases">
-            <input
-              type="checkbox"
-              checked={includeOtherName}
-              onChange={(e) => setIncludeOtherName(e.target.checked)}
-            />
-            Also include my {otherLabel} in this request
-            <span className="optout-aliases-warn"> — off by default; adding it discloses the link</span>
-          </label>
+          {/* In both-names mode the other-name opt-in disappears entirely: adding
+              either name to the other request would defeat the point of keeping
+              the two requests unlinkable. */}
+          {!both && (
+            <>
+              <label className="optout-aliases">
+                <input
+                  type="checkbox"
+                  checked={includeOtherName}
+                  onChange={(e) => setIncludeOtherName(e.target.checked)}
+                />
+                Also include my {otherLabel} in this request
+                <span className="optout-aliases-warn"> — off by default; adding it discloses the link</span>
+              </label>
 
-          {/* Concise, screen-reader-announced status for the toggle above. */}
-          <p className="visually-hidden" role="status" aria-live="polite">
-            {includeOtherName
-              ? `Your ${otherLabel} will be included in the ${broker.name} request.`
-              : `Your ${otherLabel} is left out of the ${broker.name} request.`}
-          </p>
+              {/* Concise, screen-reader-announced status for the toggle above. */}
+              <p className="visually-hidden" role="status" aria-live="polite">
+                {includeOtherName
+                  ? `Your ${otherLabel} will be included in the ${broker.name} request.`
+                  : `Your ${otherLabel} is left out of the ${broker.name} request.`}
+              </p>
+            </>
+          )}
 
-          {gen.missingPrimaryName && (
+          {gen && gen.missingPrimaryName && (
             <p className="optout-warn" role="note">
               Add your {listedUnder === 'former' ? 'former name' : 'current name'} in “Your details”
               above so Errata can fill this request in.
             </p>
           )}
 
-          <p className="optout-format-note">Subject and message:</p>
+          {gen && <Artifact broker={broker} gen={gen} />}
 
-          <label className="optout-field">
-            Subject
-            <input type="text" readOnly value={gen.subject} aria-label={`Subject for ${broker.name}`} />
-          </label>
-          <pre className="optout-body" aria-label={`Request body for ${broker.name}`}>{gen.body}</pre>
-
-          {/* The direct email route (user-testing feedback: hunting for it on each
-              site was the time sink). Shown as a visible, copyable address because
-              mailto: links go nowhere for webmail users. */}
-          {gen.mailtoUrl && broker.optOut.email && (
-            <p className="optout-email-route">
-              Email it to <strong>{broker.optOut.email}</strong>{' '}
-              <CopyButton text={broker.optOut.email} label="Copy address" />
-            </p>
-          )}
-
-          <div className="optout-actions">
-            <CopyButton text={gen.body} label="Copy message" />
-            <CopyButton text={gen.subject} label="Copy subject" />
-            {gen.mailtoUrl && (
-              <a className="optout-send" href={gen.mailtoUrl}>
-                Open in email ↗
-              </a>
-            )}
-            {broker.optOut.webFormUrl && (
-              <a className="optout-send" href={broker.optOut.webFormUrl} target="_blank" rel="noopener noreferrer">
-                Open opt-out form ↗
-              </a>
-            )}
-          </div>
-
-          {gen.mailtoUrl && broker.optOut.webFormUrl && (
-            <p className="optout-format-note">
-              If the form errors or won’t show your listing, email them directly instead — the
-              request works either way.
-            </p>
+          {genPair && (
+            <>
+              <p className="optout-warn" role="note">
+                You’ll send two separate requests — one per listing, each carrying only that
+                listing’s name. Send them as two separate messages, ideally not back-to-back, so
+                the broker can’t pair them up.
+              </p>
+              {pairSharesContact(vars) && (
+                <p className="optout-warn" role="note">
+                  Both requests would carry the same reply-to email — that alone links your names
+                  for this broker. Use a different address for the former-name request, or send one
+                  of the two through the web form instead.
+                </p>
+              )}
+              {(genPair.current.missingPrimaryName || genPair.former.missingPrimaryName) && (
+                <p className="optout-warn" role="note">
+                  Add your {genPair.current.missingPrimaryName ? 'current name' : 'former name'} in
+                  “Your details” above so Errata can fill both requests in.
+                </p>
+              )}
+              <Artifact broker={broker} gen={genPair.current} label="Request 1 (current-name listing)" />
+              <Artifact broker={broker} gen={genPair.former} label="Request 2 (former-name listing)" />
+            </>
           )}
 
           {broker.optOut.steps.length > 0 && (
@@ -210,7 +282,7 @@ export function OptOutGenerator({
             </ol>
           )}
 
-          <p className="optout-disclaimer">{gen.disclaimer}</p>
+          <p className="optout-disclaimer">{(gen ?? genPair!.current).disclaimer}</p>
           <p className="content-verified">Broker details last verified {broker.lastVerified}.</p>
 
           <div className="optout-track">

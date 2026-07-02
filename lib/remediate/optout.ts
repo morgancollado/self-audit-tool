@@ -55,6 +55,17 @@ export function buildMailto(to: string, subject: string, body: string): string {
 /** Which of the user's names the broker's listing is filed under. */
 export type ListedUnder = 'current' | 'former';
 
+/**
+ * When the current-name and former-name requests are sent as a PAIR (the
+ * "both names" flow — one request per listing, neither carrying the other
+ * name), a shared reply channel is itself the linkage: two requests arriving
+ * from one email address tell the broker the names belong together (R13).
+ * True when the vars would put the same contact on both requests.
+ */
+export function pairSharesContact(vars: OptOutVars): boolean {
+  return !isBlank(vars.email);
+}
+
 export interface GenerateOptOutOpts {
   /**
    * Which name the listing is filed under. The opt-out paradox cuts both ways
