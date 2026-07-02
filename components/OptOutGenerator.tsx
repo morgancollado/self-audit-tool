@@ -133,9 +133,7 @@ export function OptOutGenerator({
             </p>
           )}
 
-          <p className="optout-format-note">
-            Prepared on this device. Nothing is sent until you send it. Subject and message:
-          </p>
+          <p className="optout-format-note">Subject and message:</p>
 
           <label className="optout-field">
             Subject

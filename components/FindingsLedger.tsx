@@ -24,8 +24,7 @@ export function FindingsLedger() {
       <section className="ledger" aria-labelledby="ledger-title">
         <h2 id="ledger-title">Your ledger</h2>
         <p className="name-inputs-note">
-          Nothing here yet. As you work through the steps, add what you find — it stays on this
-          device.
+          Nothing here yet. As you work through the steps, add what you find.
         </p>
       </section>
     );

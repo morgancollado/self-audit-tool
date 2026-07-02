@@ -71,9 +71,8 @@ export default function RemediatePage() {
       </p>
       <h1>Remediate</h1>
       <p>
-        For each broker, Errata prepares a removal request from your details — on this device. Read
-        it, decide which name the listing is under and whether to include your other name, then send
-        it yourself. Nothing is transmitted for you.
+        For each broker, Errata prepares a removal request from your details. Read it, decide which
+        name the listing is under, then send it yourself.
       </p>
 
       <StorageModeToggle />

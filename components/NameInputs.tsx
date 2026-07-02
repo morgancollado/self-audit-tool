@@ -12,11 +12,10 @@ export function NameInputs({ vars, onChange }: { vars: QueryVars; onChange: (nex
 
   return (
     <fieldset className="name-inputs">
-      <legend>Your details (kept in memory only — never saved)</legend>
+      <legend>Your details (kept in memory only)</legend>
       <p className="name-inputs-note">
-        We use these to build search strings for you. They stay on this page and disappear when you
-        leave — Errata saves and sends nothing. On a shared device, use a private / incognito window
-        so the browser itself doesn’t remember what you type.
+        We use these to build search strings for you. On a shared device, use a private / incognito
+        window so the browser itself doesn’t remember what you type.
       </p>
       <div className="name-inputs-grid">
         <label>

@@ -91,8 +91,7 @@ export default function PlaybookPage() {
       </p>
       <h1>Your deadname-removal playbook</h1>
       <p>
-        The whole path in one place, in the order that tends to work best. Do it at your own pace —
-        every step stays on this device, and nothing is sent unless you send it.
+        The whole path in one place, in the order that tends to work best. Do it at your own pace.
       </p>
 
       <StorageModeToggle />

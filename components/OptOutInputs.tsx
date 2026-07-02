@@ -15,11 +15,10 @@ export function OptOutInputs({ vars, onChange }: { vars: OptOutVars; onChange: (
 
   return (
     <fieldset className="name-inputs">
-      <legend>Your details (kept in memory only — never saved)</legend>
+      <legend>Your details (kept in memory only)</legend>
       <p className="name-inputs-note">
-        We use these to fill in your requests. They stay on this page and disappear when you leave.
-        On a shared device, use a private / incognito window. Your former name is only written into a
-        request if you tick the box on that broker — by default it’s left out.
+        We use these to fill in your requests. Your former name is only written into a request if
+        you tick the box on that broker — by default it’s left out.
       </p>
       <div className="name-inputs-grid">
         <label>
