@@ -56,6 +56,17 @@ export interface BrokerOptOut {
   templateKey?: string;
 }
 
+/**
+ * A shared opt-out backbone (e.g. the PeopleConnect suppression center serves
+ * several sibling sites). Presentation-level grouping only: remediations stay
+ * keyed by broker slug (scope/docs/04-data-model.md).
+ */
+export interface BrokerNetwork {
+  key: string;
+  name: string;
+  note?: string;
+}
+
 export interface Broker {
   slug: string;
   jurisdiction: Jurisdiction;
@@ -64,6 +75,7 @@ export interface Broker {
   exposesDeadnameRisk: Priority;
   searchUrl?: string;
   optOut: BrokerOptOut;
+  network?: BrokerNetwork;
   notes?: string;
   attribution?: string;
   sourceUrl?: string;

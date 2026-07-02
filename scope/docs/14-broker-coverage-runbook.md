@@ -131,6 +131,22 @@ For **each** broker:
 If `optOutExposesLinkage` is `true`, add a `leaveItGuidance` string inside `optOut`
 (otherwise the content validator fails the build — by design).
 
+If the broker shares an opt-out backbone with sibling sites (e.g. the PeopleConnect
+suppression center, the BeenVerified family), add a top-level `network` object so
+`/remediate` folds them into one task:
+
+```json
+"network": {
+  "key": "<lowercase-hyphenated backbone key>",
+  "name": "<display name shown as the task title>",
+  "note": "<one line on what the shared request covers>"
+}
+```
+
+Every member of a network must carry the same `key` and `name` (validator-enforced),
+and a network needs at least two members — a one-broker "network" is a mislabel.
+Grouping is presentation only: remediations stay keyed by broker slug.
+
 ## Licensing — resolved (dual-licensed)
 
 The seed data comes from the **Big-Ass Data Broker Opt-Out List**, licensed

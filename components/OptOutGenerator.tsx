@@ -15,14 +15,29 @@ import { Broker } from '@/lib/content/types';
 import { ListedUnder, OptOutVars, generateOptOut } from '@/lib/remediate/optout';
 import { CopyButton } from './CopyButton';
 
+/** A broker this card's single send covers (network cards list every member). */
+export interface TrackTarget {
+  broker: Broker;
+  findingId?: string;
+}
+
 export function OptOutGenerator({
   broker,
   vars,
   findingId,
+  heading,
+  intro,
+  trackTargets,
 }: {
   broker: Broker;
   vars: OptOutVars;
   findingId?: string;
+  /** Display title override (e.g. a network name); the request itself is still this broker's. */
+  heading?: string;
+  /** Extra content under the title (e.g. which sibling sites this request covers). */
+  intro?: React.ReactNode;
+  /** All brokers this one request covers; defaults to just this broker. */
+  trackTargets?: TrackTarget[];
 }) {
   const { state, addRemediation } = useStorage();
   const exposesLinkage = broker.optOut.optOutExposesLinkage ?? false;
@@ -31,10 +46,13 @@ export function OptOutGenerator({
   // ALWAYS, never keyed off exposesLinkage (a broker that simply forgot the flag
   // must not become the one place a deadname leaks by default).
   const [includeOtherName, setIncludeOtherName] = useState(false);
+  const targets: TrackTarget[] = trackTargets ?? [{ broker, findingId }];
   // Derive "tracked" from the shared tracker (keyed by pillar+refId), not local
-  // state — so removing the row in the tracker re-renders the button here.
-  const tracked = (state?.remediations ?? []).some(
-    (r) => r.pillar === 'optout' && r.refId === broker.slug,
+  // state — so removing the row in the tracker re-renders the button here. A
+  // network card is tracked only when every covered site has its row.
+  const remediations = state?.remediations ?? [];
+  const tracked = targets.every((t) =>
+    remediations.some((r) => r.pillar === 'optout' && r.refId === t.broker.slug),
   );
 
   const template = broker.optOut.templateKey ? getOptOutTemplate(broker.optOut.templateKey) : undefined;
@@ -49,16 +67,27 @@ export function OptOutGenerator({
 
   const otherLabel = listedUnder === 'current' ? 'former name' : 'current name';
 
-  const track = async (action: string) => {
-    await addRemediation({ findingId, pillar: 'optout', refId: broker.slug, action, state: 'sent' });
+  // One row per covered site: presentation groups them, the tracker's data stays
+  // keyed by broker slug (scope/docs/04-data-model.md).
+  const track = async () => {
+    for (const t of targets) {
+      await addRemediation({
+        findingId: t.findingId,
+        pillar: 'optout',
+        refId: t.broker.slug,
+        action: `Opt-out request to ${t.broker.name}`,
+        state: 'sent',
+      });
+    }
   };
 
   return (
     <section className="optout" aria-labelledby={`optout-${broker.slug}`}>
       <div className="optout-head">
-        <h3 id={`optout-${broker.slug}`}>{broker.name}</h3>
+        <h3 id={`optout-${broker.slug}`}>{heading ?? broker.name}</h3>
         <span className={`badge priority-${broker.exposesDeadnameRisk}`}>{broker.exposesDeadnameRisk} risk</span>
       </div>
+      {intro}
 
       {/* The opt-out paradox, stated plainly with a real "leave it" path. */}
       {exposesLinkage && (
@@ -171,7 +200,7 @@ export function OptOutGenerator({
             {tracked ? (
               <span className="optout-tracked">Added to your tracker ✓</span>
             ) : (
-              <button type="button" onClick={() => track(`Opt-out request to ${broker.name}`)}>
+              <button type="button" onClick={track}>
                 I’ve sent this — track it
               </button>
             )}

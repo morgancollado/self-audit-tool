@@ -65,6 +65,23 @@ test('R13: a linkage-exposing opt-out must offer leave-it guidance', () => {
   }
 });
 
+test('networks are consistent: one key means one name, and never a single member', () => {
+  const names = new Map<string, string>();
+  const counts = new Map<string, number>();
+  for (const b of BROKERS) {
+    if (!b.network) continue;
+    assert.match(b.network.key, SLUG_RE, `${b.slug}: bad network key ${b.network.key}`);
+    assert.ok(b.network.name && b.network.name.trim().length > 0, `${b.slug}: network without a name`);
+    counts.set(b.network.key, (counts.get(b.network.key) ?? 0) + 1);
+    const seen = names.get(b.network.key);
+    if (seen) assert.equal(b.network.name, seen, `${b.slug}: network '${b.network.key}' name diverges`);
+    else names.set(b.network.key, b.network.name);
+  }
+  for (const [key, count] of counts) {
+    assert.ok(count >= 2, `network '${key}' has only ${count} member — remove the field instead`);
+  }
+});
+
 test('slugs are unique across the manifest', () => {
   const seen = new Set<string>();
   for (const b of BROKERS) {

@@ -282,6 +282,12 @@ button.safety-intro-primary { font-weight: 600; }
 .optout-track { margin-top: 0.5rem; }
 .optout-tracked { color: var(--marker); font-weight: 600; }
 
+/* Network opt-out card (one task per shared backbone) */
+.optout-network-covers { font-size: 0.95rem; margin: 0.5rem 0 0.25rem; }
+.optout-network-members { font-size: 0.9rem; margin: 0.25rem 0 0.75rem; }
+.optout-network-members summary { cursor: pointer; color: var(--slate); }
+.optout-network-members ul { margin: 0.4rem 0 0; padding-left: 1.2rem; }
+
 /* Remediation tracker */
 .tracker { margin: 2rem 0; }
 .tracker-list { list-style: none; padding: 0; margin: 0; }

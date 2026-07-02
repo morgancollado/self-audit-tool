@@ -21,6 +21,11 @@
     ],
     "templateKey": "optout-deletion-generic"
   },
+  "network": {
+    "key": "beenverified-family",
+    "name": "BeenVerified family (The Lifetime Value Co.)",
+    "note": "These sites share one search engine and opt-out backbone; start with BeenVerified and re-check the siblings."
+  },
   "notes": "Shares a data backbone with several sibling people-search sites; re-check related brokers too.",
   "attribution": "Derived from Big-Ass Data Broker Opt-Out List (CC BY-NC-SA).",
   "sourceUrl": "https://github.com/yaelwrites/Big-Ass-Data-Broker-Opt-Out-List",

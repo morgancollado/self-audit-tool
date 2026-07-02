@@ -89,6 +89,9 @@ Notes:
   devices.
 - Content items (brokers/platforms/laws) are **referenced by slug** (`refId`),
   never copied into user state — keeps user data tiny and content updatable.
+- Broker **networks** (shared opt-out backbones) are derived presentation: the UI
+  groups by the content-side `network.key`, but remediations are still written
+  one row per broker slug — no network identifiers enter user state.
 
 ## Export / import
 

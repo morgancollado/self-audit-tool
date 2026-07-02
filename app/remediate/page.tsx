@@ -19,9 +19,10 @@ import { SafetyIntro } from '@/components/SafetyIntro';
 import { StorageModeToggle } from '@/components/StorageModeToggle';
 import { OptOutInputs } from '@/components/OptOutInputs';
 import { StateRights } from '@/components/StateRights';
-import { OptOutGenerator } from '@/components/OptOutGenerator';
+import { NetworkOptOutCard } from '@/components/NetworkOptOutCard';
 import { RemediationTracker } from '@/components/RemediationTracker';
 import { OptOutVars } from '@/lib/remediate/optout';
+import { groupBrokers } from '@/lib/remediate/networks';
 
 export default function RemediatePage() {
   const { ready, preferences, state } = useStorage();
@@ -55,13 +56,14 @@ export default function RemediatePage() {
     );
   }
 
+  // Sites sharing an opt-out backbone fold into one task; filters and the
+  // flagged-first ordering operate on a group's members.
   const q = query.trim().toLowerCase();
-  const brokers = allBrokers
-    // Flagged-first ordering so discovered listings lead.
-    .slice()
-    .sort((a, b) => Number(findingBySlug.has(b.slug)) - Number(findingBySlug.has(a.slug)))
-    .filter((b) => (onlyFlagged && hasFindings ? findingBySlug.has(b.slug) : true))
-    .filter((b) => (q ? b.name.toLowerCase().includes(q) : true));
+  const flagged = (g: { members: { slug: string }[] }) => g.members.some((m) => findingBySlug.has(m.slug));
+  const groups = groupBrokers(allBrokers)
+    .sort((a, b) => Number(flagged(b)) - Number(flagged(a)))
+    .filter((g) => (onlyFlagged && hasFindings ? flagged(g) : true))
+    .filter((g) => (q ? g.members.some((m) => m.name.toLowerCase().includes(q)) || g.name.toLowerCase().includes(q) : true));
 
   return (
     <>
@@ -112,11 +114,11 @@ export default function RemediatePage() {
       </div>
 
       <div className="optout-list">
-        {brokers.length === 0 ? (
+        {groups.length === 0 ? (
           <p className="name-inputs-note">No brokers match that filter.</p>
         ) : (
-          brokers.map((b) => (
-            <OptOutGenerator key={b.slug} broker={b} vars={vars} findingId={findingBySlug.get(b.slug)} />
+          groups.map((g) => (
+            <NetworkOptOutCard key={g.key} group={g} vars={vars} findingBySlug={findingBySlug} />
           ))
         )}
       </div>

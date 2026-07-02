@@ -44,6 +44,17 @@
       "required": ["methods", "requiresId", "steps"],
       "additionalProperties": false
     },
+    "network": {
+      "type": "object",
+      "description": "Shared opt-out backbone: brokers with the same key are handled by one request. Derived presentation only — remediations stay keyed by broker slug.",
+      "properties": {
+        "key": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+        "name": { "type": "string", "minLength": 1 },
+        "note": { "type": "string" }
+      },
+      "required": ["key", "name"],
+      "additionalProperties": false
+    },
     "notes": { "type": "string" },
     "attribution": { "type": "string" },
     "sourceUrl": { "$ref": "common.schema.json#/$defs/url" },
