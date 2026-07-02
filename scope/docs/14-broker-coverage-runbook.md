@@ -22,20 +22,30 @@ capture on the date shown), none authored from a guess.
 
 | Broker | Category | Opt-out | Notes |
 |---|---|---|---|
-| Spokeo | people-search | web-form | linkage-exposing → leave-it guidance |
-| Whitepages | people-search | web-form | linkage-exposing → leave-it guidance |
-| BeenVerified | background-check | web-form | linkage-exposing → leave-it guidance |
-| CheckPeople | people-search | web-form (email suppression) | email-only, no linkage forced |
+| Spokeo | people-search | web-form + privacy email | linkage-exposing → leave-it guidance |
+| Whitepages | people-search | web-form + privacy email | linkage-exposing → leave-it guidance |
+| BeenVerified | background-check | web-form + privacy email | linkage-exposing → leave-it guidance |
+| CheckPeople | people-search | web-form (email suppression) + support email | email-only, no linkage forced |
 | InfoTracer | background-check | web-form + privacy email | single-name removal, no linkage forced |
-| Intelius | people-search | web-form (PeopleConnect portal) | email-only suppression, no linkage forced |
-| TruthFinder | background-check | web-form (PeopleConnect portal) | " |
-| Instant Checkmate | background-check | web-form (PeopleConnect portal) | " |
-| US Search | people-search | web-form (PeopleConnect portal) | " |
-| ZabaSearch | people-search | web-form (PeopleConnect portal) | covered by the shared suppression |
-| Addresses.com | people-search | web-form (PeopleConnect portal) | covered by the shared suppression |
+| Intelius | people-search | web-form (PeopleConnect portal) + privacy email | email-only suppression, no linkage forced |
+| TruthFinder | background-check | web-form (PeopleConnect portal) + privacy email | " |
+| Instant Checkmate | background-check | web-form (PeopleConnect portal) + privacy email | " |
+| US Search | people-search | web-form (PeopleConnect portal) + privacy email | " |
+| ZabaSearch | people-search | web-form (PeopleConnect portal) + privacy email | covered by the shared suppression |
+| Addresses.com | people-search | web-form (PeopleConnect portal) + privacy email | covered by the shared suppression |
 | NeighborWho | people-search | web-form (BeenVerified family) | select-existing-record, no linkage forced |
 | Ownerly | other (property) | web-form (BeenVerified family) | medium deadname risk |
 | PeopleLooker | background-check | web-form (BeenVerified family) | select-existing-record, no linkage forced |
+
+**Email routes (2026-07-02):** the "+ privacy email" addresses above were sourced
+from each broker's published privacy policy / privacy-request channel (web research,
+not a browser capture of the flow): `privacy@peopleconnect.us` (PeopleConnect policy
+contact), `privacy@beenverified.com`, `privacy@spokeo.com` (Spokeo privacy policy),
+`privacyrequest@whitepages.com`, `support@checkpeople.com` (already in our notes).
+Spot-verify each in a real browser before release; `lastVerified` was deliberately
+NOT bumped for these edits. NeighborWho/Ownerly/PeopleLooker keep web-form only —
+their published `privacy@` addresses are documented as Daniel's Law covered-persons
+channels, not a general route.
 
 **Two verified shared flows did the heavy lifting:**
 - **PeopleConnect Suppression Center** (`suppression.peopleconnect.us`) — one

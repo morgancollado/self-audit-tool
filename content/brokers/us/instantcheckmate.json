@@ -6,9 +6,9 @@
   "exposesDeadnameRisk": "high",
   "searchUrl": "https://www.instantcheckmate.com/",
   "optOut": {
-    "methods": ["web-form"],
+    "methods": ["web-form", "email"],
     "webFormUrl": "https://www.instantcheckmate.com/opt-out/",
-    "email": null,
+    "email": "privacy@peopleconnect.us",
     "mailingAddress": null,
     "requiresId": false,
     "optOutExposesLinkage": false,
@@ -16,7 +16,8 @@
       "Open the PeopleConnect Suppression Center (this brand's opt-out page redirects there).",
       "Enter your email address, agree to the terms, and submit.",
       "Open the verification email and click the link to proceed.",
-      "Search for your listing, select it, and confirm the suppression."
+      "Search for your listing, select it, and confirm the suppression.",
+      "If the form fails or you can't confirm a listing, email the prepared request to privacy@peopleconnect.us."
     ],
     "templateKey": "optout-deletion-generic"
   },

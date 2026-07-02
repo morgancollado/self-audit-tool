@@ -6,9 +6,9 @@
   "exposesDeadnameRisk": "high",
   "searchUrl": "https://checkpeople.com/",
   "optOut": {
-    "methods": ["web-form"],
+    "methods": ["web-form", "email"],
     "webFormUrl": "https://checkpeople.com/opt-out",
-    "email": null,
+    "email": "support@checkpeople.com",
     "mailingAddress": null,
     "requiresId": false,
     "optOutExposesLinkage": false,
@@ -16,7 +16,8 @@
       "Open the Suppression Center at the opt-out URL.",
       "Enter your email address and agree to the terms.",
       "Click Continue.",
-      "Open the verification email and click the link to confirm the suppression."
+      "Open the verification email and click the link to confirm the suppression.",
+      "If the form fails or you can't confirm a listing, email the prepared request to support@checkpeople.com."
     ],
     "templateKey": "optout-deletion-generic"
   },

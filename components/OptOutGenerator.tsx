@@ -170,6 +170,16 @@ export function OptOutGenerator({
           </label>
           <pre className="optout-body" aria-label={`Request body for ${broker.name}`}>{gen.body}</pre>
 
+          {/* The direct email route (user-testing feedback: hunting for it on each
+              site was the time sink). Shown as a visible, copyable address because
+              mailto: links go nowhere for webmail users. */}
+          {gen.mailtoUrl && broker.optOut.email && (
+            <p className="optout-email-route">
+              Email it to <strong>{broker.optOut.email}</strong>{' '}
+              <CopyButton text={broker.optOut.email} label="Copy address" />
+            </p>
+          )}
+
           <div className="optout-actions">
             <CopyButton text={gen.body} label="Copy message" />
             <CopyButton text={gen.subject} label="Copy subject" />
@@ -184,6 +194,13 @@ export function OptOutGenerator({
               </a>
             )}
           </div>
+
+          {gen.mailtoUrl && broker.optOut.webFormUrl && (
+            <p className="optout-format-note">
+              If the form errors or won’t show your listing, email them directly instead — the
+              request works either way.
+            </p>
+          )}
 
           {broker.optOut.steps.length > 0 && (
             <ol className="optout-steps">
