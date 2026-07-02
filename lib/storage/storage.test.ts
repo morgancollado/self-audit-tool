@@ -142,3 +142,72 @@ test('migrate passes through a current-version doc', () => {
   const doc = { schemaVersion: SCHEMA_VERSION, findings: [], remediations: [] };
   assert.equal(migrate(doc).schemaVersion, SCHEMA_VERSION);
 });
+
+// REGRESSION (grouped tracker controls): update() is read-modify-write, so
+// un-serialized concurrent updates would each load the same snapshot and the
+// last save would win — a 6-row network group's "Remove" left 5 rows behind and
+// its status change landed on 1 of 6. update() must chain concurrent callers.
+test('concurrent updates are serialized — none lost', async () => {
+  const store = new AuditStore(new MemoryBackend());
+  await store.init({ country: 'us' });
+  const slugs = ['a', 'b', 'c', 'd', 'e', 'f'];
+  await store.update((d) => {
+    for (const slug of slugs) {
+      d.remediations.push({
+        id: slug,
+        pillar: 'optout',
+        refId: slug,
+        action: `Opt-out request to ${slug}`,
+        state: 'sent',
+        updatedAt: '2026-01-01',
+      });
+    }
+  });
+
+  // Fire all six updates without awaiting between them (the UI's worst case).
+  await Promise.all(
+    slugs.map((slug) =>
+      store.update((d) => {
+        const row = d.remediations.find((r) => r.id === slug);
+        if (row) row.state = 'confirmed';
+      }),
+    ),
+  );
+  const afterUpdate = await store.load();
+  assert.equal(
+    afterUpdate!.remediations.filter((r) => r.state === 'confirmed').length,
+    6,
+    'every concurrent status update must land',
+  );
+
+  await Promise.all(
+    slugs.map((slug) =>
+      store.update((d) => {
+        d.remediations = d.remediations.filter((r) => r.id !== slug);
+      }),
+    ),
+  );
+  const afterRemove = await store.load();
+  assert.equal(afterRemove!.remediations.length, 0, 'every concurrent removal must land');
+});
+
+test('a rejected update does not wedge later ones', async () => {
+  const store = new AuditStore(new MemoryBackend());
+  await store.init({ country: 'us' });
+  await assert.rejects(
+    store.update(() => {
+      throw new Error('boom');
+    }),
+  );
+  const after = await store.update((d) => {
+    d.remediations.push({
+      id: 'x',
+      pillar: 'optout',
+      refId: 'x',
+      action: 'Opt-out request to x',
+      state: 'sent',
+      updatedAt: '2026-01-01',
+    });
+  });
+  assert.equal(after.remediations.length, 1);
+});

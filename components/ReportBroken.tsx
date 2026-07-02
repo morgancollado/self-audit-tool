@@ -43,7 +43,7 @@ export function ReportBroken(props: Props) {
       />
       <p className="report-broken-hint">
         This opens a <strong>public</strong> issue on GitHub, in a new tab, under your own GitHub
-        account — anyone can see it and it stays public. Nothing is routed through Errata.
+        account — anyone can see it and it stays public.
       </p>
       <a className="report-broken-submit" href={href} target="_blank" rel="noopener noreferrer">
         Open a report on GitHub

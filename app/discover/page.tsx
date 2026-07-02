@@ -43,8 +43,7 @@ export default function DiscoverPage() {
       <h1>Discover</h1>
       <p>
         Find what’s out there the way someone looking for you would. Go at your own pace — you can
-        stop and come back. Nothing here is sent or saved unless you add it to your ledger, and even
-        that stays on this device.
+        stop and come back.
       </p>
 
       {/* Keep the shared-device mode choice reachable on this sensitive page. */}

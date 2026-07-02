@@ -2,7 +2,8 @@
 // state — no I/O. Powers the consolidated deadname-removal playbook's at-a-glance
 // status. Reads only what's already on the device; summarizes nothing that leaves it.
 
-import { AuditState, Pillar, RemediationState } from '../model/types';
+import { AuditState, Pillar, Remediation, RemediationState } from '../model/types';
+import { BrokerGroup } from './networks';
 
 export interface PlaybookSummary {
   findings: number;
@@ -16,6 +17,18 @@ export interface PlaybookSummary {
 
 const ZERO_PILLARS: Record<Pillar, number> = { optout: 0, platform: 0, breach: 0, deadname: 0 };
 const ZERO_STATES: Record<RemediationState, number> = { todo: 0, sent: 0, confirmed: 0, blocked: 0 };
+
+/**
+ * How many opt-out targets (network groups / standalone brokers) are fully
+ * tracked — a group counts only when every member site has its tracker row.
+ * Powers the "X of N targets" pacing line on /remediate.
+ */
+export function countGroupsTracked(groups: BrokerGroup[], remediations: Remediation[]): number {
+  const tracked = new Set(
+    remediations.filter((r) => r.pillar === 'optout' && r.refId).map((r) => r.refId as string),
+  );
+  return groups.filter((g) => g.members.every((m) => tracked.has(m.slug))).length;
+}
 
 export function summarizePlaybook(state: AuditState | null): PlaybookSummary {
   const findings = state?.findings ?? [];

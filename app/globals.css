@@ -276,11 +276,24 @@ button.safety-intro-primary { font-weight: 600; }
 .optout-field input { font: inherit; padding: 0.45rem 0.55rem; border: 1px solid var(--slate); border-radius: var(--radius); background: var(--paper); color: var(--ink); }
 .optout-body { font-family: var(--mono); font-size: 0.88rem; white-space: pre-wrap; word-break: break-word; background: var(--paper); border: 1px solid var(--slate); border-radius: var(--radius); padding: 0.75rem; margin: 0.5rem 0; }
 .optout-actions { display: flex; flex-wrap: wrap; gap: 0.6rem; align-items: center; margin: 0.5rem 0; }
+.optout-email-route { font-size: 0.95rem; margin: 0.5rem 0 0.25rem; display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
 .optout-send { font-weight: 600; font-size: 0.95rem; }
 .optout-steps { padding-left: 1.2rem; font-size: 0.95rem; }
 .optout-disclaimer { color: var(--slate); font-size: 0.85rem; margin: 0.6rem 0; }
 .optout-track { margin-top: 0.5rem; }
 .optout-tracked { color: var(--marker); font-weight: 600; }
+
+/* Quick pass (email every target in one sitting) */
+.quicksend { margin: 1rem 0 1.5rem; border: 1px solid var(--slate); border-radius: var(--radius); padding: 0.75rem 1rem; }
+.quicksend summary { cursor: pointer; font-weight: 600; }
+.quicksend-list { list-style: none; padding: 0; margin: 0.5rem 0 0; display: grid; gap: 0.75rem; }
+.quicksend-list li { border-top: 1px solid var(--cream); padding-top: 0.6rem; font-size: 0.95rem; }
+
+/* Network opt-out card (one task per shared backbone) */
+.optout-network-covers { font-size: 0.95rem; margin: 0.5rem 0 0.25rem; }
+.optout-network-members { font-size: 0.9rem; margin: 0.25rem 0 0.75rem; }
+.optout-network-members summary { cursor: pointer; color: var(--slate); }
+.optout-network-members ul { margin: 0.4rem 0 0; padding-left: 1.2rem; }
 
 /* Remediation tracker */
 .tracker { margin: 2rem 0; }
@@ -294,6 +307,9 @@ button.safety-intro-primary { font-weight: 600; }
 .state-sent { background: var(--marker); color: var(--on-marker); }
 .state-confirmed { background: var(--ink); color: var(--paper); }
 .state-blocked { background: var(--proof); color: var(--paper); }
+/* A grouped row whose member sites are in different states (e.g. representative
+   sent, siblings still to-do). */
+.state-mixed { background: var(--paper); color: var(--slate); border: 1px dashed var(--slate); }
 
 /* Ledger */
 .ledger { margin: 2rem 0; }

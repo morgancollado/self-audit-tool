@@ -2,7 +2,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { fillOptOutText, buildMailto, generateOptOut } from './optout.ts';
+import { fillOptOutText, buildMailto, generateOptOut, pairSharesContact } from './optout.ts';
 import { Broker, OptOutTemplate } from '../content/types.ts';
 
 const template: OptOutTemplate = {
@@ -90,6 +90,26 @@ test('missingPrimaryName is flagged when the keying name is blank', () => {
   assert.equal(g.missingPrimaryName, true, 'no current name entered, listing keyed on current');
   const g2 = generateOptOut(webFormBroker, template, { name: 'Alex' }, underCurrent());
   assert.equal(g2.missingPrimaryName, false);
+});
+
+test('PARADOX (both-names pair): each request carries exactly one name, never the other', () => {
+  // The "both names" flow is two independent artifacts, one keyed per name with
+  // the other name omitted — a single request carrying both would BE the linkage.
+  const vars = { name: 'Alex', aliases: 'Deadname' };
+  const a = generateOptOut(webFormBroker, template, vars, underCurrent(false));
+  const b = generateOptOut(webFormBroker, template, vars, underFormer(false));
+  assert.ok(a.body.includes('Name: Alex'));
+  assert.ok(!a.body.includes('Deadname'), 'current-name request must not carry the former name');
+  assert.ok(b.body.includes('Name: Deadname'));
+  assert.ok(!b.body.includes('Alex'), 'former-name request must not carry the current name');
+  assert.equal(a.includesFormerName, false);
+  assert.equal(b.includesCurrentName, false);
+});
+
+test('pairSharesContact flags a shared reply channel (the linkage across a request pair)', () => {
+  assert.equal(pairSharesContact({ name: 'Alex', email: 'me@example.com' }), true);
+  assert.equal(pairSharesContact({ name: 'Alex', email: '  ' }), false);
+  assert.equal(pairSharesContact({ name: 'Alex' }), false);
 });
 
 test('mailto format only offered when the broker accepts email', () => {

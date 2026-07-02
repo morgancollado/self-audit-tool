@@ -56,6 +56,30 @@ export interface BrokerOptOut {
   templateKey?: string;
 }
 
+/**
+ * How much one request to a network's backbone is verified to cover:
+ *  - 'single-submission' — one submission verifiably removes every member site
+ *    (e.g. the PeopleConnect suppression center); tracking marks them all sent.
+ *  - 'shared-backbone' — the sites share data and a privacy contact, but only
+ *    the representative's own removal is verified; siblings are tracked as
+ *    re-check to-dos, never as sent (a false "sent" is worse than an extra task).
+ */
+export type NetworkCoverage = 'single-submission' | 'shared-backbone';
+
+/**
+ * A shared opt-out backbone (e.g. the PeopleConnect suppression center serves
+ * several sibling sites). Presentation-level grouping only: remediations stay
+ * keyed by broker slug (scope/docs/04-data-model.md).
+ */
+export interface BrokerNetwork {
+  key: string;
+  name: string;
+  note?: string;
+  coverage: NetworkCoverage;
+  /** Exactly one member per network fronts the shared request (validator-enforced). */
+  representative?: boolean;
+}
+
 export interface Broker {
   slug: string;
   jurisdiction: Jurisdiction;
@@ -64,6 +88,7 @@ export interface Broker {
   exposesDeadnameRisk: Priority;
   searchUrl?: string;
   optOut: BrokerOptOut;
+  network?: BrokerNetwork;
   notes?: string;
   attribution?: string;
   sourceUrl?: string;

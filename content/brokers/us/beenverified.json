@@ -6,9 +6,9 @@
   "exposesDeadnameRisk": "high",
   "searchUrl": "https://www.beenverified.com/",
   "optOut": {
-    "methods": ["web-form"],
+    "methods": ["web-form", "email"],
     "webFormUrl": "https://www.beenverified.com/app/optout/search",
-    "email": null,
+    "email": "privacy@beenverified.com",
     "mailingAddress": null,
     "requiresId": false,
     "optOutExposesLinkage": true,
@@ -17,9 +17,17 @@
       "Search for your record on the opt-out page.",
       "Select your listing from the results.",
       "Provide an email to receive the verification link.",
-      "Click the verification link to complete the removal."
+      "Click the verification link to complete the removal.",
+      "If the form fails or you can't confirm a listing, email the prepared request to privacy@beenverified.com."
     ],
     "templateKey": "optout-deletion-generic"
+  },
+  "network": {
+    "key": "beenverified-family",
+    "name": "BeenVerified family (The Lifetime Value Co.)",
+    "note": "These sites share one search engine and a privacy contact at The Lifetime Value Co.",
+    "coverage": "shared-backbone",
+    "representative": true
   },
   "notes": "Shares a data backbone with several sibling people-search sites; re-check related brokers too.",
   "attribution": "Derived from Big-Ass Data Broker Opt-Out List (CC BY-NC-SA).",

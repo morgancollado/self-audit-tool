@@ -6,9 +6,9 @@
   "exposesDeadnameRisk": "high",
   "searchUrl": "https://www.whitepages.com/",
   "optOut": {
-    "methods": ["web-form"],
+    "methods": ["web-form", "email"],
     "webFormUrl": "https://www.whitepages.com/suppression-requests",
-    "email": null,
+    "email": "privacyrequest@whitepages.com",
     "mailingAddress": null,
     "requiresId": false,
     "optOutExposesLinkage": true,
@@ -17,7 +17,8 @@
       "Find your listing via the search URL.",
       "Copy the listing URL.",
       "Submit it on the suppression-requests page.",
-      "Complete the phone or email verification step."
+      "Complete the phone or email verification step.",
+      "If the form fails or you can't confirm a listing, email the prepared request to privacyrequest@whitepages.com."
     ],
     "templateKey": "optout-deletion-generic"
   },

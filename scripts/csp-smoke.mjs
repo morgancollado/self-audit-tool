@@ -77,7 +77,9 @@ const server = http.createServer((req, res) => {
 await new Promise((r) => server.listen(0, r));
 const base = `http://localhost:${server.address().port}/`;
 
-const browser = await chromium.launch({ headless: true });
+// ERRATA_CHROMIUM: optional path to a system Chromium, for sandboxes where the
+// Playwright-managed download isn't available. Unset = Playwright's default.
+const browser = await chromium.launch({ headless: true, executablePath: process.env.ERRATA_CHROMIUM || undefined });
 try {
   const page = await browser.newPage();
   const blockedScripts = [];
@@ -258,7 +260,57 @@ try {
   if (alText.includes('no verified guidance yet')) fail('Alabama still falls back to the generic note.');
   console.log('[csp-smoke] /remediate rights: OR→Oregon, NY→limited, AL→authored (full coverage)');
 
+  // Quick pass (send-them-all): renders, lists the email-capable targets, and —
+  // like everything on this page — never carries the former name.
+  await rpage.locator('details.quicksend > summary').click();
+  const quickRows = await rpage.locator('.quicksend-list li').count();
+  const quickText = await rpage.locator('details.quicksend').innerText();
+  console.log(`[csp-smoke] /remediate quick pass: ${quickRows} email target(s)`);
+  if (quickRows === 0) fail('the quick pass listed no email-capable targets.');
+  if (quickText.includes('Deadname McTest')) fail('the quick pass leaked the former name.');
+
+  // Grouped tracking honesty (shared-backbone): tracking the BeenVerified-family
+  // card must mark ONLY the representative sent and the siblings as re-check
+  // to-dos — never a family-wide "sent" the data doesn't support.
+  const bvCard = rpage.locator('section.optout', { hasText: 'BeenVerified family' }).first();
+  await bvCard.getByRole('button', { name: /track it/ }).click();
+  await rpage.waitForTimeout(300);
+  const bvItem = rpage.locator('li.tracker-item', { hasText: 'BeenVerified family' }).first();
+  const bvBadge = (await bvItem.locator('.badge').innerText()).toLowerCase();
+  const bvCovers = await bvItem.locator('p.name-inputs-note').innerText();
+  console.log(`[csp-smoke] /remediate BV-family tracked: badge=${JSON.stringify(bvBadge)}`);
+  if (bvBadge !== 'mixed') fail(`shared-backbone tracking shows '${bvBadge}', expected the mixed-state group badge.`);
+  if (!bvCovers.includes('(sent)') || !bvCovers.includes('(to do)')) {
+    fail('shared-backbone tracking did not record representative=sent + siblings=to-do.');
+  }
+
+  // Grouped tracking (single-submission): one click on the PeopleConnect card
+  // tracks all six sites uniformly as sent.
+  const pcCard = rpage.locator('section.optout', { hasText: 'PeopleConnect Suppression Center' }).first();
+  await pcCard.getByRole('button', { name: /track it/ }).click();
+  await rpage.waitForTimeout(300);
+  const pcItem = rpage.locator('li.tracker-item', { hasText: 'PeopleConnect Suppression Center' }).first();
+  const pcBadge = (await pcItem.locator('.badge').innerText()).toLowerCase();
+  const pcCovers = await pcItem.locator('p.name-inputs-note').innerText();
+  const pcCovered = pcCovers.split(',').length;
+  console.log(`[csp-smoke] /remediate PeopleConnect tracked: badge=${JSON.stringify(pcBadge)}, covers ${pcCovered} site(s)`);
+  if (pcBadge !== 'sent') fail(`single-submission tracking shows '${pcBadge}', expected a uniform 'sent'.`);
+  if (pcCovered < 6) fail(`the PeopleConnect group covers ${pcCovered} sites, expected 6.`);
+
   await axeFailures(rpage, '/remediate');
+
+  // Atomic group removal (the lost-update regression: un-serialized writes left
+  // 5 of 6 rows behind). Removing both groups must empty the tracker completely.
+  await pcItem.getByRole('button', { name: 'Remove' }).click();
+  await rpage.waitForTimeout(300);
+  await bvItem.getByRole('button', { name: 'Remove' }).click();
+  await rpage.waitForTimeout(300);
+  const leftoverRows = await rpage.locator('li.tracker-item').count();
+  console.log(`[csp-smoke] /remediate group removal: ${leftoverRows} tracker row(s) left`);
+  if (leftoverRows !== 0) {
+    fail(`removing both tracked groups left ${leftoverRows} row(s) behind (lost-update regression).`);
+  }
+
   await rctx.close();
 
   // ---- /harden: safety gate + platform guides render, no dead-ends (M2) ----

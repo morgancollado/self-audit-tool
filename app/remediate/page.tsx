@@ -19,12 +19,15 @@ import { SafetyIntro } from '@/components/SafetyIntro';
 import { StorageModeToggle } from '@/components/StorageModeToggle';
 import { OptOutInputs } from '@/components/OptOutInputs';
 import { StateRights } from '@/components/StateRights';
-import { OptOutGenerator } from '@/components/OptOutGenerator';
+import { NetworkOptOutCard } from '@/components/NetworkOptOutCard';
+import { QuickSendList } from '@/components/QuickSendList';
 import { RemediationTracker } from '@/components/RemediationTracker';
 import { OptOutVars } from '@/lib/remediate/optout';
+import { groupBrokers } from '@/lib/remediate/networks';
+import { countGroupsTracked } from '@/lib/remediate/progress';
 
 export default function RemediatePage() {
-  const { ready, preferences, state } = useStorage();
+  const { ready, preferences, state, mode, durable } = useStorage();
   const [vars, setVars] = useState<OptOutVars>({});
   const [onlyFlagged, setOnlyFlagged] = useState(true);
   const [query, setQuery] = useState('');
@@ -55,13 +58,17 @@ export default function RemediatePage() {
     );
   }
 
+  // Sites sharing an opt-out backbone fold into one task; filters and the
+  // flagged-first ordering operate on a group's members.
   const q = query.trim().toLowerCase();
-  const brokers = allBrokers
-    // Flagged-first ordering so discovered listings lead.
+  const flagged = (g: { members: { slug: string }[] }) => g.members.some((m) => findingBySlug.has(m.slug));
+  const allGroups = groupBrokers(allBrokers);
+  const groups = allGroups
     .slice()
-    .sort((a, b) => Number(findingBySlug.has(b.slug)) - Number(findingBySlug.has(a.slug)))
-    .filter((b) => (onlyFlagged && hasFindings ? findingBySlug.has(b.slug) : true))
-    .filter((b) => (q ? b.name.toLowerCase().includes(q) : true));
+    .sort((a, b) => Number(flagged(b)) - Number(flagged(a)))
+    .filter((g) => (onlyFlagged && hasFindings ? flagged(g) : true))
+    .filter((g) => (q ? g.members.some((m) => m.name.toLowerCase().includes(q)) || g.name.toLowerCase().includes(q) : true));
+  const trackedCount = countGroupsTracked(allGroups, state?.remediations ?? []);
 
   return (
     <>
@@ -71,16 +78,38 @@ export default function RemediatePage() {
       </p>
       <h1>Remediate</h1>
       <p>
-        For each broker, Errata prepares a removal request from your details — on this device. Read
-        it, decide which name the listing is under and whether to include your other name, then send
-        it yourself. Nothing is transmitted for you.
+        For each broker, Errata prepares a removal request from your details. Read it, decide which
+        name the listing is under, then send it yourself.
       </p>
 
       <StorageModeToggle />
+      {mode === 'ephemeral' && durable && (
+        <p className="name-inputs-note">
+          Most people need more than one sitting for this — saving keeps your tracker for next time.
+        </p>
+      )}
       <StateRights />
       <OptOutInputs vars={vars} onChange={setVars} />
 
       <h2>Prepare your removal requests</h2>
+
+      <p className="ledger-summary">
+        {trackedCount} of {allGroups.length} opt-out targets tracked
+      </p>
+
+      {/* User-testing feedback: broker paywalls stopped people from even confirming
+          a listing. Sending anyway is legitimate — brokers must process the request
+          whether or not you saw the report. R13 nuance: the request stays keyed on
+          one name, so an unconfirmed send doesn't hand over the linkage. */}
+      <p className="name-inputs-note">
+        Couldn’t confirm a listing because the site wanted payment or a sign-up? Send the request
+        anyway — brokers have to process it whether or not you saw the report. Each request carries
+        only the one name you choose below, so you’re not handing them anything new.
+      </p>
+
+      {/* The tester's own strategy — email everyone in one sweep — as a first-class
+          path instead of a card-by-card slog. */}
+      <QuickSendList groups={allGroups} vars={vars} findingBySlug={findingBySlug} />
 
       {!hasFindings && (
         <p className="name-inputs-note">
@@ -113,11 +142,11 @@ export default function RemediatePage() {
       </div>
 
       <div className="optout-list">
-        {brokers.length === 0 ? (
+        {groups.length === 0 ? (
           <p className="name-inputs-note">No brokers match that filter.</p>
         ) : (
-          brokers.map((b) => (
-            <OptOutGenerator key={b.slug} broker={b} vars={vars} findingId={findingBySlug.get(b.slug)} />
+          groups.map((g) => (
+            <NetworkOptOutCard key={g.key} group={g} vars={vars} findingBySlug={findingBySlug} />
           ))
         )}
       </div>

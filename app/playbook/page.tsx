@@ -51,8 +51,11 @@ export default function PlaybookPage() {
       blurb:
         'For each broker, Errata prepares a removal request on this device — you decide which name the listing is under and whether to include your other name, then send it yourself.',
       status:
+        // Counted per broker SITE (one tracker row each) — /remediate counts
+        // grouped targets, so it says "sites" here to keep the two numbers from
+        // reading as a contradiction.
         s.byPillar.optout > 0
-          ? `${s.byPillar.optout} request${s.byPillar.optout === 1 ? '' : 's'} tracked`
+          ? `${s.byPillar.optout} broker site${s.byPillar.optout === 1 ? '' : 's'} tracked`
           : 'Prepare opt-out requests for where you were found.',
       done: s.byPillar.optout > 0,
     },
@@ -91,8 +94,7 @@ export default function PlaybookPage() {
       </p>
       <h1>Your deadname-removal playbook</h1>
       <p>
-        The whole path in one place, in the order that tends to work best. Do it at your own pace —
-        every step stays on this device, and nothing is sent unless you send it.
+        The whole path in one place, in the order that tends to work best. Do it at your own pace.
       </p>
 
       <StorageModeToggle />
