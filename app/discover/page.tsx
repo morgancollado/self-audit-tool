@@ -49,6 +49,14 @@ export default function DiscoverPage() {
       {/* Keep the shared-device mode choice reachable on this sensitive page. */}
       <StorageModeToggle />
       <NameInputs vars={vars} onChange={setVars} />
+      {/* Quiet confirmation chips. The former name itself is NEVER rendered — its
+          chip only confirms it is held in memory and kept off screen. */}
+      {(vars.name || vars.deadname) && (
+        <p className="name-chips" aria-label="Names in use">
+          {vars.name && <span className="name-chip">{vars.name}</span>}
+          {vars.deadname && <span className="name-chip name-chip-hidden">former name · hidden</span>}
+        </p>
+      )}
       <DiscoveryChecklist vars={vars} />
       <FindingsLedger />
 

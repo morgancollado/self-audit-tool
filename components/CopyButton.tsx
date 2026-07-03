@@ -4,7 +4,16 @@ import { useState } from 'react';
 
 type CopyState = 'idle' | 'copied' | 'failed';
 
-export function CopyButton({ text, label = 'Copy' }: { text: string; label?: string }) {
+export function CopyButton({
+  text,
+  label = 'Copy',
+  variant = 'default',
+}: {
+  text: string;
+  label?: string;
+  /** 'primary' = the one emphasized action; 'quiet' = an underlined text button. */
+  variant?: 'default' | 'primary' | 'quiet';
+}) {
   const [status, setStatus] = useState<CopyState>('idle');
 
   const onClick = async () => {
@@ -23,9 +32,14 @@ export function CopyButton({ text, label = 'Copy' }: { text: string; label?: str
   const buttonLabel =
     status === 'copied' ? 'Copied ✓' : status === 'failed' ? 'Select the text to copy' : label;
 
+  const cls =
+    variant === 'primary' ? 'copy-button copy-primary'
+    : variant === 'quiet' ? 'copy-button copy-quiet'
+    : 'copy-button';
+
   return (
     <>
-      <button type="button" className="copy-button" onClick={onClick} aria-label={buttonLabel}>
+      <button type="button" className={cls} onClick={onClick} aria-label={buttonLabel}>
         {buttonLabel}
       </button>
       {/* Announce the result to assistive tech without depending on the label swap. */}

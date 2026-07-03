@@ -149,14 +149,17 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 1.5rem 1.25rem 4rem; }
 }
 .app-bar .wordmark { font-family: var(--serif); font-size: 1.25rem; letter-spacing: 0.02em; }
 
+/* The panic control: the correction gesture's twin — a solid proof-red fill,
+   instant and unconfirmed by design (scope/docs/04-data-model.md). */
 .panic-button {
   font-family: var(--sans);
   font-weight: 600;
+  font-size: 0.8rem;
   color: var(--paper);
   background: var(--proof);
   border: 2px solid transparent;
-  border-radius: var(--radius);
-  padding: 0.5rem 0.9rem;
+  border-radius: 4px;
+  padding: 0.42rem 0.8rem;
   cursor: pointer;
 }
 .panic-button:hover { filter: brightness(0.95); }
@@ -236,14 +239,20 @@ button.safety-intro-primary { font-weight: 600; }
 .step-prompts { border-left: 3px solid var(--marker); list-style: none; padding: 0.4rem 0 0.4rem 0.9rem; margin: 0.75rem 0; }
 .step-prompts li { margin: 0.25rem 0; }
 
-.broker-row { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem; padding: 0.4rem 0; border-top: 1px solid var(--paper); }
+.broker-row { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem; padding: 0.4rem 0; border-top: 1px solid var(--card-line); }
 .broker-row span:first-child { font-weight: 600; min-width: 8rem; }
 
-.query-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.5rem; padding: 0.4rem 0; border-top: 1px solid var(--paper); }
+.query-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.5rem; padding: 0.4rem 0; border-top: 1px solid var(--card-line); }
 .query-row code { font-family: var(--mono); font-size: 0.9rem; word-break: break-word; }
-.query-deadname code { font-weight: 700; }
+/* Deliberately NOT bold: emphasizing the former name is the opposite of the
+   goal. The deadname is masked in the DOM anyway (see .query-placeholder). */
 .query-actions { display: flex; gap: 0.6rem; align-items: center; }
-.copy-button { background: var(--marker); color: var(--on-marker); border: 1px solid var(--marker); padding: 0.25rem 0.6rem; font-weight: 600; }
+.step-stamps { display: inline-flex; gap: 0.4rem; flex: none; }
+.copy-button { background: var(--marker); color: var(--on-marker); border: 1px solid var(--marker); border-radius: var(--radius); padding: 0.25rem 0.6rem; font-weight: 600; }
+/* The one emphasized copy action per letter. */
+.copy-button.copy-primary { font-weight: 600; }
+/* Quiet, underlined copy actions — everything that isn't the primary. */
+.copy-button.copy-quiet { background: none; color: var(--marker); border: none; text-decoration: underline; padding: 0.25rem 0; font-weight: 400; }
 .query-run { font-size: 0.9rem; }
 .query-privacy-note { color: var(--slate); font-size: 0.9rem; background: var(--cream); border-radius: var(--radius); padding: 0.5rem 0.75rem; margin: 0.5rem 0; }
 
@@ -255,12 +264,45 @@ button.safety-intro-primary { font-weight: 600; }
 .add-finding-checkbox { flex-direction: row !important; align-items: center; gap: 0.4rem; }
 .add-finding-actions { display: flex; gap: 0.75rem; align-items: center; }
 
-/* Badges */
-.badge { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; padding: 0.15rem 0.45rem; border-radius: 999px; white-space: nowrap; }
-.priority-high { background: var(--proof); color: var(--paper); }
-.priority-medium { background: var(--marker); color: var(--on-marker); }
-.priority-low { background: var(--cream); color: var(--slate); border: 1px solid var(--slate); }
-.badge-deadname { background: var(--ink); color: var(--paper); }
+/* Status stamps — rectangular rubber-stamp chips (scope/docs/11-brand.md).
+   Five visual states; "corrected" is the ONLY filled stamp — the terminal good
+   state earns the ink. Everything else is an outline. Labels are plain words,
+   no proofreader jargon. */
+.stamp {
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border: 1px solid;
+  border-radius: 2px;
+  padding: 0.16rem 0.48rem;
+  white-space: nowrap;
+  display: inline-block;
+  line-height: 1.35;
+}
+/* to do — quiet neutral outline (priority: low reuses it) */
+.stamp.state-todo,
+.stamp.priority-low { color: #6a665a; border-color: #cfc9bb; background: transparent; }
+/* drafting / blocked — proof outline (a correction in progress). priority: high
+   reuses the proof outline. */
+.stamp.state-blocked,
+.stamp.priority-high { color: var(--proof); border-color: var(--proof); background: transparent; }
+/* sent — marker outline (priority: medium reuses it) */
+.stamp.state-sent,
+.stamp.priority-medium { color: var(--marker); border-color: var(--marker); background: transparent; }
+/* corrected — the one filled stamp */
+.stamp.state-confirmed { color: var(--on-marker); border-color: var(--marker); background: var(--marker); }
+/* monitor / mixed — slate dashed outline */
+.stamp.state-mixed { color: var(--slate); border-color: var(--slate); border-style: dashed; background: transparent; }
+/* the "former name" differentiator flag — proof outline (the correction target,
+   never a fill: proof means correction, not alarm) */
+.stamp.badge-deadname { color: var(--proof); border-color: var(--proof); background: transparent; }
+
+@media (prefers-color-scheme: dark) {
+  .stamp.state-todo,
+  .stamp.priority-low { color: #b8b2a6; border-color: #4a463c; }
+}
 
 /* Backup & restore */
 .backup { margin: 1.5rem 0; }
@@ -306,7 +348,7 @@ button.safety-intro-primary { font-weight: 600; }
 .platform-deadname { border-left: 3px solid var(--marker); padding: 0.5rem 0 0.5rem 0.9rem; margin: 0.75rem 0; }
 .platform-subhead { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; flex-wrap: wrap; }
 .platform-subhead h4, .platform-hardening h4 { margin: 0.3rem 0; font-family: var(--serif); }
-.platform-hardening { margin-top: 1rem; border-top: 1px solid var(--paper); padding-top: 0.5rem; }
+.platform-hardening { margin-top: 1rem; border-top: 1px solid var(--card-line); padding-top: 0.5rem; }
 .platform-steps { padding-left: 1.2rem; font-size: 0.95rem; }
 .platform-steps li { margin: 0.25rem 0; }
 .platform-note { color: var(--slate); font-size: 0.92rem; }
@@ -339,7 +381,7 @@ button.safety-intro-primary { font-weight: 600; }
 .optout-format-note { color: var(--slate); font-size: 0.9rem; margin: 0.5rem 0 0.25rem; }
 .optout-field { display: flex; flex-direction: column; gap: 0.25rem; font-size: 0.95rem; }
 .optout-field input { font: inherit; padding: 0.45rem 0.55rem; border: 1px solid var(--slate); border-radius: var(--radius); background: var(--paper); color: var(--ink); }
-.optout-body { font-family: var(--mono); font-size: 0.88rem; white-space: pre-wrap; word-break: break-word; background: var(--paper); border: 1px solid var(--slate); border-radius: var(--radius); padding: 0.75rem; margin: 0.5rem 0; }
+.optout-body { font-family: var(--mono); font-size: 0.88rem; white-space: pre-wrap; word-break: break-word; background: var(--paper); border: 1px solid var(--card-line); border-radius: var(--radius); padding: 0.75rem; margin: 0.5rem 0; }
 .optout-actions { display: flex; flex-wrap: wrap; gap: 0.6rem; align-items: center; margin: 0.5rem 0; }
 .optout-email-route { font-size: 0.95rem; margin: 0.5rem 0 0.25rem; display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
 .optout-send { font-weight: 600; font-size: 0.95rem; }
@@ -368,13 +410,9 @@ button.safety-intro-primary { font-weight: 600; }
 .tracker-controls { display: flex; flex-wrap: wrap; gap: 1rem; align-items: flex-end; margin-top: 0.5rem; }
 .tracker-controls label { display: flex; flex-direction: column; gap: 0.25rem; font-size: 0.85rem; }
 .tracker-controls input[type="date"] { font: inherit; padding: 0.4rem 0.5rem; border: 1px solid var(--slate); border-radius: var(--radius); background: var(--paper); color: var(--ink); }
-.state-todo { background: var(--cream); color: var(--slate); border: 1px solid var(--slate); }
-.state-sent { background: var(--marker); color: var(--on-marker); }
-.state-confirmed { background: var(--ink); color: var(--paper); }
-.state-blocked { background: var(--proof); color: var(--paper); }
-/* A grouped row whose member sites are in different states (e.g. representative
-   sent, siblings still to-do). */
-.state-mixed { background: var(--paper); color: var(--slate); border: 1px dashed var(--slate); }
+/* Tracker state styling now lives in the .stamp system above (.stamp.state-*),
+   so a grouped row whose members diverge is badged "mixed" (monitor styling)
+   and each site's own state goes in the covers line. */
 
 /* Ledger */
 .ledger { margin: 2rem 0; }
@@ -406,3 +444,118 @@ button.safety-intro-primary { font-weight: 600; }
 .optout-filter-search input { font: inherit; padding: 0.4rem 0.5rem; border: 1px solid var(--slate); border-radius: var(--radius); background: var(--paper); color: var(--ink); }
 .content-verified { font-size: 0.8rem; color: var(--slate); margin: 0.4rem 0 0; }
 .law-mechanism-status { font-size: 0.9rem; margin: 0.4rem 0; }
+
+/* ============================================================================
+   Redesign — cards, letters, chips, ledger (steps 2–3 of the visual pass).
+   These rules come last so they win the cascade over the legacy card
+   backgrounds above, without disturbing per-card margins/accents.
+   ============================================================================ */
+
+/* Cards: raised parchment surfaces with a hairline border. */
+.step-card,
+.optout,
+.tracker-item,
+.finding,
+.record,
+.platform,
+.playbook-stage {
+  background: var(--card-bg);
+  border: 1px solid var(--card-line);
+  border-radius: 6px;
+  padding: 1.1rem 1.3rem;
+}
+/* Card titles: serif 600, ~1.08rem. */
+.step-head h3,
+.optout-head h3,
+.record-head h3,
+.platform-head h3 { font-weight: 600; font-size: 1.08rem; }
+.tracker-head strong,
+.finding-head strong { font-family: var(--serif); font-weight: 600; font-size: 1.08rem; }
+.playbook-stage-head h2 { font-weight: 600; }
+
+/* Screen C — the letter body. Every user-specific insertion is washed so the
+   user can verify their own details at a glance before copying. */
+.optout-body mark.fill {
+  background: var(--fill);
+  border-radius: 2px;
+  padding: 0 0.2em;
+  color: inherit;
+}
+/* One primary action per letter; everything else quiet + underlined. */
+.optout-actions .copy-primary { font-weight: 600; }
+.optout-send { color: var(--marker); text-decoration: underline; }
+/* The "mark as sent" row sits on a hairline with the entry's stamp at the right. */
+.optout-track {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  border-top: 1px dashed var(--card-line);
+  padding-top: 0.6rem;
+}
+
+/* Screen B — quiet mono name chips. The former name itself is never rendered;
+   its chip only says it is held and hidden. */
+.name-chips { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0.5rem 0 1rem; }
+.name-chip {
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  color: var(--slate);
+  border: 1px solid var(--card-line);
+  border-radius: 2px;
+  padding: 0.16rem 0.5rem;
+  background: var(--card-bg);
+}
+.name-chip-hidden { font-style: normal; letter-spacing: 0.02em; }
+
+/* Screen B — masked deadname in a query row: the placeholder shows in proof
+   italic; the real string is only ever in the clipboard payload. */
+.query-placeholder { color: var(--proof); font-style: italic; }
+
+/* Screen D — ledger / tracker summary line + quiet filter tabs. */
+.ledger-headline, .tracker-headline {
+  font-family: var(--serif);
+  font-size: 1.05rem;
+  line-height: 1.4;
+  margin: 0.25rem 0 0.75rem;
+  text-wrap: pretty;
+}
+.ledger-headline .count, .tracker-headline .count { font-weight: 600; }
+.filter-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 1rem;
+  margin: 0.5rem 0 1rem;
+  padding: 0;
+  list-style: none;
+}
+.filter-tab {
+  background: none;
+  border: none;
+  padding: 0.1rem 0;
+  color: var(--slate);
+  font: inherit;
+  font-size: 0.92rem;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  border-radius: 0;
+}
+.filter-tab[aria-current="true"] { color: var(--ink); border-bottom-color: var(--marker); }
+.filter-tab:hover { color: var(--ink); }
+
+/* Tracker entry meta: a dashed hairline, mono dates, one teal action link. */
+.tracker-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem 1rem;
+  border-top: 1px dashed var(--card-line);
+  margin-top: 0.6rem;
+  padding-top: 0.5rem;
+}
+.tracker-dates { font-family: var(--mono); font-size: 0.8rem; color: var(--slate); }
+.tracker-attention { color: var(--proof); }
+.tracker-action { font-size: 0.9rem; }
+.tracker-desc { color: var(--slate); margin: 0.35rem 0 0; }

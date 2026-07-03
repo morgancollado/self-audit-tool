@@ -15,10 +15,10 @@ export function PanicButton() {
       type="button"
       className="panic-button"
       onClick={() => void panic()}
-      aria-label="Clear everything now and reload"
+      aria-label="Clear the desk: instantly delete all Errata data on this device and reload"
       title="Instantly delete all data on this device and reload"
     >
-      Clear&nbsp;everything
+      Clear&nbsp;the&nbsp;desk
     </button>
   );
 }

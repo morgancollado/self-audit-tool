@@ -276,7 +276,7 @@ try {
   await bvCard.getByRole('button', { name: /track it/ }).click();
   await rpage.waitForTimeout(300);
   const bvItem = rpage.locator('li.tracker-item', { hasText: 'BeenVerified family' }).first();
-  const bvBadge = (await bvItem.locator('.badge').innerText()).toLowerCase();
+  const bvBadge = (await bvItem.locator('.stamp').innerText()).toLowerCase();
   const bvCovers = await bvItem.locator('p.name-inputs-note').innerText();
   console.log(`[csp-smoke] /remediate BV-family tracked: badge=${JSON.stringify(bvBadge)}`);
   if (bvBadge !== 'mixed') fail(`shared-backbone tracking shows '${bvBadge}', expected the mixed-state group badge.`);
@@ -290,7 +290,7 @@ try {
   await pcCard.getByRole('button', { name: /track it/ }).click();
   await rpage.waitForTimeout(300);
   const pcItem = rpage.locator('li.tracker-item', { hasText: 'PeopleConnect Suppression Center' }).first();
-  const pcBadge = (await pcItem.locator('.badge').innerText()).toLowerCase();
+  const pcBadge = (await pcItem.locator('.stamp').innerText()).toLowerCase();
   const pcCovers = await pcItem.locator('p.name-inputs-note').innerText();
   const pcCovered = pcCovers.split(',').length;
   console.log(`[csp-smoke] /remediate PeopleConnect tracked: badge=${JSON.stringify(pcBadge)}, covers ${pcCovered} site(s)`);

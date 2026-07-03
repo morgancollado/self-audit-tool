@@ -116,7 +116,7 @@ export default function PlaybookPage() {
                 {i + 1}
               </span>
               <h2>{stage.title}</h2>
-              {stage.done && <span className="badge state-confirmed">started</span>}
+              {stage.done && <span className="stamp state-confirmed">started</span>}
             </div>
             <p className="playbook-blurb">{stage.blurb}</p>
             <p className="playbook-status">{stage.status}</p>

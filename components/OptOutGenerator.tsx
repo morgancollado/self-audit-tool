@@ -25,8 +25,43 @@ import { CopyButton } from './CopyButton';
 
 type ListedUnderChoice = ListedUnder | 'both';
 
+const escapeRe = (s: string): string => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+/**
+ * Wash every user-specific insertion in the letter body so the user can verify
+ * their own details at a glance before copying. Purely presentational — the text
+ * content (and so the clipboard/`innerText`) is unchanged.
+ */
+function washInsertions(body: string, values: string[]): React.ReactNode[] {
+  const uniq = Array.from(new Set(values.map((v) => v.trim()).filter(Boolean))).sort(
+    (a, b) => b.length - a.length,
+  );
+  if (uniq.length === 0) return [body];
+  const re = new RegExp(`(${uniq.map(escapeRe).join('|')})`, 'g');
+  return body.split(re).map((part, i) =>
+    i % 2 === 1 ? (
+      <mark key={i} className="fill">
+        {part}
+      </mark>
+    ) : (
+      part
+    ),
+  );
+}
+
 /** One prepared request: subject, body, and the ways to send it. */
-function Artifact({ broker, gen, label }: { broker: Broker; gen: GeneratedOptOut; label?: string }) {
+function Artifact({
+  broker,
+  gen,
+  label,
+  highlight = [],
+}: {
+  broker: Broker;
+  gen: GeneratedOptOut;
+  label?: string;
+  /** User-specific values to wash in the letter body (names, location, email). */
+  highlight?: string[];
+}) {
   const forLabel = label ? `${label} for ${broker.name}` : `for ${broker.name}`;
   return (
     <>
@@ -36,7 +71,9 @@ function Artifact({ broker, gen, label }: { broker: Broker; gen: GeneratedOptOut
         Subject
         <input type="text" readOnly value={gen.subject} aria-label={`Subject ${forLabel}`} />
       </label>
-      <pre className="optout-body" aria-label={`Request body ${forLabel}`}>{gen.body}</pre>
+      <pre className="optout-body" aria-label={`Request body ${forLabel}`}>
+        {washInsertions(gen.body, highlight)}
+      </pre>
 
       {/* The direct email route (user-testing feedback: hunting for it on each
           site was the time sink). Shown as a visible, copyable address because
@@ -44,13 +81,14 @@ function Artifact({ broker, gen, label }: { broker: Broker; gen: GeneratedOptOut
       {gen.mailtoUrl && broker.optOut.email && (
         <p className="optout-email-route">
           Email it to <strong>{broker.optOut.email}</strong>{' '}
-          <CopyButton text={broker.optOut.email} label="Copy address" />
+          <CopyButton text={broker.optOut.email} label="Copy address" variant="quiet" />
         </p>
       )}
 
+      {/* One emphasized action — copy the whole letter; everything else is quiet. */}
       <div className="optout-actions">
-        <CopyButton text={gen.body} label="Copy message" />
-        <CopyButton text={gen.subject} label="Copy subject" />
+        <CopyButton text={gen.body} label="Copy the letter" variant="primary" />
+        <CopyButton text={gen.subject} label="Copy subject only" variant="quiet" />
         {gen.mailtoUrl && (
           <a className="optout-send" href={gen.mailtoUrl}>
             Open in email ↗
@@ -141,6 +179,13 @@ export function OptOutGenerator({
 
   const otherLabel = listedUnder === 'current' ? 'former name' : 'current name';
 
+  // The user-specific values that get washed in the letter body so they can be
+  // verified at a glance (Screen C). Only values actually written into a given
+  // request will match; the rest are inert.
+  const highlight = [vars.name, vars.aliases, vars.location, vars.email].filter(
+    (v): v is string => !!v && v.trim() !== '',
+  );
+
   // One row per covered site, written in a single batch: presentation groups
   // them, the tracker's data stays keyed by broker slug
   // (scope/docs/04-data-model.md). Row labels never carry the user's names.
@@ -150,7 +195,7 @@ export function OptOutGenerator({
     <section className="optout" aria-labelledby={`optout-${broker.slug}`}>
       <div className="optout-head">
         <h3 id={`optout-${broker.slug}`}>{heading ?? broker.name}</h3>
-        <span className={`badge priority-${broker.exposesDeadnameRisk}`}>{broker.exposesDeadnameRisk} risk</span>
+        <span className={`stamp priority-${broker.exposesDeadnameRisk}`}>{broker.exposesDeadnameRisk} risk</span>
       </div>
       {intro}
 
@@ -243,7 +288,7 @@ export function OptOutGenerator({
             </p>
           )}
 
-          {gen && <Artifact broker={broker} gen={gen} />}
+          {gen && <Artifact broker={broker} gen={gen} highlight={highlight} />}
 
           {genPair && (
             <>
@@ -280,8 +325,8 @@ export function OptOutGenerator({
                   in “Your details” above so Errata can fill both requests in.
                 </p>
               )}
-              <Artifact broker={broker} gen={genPair.current} label="Request 1 (current-name listing)" />
-              <Artifact broker={broker} gen={genPair.former} label="Request 2 (former-name listing)" />
+              <Artifact broker={broker} gen={genPair.current} label="Request 1 (current-name listing)" highlight={highlight} />
+              <Artifact broker={broker} gen={genPair.former} label="Request 2 (former-name listing)" highlight={highlight} />
             </>
           )}
 
@@ -296,6 +341,8 @@ export function OptOutGenerator({
           <p className="optout-disclaimer">{(gen ?? genPair!.current).disclaimer}</p>
           <p className="content-verified">Broker details last verified {broker.lastVerified}.</p>
 
+          {/* Hairline-topped row: the send control on the left, the entry's
+              current stamp on the right (Screen C). */}
           <div className="optout-track">
             {tracked ? (
               <span className="optout-tracked">Added to your tracker ✓</span>
@@ -304,6 +351,9 @@ export function OptOutGenerator({
                 I’ve sent this — track it
               </button>
             )}
+            <span className={`stamp ${tracked ? 'state-sent' : 'state-todo'}`}>
+              {tracked ? 'sent' : 'to do'}
+            </span>
           </div>
         </>
       ) : (
