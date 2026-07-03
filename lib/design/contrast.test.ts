@@ -18,6 +18,8 @@ import { dirname, join } from 'node:path';
 const CSS = readFileSync(join(dirname(fileURLToPath(import.meta.url)), '../../app/globals.css'), 'utf8');
 
 const AA_NORMAL = 4.5;
+// Large text (the hero strikethrough renders at clamp(2.4rem…)) needs only 3:1.
+const AA_LARGE = 3.0;
 
 /** Pull the `--name: #hex;` declarations out of a CSS block. */
 function parseTokens(block: string): Record<string, string> {
@@ -75,18 +77,51 @@ const PAIRS: [string, string, string][] = [
   ['text on a proof fill (panic, high-priority, blocked)', 'paper', 'proof'],
   ['warn text on page', 'proof', 'paper'],
   ['warn text on card', 'proof', 'cream'],
+  // Redesign ground + surfaces: body text now sits on --parchment, cards on
+  // --card-bg. Every text role that lands on them must still clear AA.
+  ['body text on parchment', 'ink', 'parchment'],
+  ['muted text on parchment', 'slate', 'parchment'],
+  ['link on parchment', 'marker', 'parchment'],
+  ['margin voice on parchment', 'proof', 'parchment'],
+  ['body text on card', 'ink', 'card-bg'],
+  ['muted text on card surface', 'slate', 'card-bg'],
+  ['link on card surface', 'marker', 'card-bg'],
+  ['stamp / warn text on card surface', 'proof', 'card-bg'],
+  // Landing register + the quiet-stamp pair. These used to be raw hexes in
+  // globals.css, invisible to this gate; they are tokens now precisely so a
+  // future tweak can't quietly regress them.
+  ['hero support text on landing', 'ink', 'landing-bg'],
+  ['footnotes on landing', 'slate', 'landing-bg'],
+  ['jump links on landing', 'marker', 'landing-bg'],
+  ['footnote numerals / hero correction on landing', 'proof', 'landing-bg'],
+  ['DROP plate text on plate', 'plate-text', 'plate-bg'],
+  ['quiet to-do stamp on card', 'stamp-quiet', 'card-bg'],
+  ['quiet to-do stamp on parchment', 'stamp-quiet', 'parchment'],
+];
+
+// [label, fg, bg] pairs that only ever render as LARGE text (3:1 floor).
+const PAIRS_LARGE: [string, string, string][] = [
+  // The struck former entry in the hero — display type, deliberately receded
+  // (it is the entry being corrected; aria-hidden with an accessible
+  // alternative on the heading).
+  ['struck former entry in the hero', 'strike-old', 'landing-bg'],
 ];
 
 for (const [themeName, palette] of Object.entries(themes(CSS))) {
-  for (const [label, fg, bg] of PAIRS) {
-    test(`${themeName}: ${label} clears WCAG AA`, () => {
-      assert.ok(palette[fg], `token --${fg} is missing`);
-      assert.ok(palette[bg], `token --${bg} is missing`);
-      const ratio = contrast(palette[fg], palette[bg]);
-      assert.ok(
-        ratio >= AA_NORMAL,
-        `${label} (${themeName}): --${fg} ${palette[fg]} on --${bg} ${palette[bg]} = ${ratio.toFixed(2)}:1, below AA ${AA_NORMAL}:1`,
-      );
-    });
+  for (const [pairs, floor, tier] of [
+    [PAIRS, AA_NORMAL, ''],
+    [PAIRS_LARGE, AA_LARGE, ' (large text)'],
+  ] as const) {
+    for (const [label, fg, bg] of pairs) {
+      test(`${themeName}: ${label} clears WCAG AA${tier}`, () => {
+        assert.ok(palette[fg], `token --${fg} is missing`);
+        assert.ok(palette[bg], `token --${bg} is missing`);
+        const ratio = contrast(palette[fg], palette[bg]);
+        assert.ok(
+          ratio >= floor,
+          `${label} (${themeName}): --${fg} ${palette[fg]} on --${bg} ${palette[bg]} = ${ratio.toFixed(2)}:1, below AA${tier} ${floor}:1`,
+        );
+      });
+    }
   }
 }

@@ -11,6 +11,7 @@ import Link from 'next/link';
 import { useStorage } from '@/lib/storage/StorageProvider';
 import { SafetyIntro } from '@/components/SafetyIntro';
 import { StorageModeToggle } from '@/components/StorageModeToggle';
+import { MarginNote } from '@/components/MarginNote';
 import { summarizePlaybook } from '@/lib/remediate/progress';
 
 export default function PlaybookPage() {
@@ -99,6 +100,8 @@ export default function PlaybookPage() {
 
       <StorageModeToggle />
 
+      <MarginNote>this only reflects what is already saved on your device</MarginNote>
+
       <section className="playbook-summary" aria-label="Your progress so far">
         <p>
           <strong>{s.findings}</strong> finding{s.findings === 1 ? '' : 's'}
@@ -106,6 +109,10 @@ export default function PlaybookPage() {
           <strong>{acted}</strong> action{acted === 1 ? '' : 's'} tracked
           {acted > 0 && <> ({s.byState.confirmed} confirmed)</>}
         </p>
+        {/* The margin note above says this too, but margin notes are decoration
+            (aria-hidden, gone below 46rem) — the fact must also live in the
+            accessible flow (the MarginNote duplication contract). */}
+        <p className="name-inputs-note">This reflects only what is saved on this device.</p>
       </section>
 
       <ol className="playbook">
@@ -116,7 +123,7 @@ export default function PlaybookPage() {
                 {i + 1}
               </span>
               <h2>{stage.title}</h2>
-              {stage.done && <span className="badge state-confirmed">started</span>}
+              {stage.done && <span className="stamp state-confirmed">started</span>}
             </div>
             <p className="playbook-blurb">{stage.blurb}</p>
             <p className="playbook-status">{stage.status}</p>

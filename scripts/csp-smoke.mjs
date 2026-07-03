@@ -81,7 +81,10 @@ const base = `http://localhost:${server.address().port}/`;
 // Playwright-managed download isn't available. Unset = Playwright's default.
 const browser = await chromium.launch({ headless: true, executablePath: process.env.ERRATA_CHROMIUM || undefined });
 try {
-  const page = await browser.newPage();
+  // An explicit context (not browser.newPage()) so AxeBuilder can scan this
+  // page too — it refuses pages born from the browser's default context.
+  const landingCtx = await browser.newContext();
+  const page = await landingCtx.newPage();
   const blockedScripts = [];
   page.on('requestfailed', (r) => {
     if (r.failure()?.errorText?.includes('csp')) blockedScripts.push(r.url().replace(base, '/'));
@@ -98,7 +101,8 @@ try {
   // once the client scripts run. Give it a bounded window to get there.
   let hydrated = true;
   try {
-    await page.getByText('Find what’s published about you', { exact: false }).waitFor({ timeout: 8000 });
+    // A phrase from the landing hero's supporting copy — present only after hydration.
+    await page.getByText('correcting a publishing error', { exact: false }).waitFor({ timeout: 8000 });
   } catch {
     hydrated = false;
   }
@@ -131,6 +135,11 @@ try {
   if (probe.persisted === true) {
     fail('first load was granted persistent storage before consent.');
   }
+
+  // The redesigned landing carries the most bespoke markup in the app (the
+  // strikethrough hero, the DROP plate, footnotes) — scan it like every flow
+  // route instead of leaving the front door unchecked.
+  await axeFailures(page, '/ (landing)');
 
   // ---- /discover: safety gate + deadname-query routing (M1 hardening) ----
   const dctx = await browser.newContext();
@@ -276,7 +285,7 @@ try {
   await bvCard.getByRole('button', { name: /track it/ }).click();
   await rpage.waitForTimeout(300);
   const bvItem = rpage.locator('li.tracker-item', { hasText: 'BeenVerified family' }).first();
-  const bvBadge = (await bvItem.locator('.badge').innerText()).toLowerCase();
+  const bvBadge = (await bvItem.locator('.stamp').innerText()).toLowerCase();
   const bvCovers = await bvItem.locator('p.name-inputs-note').innerText();
   console.log(`[csp-smoke] /remediate BV-family tracked: badge=${JSON.stringify(bvBadge)}`);
   if (bvBadge !== 'mixed') fail(`shared-backbone tracking shows '${bvBadge}', expected the mixed-state group badge.`);
@@ -290,7 +299,7 @@ try {
   await pcCard.getByRole('button', { name: /track it/ }).click();
   await rpage.waitForTimeout(300);
   const pcItem = rpage.locator('li.tracker-item', { hasText: 'PeopleConnect Suppression Center' }).first();
-  const pcBadge = (await pcItem.locator('.badge').innerText()).toLowerCase();
+  const pcBadge = (await pcItem.locator('.stamp').innerText()).toLowerCase();
   const pcCovers = await pcItem.locator('p.name-inputs-note').innerText();
   const pcCovered = pcCovers.split(',').length;
   console.log(`[csp-smoke] /remediate PeopleConnect tracked: badge=${JSON.stringify(pcBadge)}, covers ${pcCovered} site(s)`);

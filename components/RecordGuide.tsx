@@ -46,7 +46,7 @@ export function RecordGuide({ record }: { record: DeadnameRecord }) {
       <div className="record-head">
         <h3 id={`record-${record.slug}`}>{label}</h3>
         {record.exposesDeadnameRisk && (
-          <span className={`badge priority-${record.exposesDeadnameRisk}`}>{record.exposesDeadnameRisk} risk</span>
+          <span className={`stamp priority-${record.exposesDeadnameRisk}`}>{record.exposesDeadnameRisk} risk</span>
         )}
       </div>
 

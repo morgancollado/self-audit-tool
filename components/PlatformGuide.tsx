@@ -31,7 +31,7 @@ export function PlatformGuide({ platform }: { platform: Platform }) {
       <div className="platform-head">
         <h3 id={`platform-${platform.slug}`}>{platform.name}</h3>
         {platform.difficulty && (
-          <span className={`badge priority-${platform.difficulty}`}>{platform.difficulty} effort</span>
+          <span className={`stamp priority-${platform.difficulty}`}>{platform.difficulty} effort</span>
         )}
       </div>
 
@@ -39,7 +39,7 @@ export function PlatformGuide({ platform }: { platform: Platform }) {
         <div className="platform-deadname">
           <div className="platform-subhead">
             <h4>Remove your former name</h4>
-            <span className={`badge ${dr.supported ? 'state-sent' : 'priority-low'}`}>
+            <span className={`stamp ${dr.supported ? 'state-sent' : 'priority-low'}`}>
               {dr.supported ? (dr.tool ?? 'supported') : 'no direct change'}
             </span>
           </div>

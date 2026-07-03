@@ -22,6 +22,7 @@ import { StateRights } from '@/components/StateRights';
 import { NetworkOptOutCard } from '@/components/NetworkOptOutCard';
 import { QuickSendList } from '@/components/QuickSendList';
 import { RemediationTracker } from '@/components/RemediationTracker';
+import { MarginNote } from '@/components/MarginNote';
 import { OptOutVars } from '@/lib/remediate/optout';
 import { groupBrokers } from '@/lib/remediate/networks';
 import { countGroupsTracked } from '@/lib/remediate/progress';
@@ -92,6 +93,7 @@ export default function RemediatePage() {
       <OptOutInputs vars={vars} onChange={setVars} />
 
       <h2>Prepare your removal requests</h2>
+      <MarginNote>each request is drafted on this device — nothing sends until you press send</MarginNote>
 
       <p className="ledger-summary">
         {trackedCount} of {allGroups.length} opt-out targets tracked

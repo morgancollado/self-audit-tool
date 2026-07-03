@@ -58,3 +58,20 @@ test('generateQueries routes every deadname-aware query to duckduckgo', () => {
     assert.ok(q.url.startsWith('https://duckduckgo.com/?q='), q.url);
   }
 });
+
+test('DENIABILITY: the former name is masked in display but kept in the real query', () => {
+  const out = generateQueries(templates, { city: 'Austin', deadname: 'Jordan Vale' });
+  const dn = out.find((q) => q.key === 'deadname-city')!;
+  // The real (clipboard) query still carries the former name...
+  assert.ok(dn.query.includes('Jordan Vale'), 'clipboard payload keeps the real query');
+  // ...but nothing rendered on screen does.
+  const shown = dn.display.map((s) => s.text).join('');
+  assert.ok(!shown.includes('Jordan Vale'), 'the former name must never be rendered');
+  assert.ok(
+    dn.display.some((s) => s.masked && s.text === 'former name'),
+    'the deadname slot renders a masked "former name" placeholder',
+  );
+  // A non-deadname query renders verbatim.
+  const plain = generateQueries(templates, { name: 'Alex Real', city: 'Austin' }).find((q) => q.key === 'name-city')!;
+  assert.equal(plain.display.map((s) => s.text).join(''), '"Alex Real" "Austin"');
+});

@@ -9,6 +9,14 @@ import { Finding, FindingStatus, Priority } from '@/lib/model/types';
 
 const PRIORITY_ORDER: Record<Priority, number> = { high: 0, medium: 1, low: 2 };
 
+// Map a finding's status onto a stamp style + plain-word label (scope/docs/11).
+const STATUS_STAMP: Record<FindingStatus, { cls: string; label: string }> = {
+  found: { cls: 'state-todo', label: 'to do' },
+  in_progress: { cls: 'state-blocked', label: 'in progress' },
+  resolved: { cls: 'state-confirmed', label: 'corrected' },
+  wont_fix: { cls: 'state-mixed', label: 'monitor' },
+};
+
 function sortFindings(a: Finding, b: Finding): number {
   if (a.exposesDeadname !== b.exposesDeadname) return a.exposesDeadname ? -1 : 1;
   return PRIORITY_ORDER[a.priority] - PRIORITY_ORDER[b.priority];
@@ -33,17 +41,29 @@ export function FindingsLedger() {
   return (
     <section className="ledger" aria-labelledby="ledger-title">
       <h2 id="ledger-title">Your ledger</h2>
-      <p className="ledger-summary">
-        {findings.length} finding{findings.length === 1 ? '' : 's'}
-        {deadnameCount > 0 && <> · {deadnameCount} expose your former name</>}
+      <p className="ledger-headline">
+        <span className="count">
+          {findings.length} finding{findings.length === 1 ? '' : 's'}.
+        </span>{' '}
+        {deadnameCount > 0 ? (
+          <>
+            <span className="hl">
+              {deadnameCount} expose your former name
+            </span>{' '}
+            — those lead the list.
+          </>
+        ) : (
+          <>None expose your former name.</>
+        )}
       </p>
       <ul className="ledger-list">
         {findings.map((f) => (
           <li key={f.id} className="finding">
             <div className="finding-head">
               <strong>{f.label}</strong>
-              {f.exposesDeadname && <span className="badge badge-deadname">former name</span>}
-              <span className={`badge priority-${f.priority}`}>{f.priority}</span>
+              {f.exposesDeadname && <span className="stamp badge-deadname">former name</span>}
+              <span className={`stamp ${STATUS_STAMP[f.status].cls}`}>{STATUS_STAMP[f.status].label}</span>
+              <span className={`stamp priority-${f.priority}`}>{f.priority}</span>
             </div>
             {f.whatFound && <p className="finding-what">{f.whatFound}</p>}
             <div className="finding-controls">

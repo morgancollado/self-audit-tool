@@ -1,7 +1,39 @@
 /* Errata base styles — calm editorial register (scope/docs/11-brand.md).
-   Paper-and-ink, AA contrast, one restrained proof-red used only for emphasis.
-   Self-hosted fonts only (no font CDN). System stack for now; real type stack
-   lands with the design pass. */
+   Paper-and-ink, AA contrast, one restrained proof-red used only for correction.
+   Self-hosted fonts only — no font CDN, no phone-home (served from /public/fonts,
+   governed by CSP font-src 'self'). */
+
+/* --- Self-hosted type (OFL, see public/fonts/OFL-*.txt and NOTICE.md) --------
+   Newsreader → headings, wordmark, the "annotator" italic margin voice.
+   IBM Plex Mono → stamps, metadata, letter bodies, taglines. */
+@font-face {
+  font-family: "Newsreader";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("/fonts/Newsreader-Medium500.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Newsreader";
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/Newsreader-Italic400.woff2") format("woff2");
+}
+@font-face {
+  font-family: "IBM Plex Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/IBMPlexMono-Regular.woff2") format("woff2");
+}
+@font-face {
+  font-family: "IBM Plex Mono";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("/fonts/IBMPlexMono-SemiBold.woff2") format("woff2");
+}
 
 :root {
   --ink: #1b1b1a;
@@ -17,12 +49,31 @@
      stays the dark emphasis ink. */
   --on-marker: #fbfaf7;
 
-  --maxw: 42rem;
+  /* Redesign ground + surfaces (the "margin notes" system). */
+  --parchment: #f8f5ee;      /* page ground for working screens */
+  --card-bg: #fdfbf6;        /* raised card surface */
+  --card-line: #e5dfd0;      /* card borders + hairlines */
+  --hl: rgba(47, 93, 98, 0.22);   /* teal highlighter wash (one phrase / screen) */
+  --fill: rgba(47, 93, 98, 0.16); /* personal-detail wash in letters */
+  --annotate: var(--proof);  /* the margin voice */
+
+  /* Landing ("errata sheet") register. Tokenized — NOT inlined below — so the
+     contrast gate (lib/design/contrast.test.ts) can see every pair. */
+  --landing-bg: #f6f1e6;     /* landing ground, a shade deeper than parchment */
+  --strike-old: #8b8172;     /* the struck former entry in the hero (large text) */
+  --plate-bg: #24484c;       /* the DROP plate band (same in both themes) */
+  --plate-text: #f2eee6;
+
+  /* Quiet "to do" stamp pair (also priority: low). */
+  --stamp-quiet: #6a665a;
+  --stamp-quiet-line: #cfc9bb;
+
+  --maxw: 54rem;
   --radius: 6px;
 
-  --serif: ui-serif, Georgia, "Times New Roman", serif;
+  --serif: "Newsreader", ui-serif, Georgia, serif;
   --sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  --mono: ui-monospace, "SFMono-Regular", "IBM Plex Mono", monospace;
+  --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", monospace;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -38,6 +89,17 @@
     --marker-ink: #0f2a2d;
     /* On the light dark-mode teal, text on a --marker fill is the dark ink. */
     --on-marker: #0f2a2d;
+
+    --parchment: #15140f;
+    --card-bg: #201d15;
+    --card-line: #34302a;
+    --hl: rgba(127, 178, 184, 0.30);
+    --fill: rgba(127, 178, 184, 0.22);
+
+    --landing-bg: #15140f;
+    --strike-old: #9a8f7d;
+    --stamp-quiet: #b8b2a6;
+    --stamp-quiet-line: #4a463c;
   }
 }
 
@@ -46,18 +108,100 @@
 html, body { margin: 0; padding: 0; }
 
 body {
-  background: var(--paper);
+  background: var(--parchment);
   color: var(--ink);
   font-family: var(--sans);
   font-size: 1.0625rem;
   line-height: 1.6;
 }
 
-h1, h2, h3 { font-family: var(--serif); line-height: 1.25; }
+h1, h2, h3 {
+  font-family: var(--serif);
+  font-weight: 500;
+  line-height: 1.25;
+  letter-spacing: -0.005em;
+}
+/* Page titles: a touch tighter, balanced. */
+h1 { font-size: 1.9rem; line-height: 1.2; text-wrap: balance; }
 
 a { color: var(--marker); }
 
-main { max-width: var(--maxw); margin: 0 auto; padding: 1.5rem 1.25rem 4rem; }
+/* Two-column reading layout: a decorative left "margin" gutter + the content
+   column (≤ 42rem). The gutter is drawn by main::before (border only) so the
+   content column can stay a plain block that pages fill normally. */
+main {
+  display: grid;
+  grid-template-columns: 10rem 1fr;
+  column-gap: 1.75rem;
+  max-width: var(--maxw);
+  margin: 0 auto;
+  padding: 1.5rem 1.25rem 4rem;
+}
+main::before {
+  content: "";
+  grid-column: 1;
+  border-right: 1px solid var(--card-line);
+}
+.main-col { grid-column: 2; min-width: 0; max-width: 42rem; }
+
+/* The margin voice — floats into the gutter aligned to where it's declared. */
+.margin-note {
+  float: left;
+  clear: left;
+  width: 8rem;
+  /* pull left out of the content column into the gutter (10rem col + 1.75rem gap) */
+  margin-left: calc(-10rem - 1.75rem);
+  margin-bottom: 1rem;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 0.85rem;
+  line-height: 1.45;
+  color: var(--annotate);
+  text-align: left;
+}
+.margin-note-mark {
+  display: block;
+  font-style: normal;
+  /* Text marks (✓, →) come from the mono face — the Newsreader subsets don't
+     carry the dingbat codepoints, and mono keeps them off font fallback. The
+     default caret mark is the SVG (components/Caret.tsx), unaffected by this. */
+  font-family: var(--mono);
+  font-size: 1rem;
+  line-height: 1;
+  margin-bottom: 0.15rem;
+}
+
+/* Below 46rem the gutter collapses; the content column goes full-width and the
+   margin notes are hidden (content never depends on them). */
+@media (max-width: 46rem) {
+  main { display: block; }
+  main::before { display: none; }
+  .main-col { max-width: none; }
+  .margin-note { display: none; }
+}
+
+/* The highlighter wash — used on AT MOST one phrase per screen (the single most
+   important one). A bottom-anchored linear gradient so it reads as a marker
+   stroke, not a filled block. */
+.hl {
+  background: linear-gradient(transparent 55%, var(--hl) 55%);
+  padding: 0 0.1em;
+}
+
+/* The wordmark: lowercase serif "errata" + a proof-red proofreader's caret. */
+.wordmark { font-family: var(--serif); font-weight: 500; }
+.wordmark .caret { color: var(--proof); }
+
+/* The caret mark as an inline SVG (components/Caret.tsx) — em-sized so it scales
+   with the surrounding type, currentColor so it follows the text color (and
+   forced-colors mode). Sits slightly below the baseline, as the proofreader's
+   insertion mark does. */
+.caret-svg {
+  display: inline-block;
+  width: 0.52em;
+  height: 0.42em;
+  vertical-align: -0.08em;
+}
 
 /* Keyboard skip link */
 .skip-link {
@@ -73,25 +217,41 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 1.5rem 1.25rem 4rem; }
 
 :focus-visible { outline: 3px solid var(--marker); outline-offset: 2px; }
 
-/* App bar with the always-visible panic control */
+/* Slim top bar with the always-visible panic control. A 3px double rule reads as
+   the top of an errata sheet; deliberately no oversized masthead (it fails on
+   mobile). The tagline is landing-only (AppBar gates it on the route). */
 .app-bar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem;
-  padding: 0.5rem 1rem;
-  border-bottom: 1px solid var(--cream);
+  gap: 1rem 1.5rem;
+  padding: 0.55rem 1.1rem;
+  border-bottom: 3px double var(--ink);
 }
-.app-bar .wordmark { font-family: var(--serif); font-size: 1.25rem; letter-spacing: 0.02em; }
+.app-bar .wordmark { font-family: var(--serif); font-size: 1.35rem; letter-spacing: 0.01em; }
+.app-tagline {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--slate);
+  margin: 0;
+  flex: 1 1 auto;
+  text-align: center;
+}
+@media (max-width: 40rem) { .app-tagline { display: none; } }
 
+/* The panic control: the correction gesture's twin — a solid proof-red fill,
+   instant and unconfirmed by design (scope/docs/04-data-model.md). */
 .panic-button {
   font-family: var(--sans);
   font-weight: 600;
+  font-size: 0.8rem;
   color: var(--paper);
   background: var(--proof);
   border: 2px solid transparent;
-  border-radius: var(--radius);
-  padding: 0.5rem 0.9rem;
+  border-radius: 4px;
+  padding: 0.42rem 0.8rem;
   cursor: pointer;
 }
 .panic-button:hover { filter: brightness(0.95); }
@@ -171,14 +331,20 @@ button.safety-intro-primary { font-weight: 600; }
 .step-prompts { border-left: 3px solid var(--marker); list-style: none; padding: 0.4rem 0 0.4rem 0.9rem; margin: 0.75rem 0; }
 .step-prompts li { margin: 0.25rem 0; }
 
-.broker-row { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem; padding: 0.4rem 0; border-top: 1px solid var(--paper); }
+.broker-row { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem; padding: 0.4rem 0; border-top: 1px solid var(--card-line); }
 .broker-row span:first-child { font-weight: 600; min-width: 8rem; }
 
-.query-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.5rem; padding: 0.4rem 0; border-top: 1px solid var(--paper); }
+.query-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.5rem; padding: 0.4rem 0; border-top: 1px solid var(--card-line); }
 .query-row code { font-family: var(--mono); font-size: 0.9rem; word-break: break-word; }
-.query-deadname code { font-weight: 700; }
+/* Deliberately NOT bold: emphasizing the former name is the opposite of the
+   goal. The deadname is masked in the DOM anyway (see .query-placeholder). */
 .query-actions { display: flex; gap: 0.6rem; align-items: center; }
-.copy-button { background: var(--marker); color: var(--on-marker); border: 1px solid var(--marker); padding: 0.25rem 0.6rem; font-weight: 600; }
+.step-stamps { display: inline-flex; gap: 0.4rem; flex: none; }
+.copy-button { background: var(--marker); color: var(--on-marker); border: 1px solid var(--marker); border-radius: var(--radius); padding: 0.25rem 0.6rem; font-weight: 600; }
+/* The one emphasized copy action per letter. */
+.copy-button.copy-primary { font-weight: 600; }
+/* Quiet, underlined copy actions — everything that isn't the primary. */
+.copy-button.copy-quiet { background: none; color: var(--marker); border: none; text-decoration: underline; padding: 0.25rem 0; font-weight: 400; }
 .query-run { font-size: 0.9rem; }
 .query-privacy-note { color: var(--slate); font-size: 0.9rem; background: var(--cream); border-radius: var(--radius); padding: 0.5rem 0.75rem; margin: 0.5rem 0; }
 
@@ -190,12 +356,43 @@ button.safety-intro-primary { font-weight: 600; }
 .add-finding-checkbox { flex-direction: row !important; align-items: center; gap: 0.4rem; }
 .add-finding-actions { display: flex; gap: 0.75rem; align-items: center; }
 
-/* Badges */
-.badge { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; padding: 0.15rem 0.45rem; border-radius: 999px; white-space: nowrap; }
-.priority-high { background: var(--proof); color: var(--paper); }
-.priority-medium { background: var(--marker); color: var(--on-marker); }
-.priority-low { background: var(--cream); color: var(--slate); border: 1px solid var(--slate); }
-.badge-deadname { background: var(--ink); color: var(--paper); }
+/* Status stamps — rectangular rubber-stamp chips (scope/docs/11-brand.md).
+   Five visual states; "corrected" is the ONLY filled stamp — the terminal good
+   state earns the ink. Everything else is an outline. Labels are plain words,
+   no proofreader jargon. */
+.stamp {
+  font-family: var(--mono);
+  /* 0.7rem, not smaller: the stamps carry status meaning and this audience is
+     reading on phones, in bright light, possibly in distress — the smallest
+     text in the app should not be the load-bearing text. */
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border: 1px solid;
+  border-radius: 2px;
+  padding: 0.16rem 0.48rem;
+  white-space: nowrap;
+  display: inline-block;
+  line-height: 1.35;
+}
+/* to do — quiet neutral outline (priority: low reuses it) */
+.stamp.state-todo,
+.stamp.priority-low { color: var(--stamp-quiet); border-color: var(--stamp-quiet-line); background: transparent; }
+/* drafting / blocked — proof outline (a correction in progress). priority: high
+   reuses the proof outline. */
+.stamp.state-blocked,
+.stamp.priority-high { color: var(--proof); border-color: var(--proof); background: transparent; }
+/* sent — marker outline (priority: medium reuses it) */
+.stamp.state-sent,
+.stamp.priority-medium { color: var(--marker); border-color: var(--marker); background: transparent; }
+/* corrected — the one filled stamp */
+.stamp.state-confirmed { color: var(--on-marker); border-color: var(--marker); background: var(--marker); }
+/* monitor / mixed — slate dashed outline */
+.stamp.state-mixed { color: var(--slate); border-color: var(--slate); border-style: dashed; background: transparent; }
+/* the "former name" differentiator flag — proof outline (the correction target,
+   never a fill: proof means correction, not alarm) */
+.stamp.badge-deadname { color: var(--proof); border-color: var(--proof); background: transparent; }
 
 /* Backup & restore */
 .backup { margin: 1.5rem 0; }
@@ -241,7 +438,7 @@ button.safety-intro-primary { font-weight: 600; }
 .platform-deadname { border-left: 3px solid var(--marker); padding: 0.5rem 0 0.5rem 0.9rem; margin: 0.75rem 0; }
 .platform-subhead { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; flex-wrap: wrap; }
 .platform-subhead h4, .platform-hardening h4 { margin: 0.3rem 0; font-family: var(--serif); }
-.platform-hardening { margin-top: 1rem; border-top: 1px solid var(--paper); padding-top: 0.5rem; }
+.platform-hardening { margin-top: 1rem; border-top: 1px solid var(--card-line); padding-top: 0.5rem; }
 .platform-steps { padding-left: 1.2rem; font-size: 0.95rem; }
 .platform-steps li { margin: 0.25rem 0; }
 .platform-note { color: var(--slate); font-size: 0.92rem; }
@@ -274,7 +471,7 @@ button.safety-intro-primary { font-weight: 600; }
 .optout-format-note { color: var(--slate); font-size: 0.9rem; margin: 0.5rem 0 0.25rem; }
 .optout-field { display: flex; flex-direction: column; gap: 0.25rem; font-size: 0.95rem; }
 .optout-field input { font: inherit; padding: 0.45rem 0.55rem; border: 1px solid var(--slate); border-radius: var(--radius); background: var(--paper); color: var(--ink); }
-.optout-body { font-family: var(--mono); font-size: 0.88rem; white-space: pre-wrap; word-break: break-word; background: var(--paper); border: 1px solid var(--slate); border-radius: var(--radius); padding: 0.75rem; margin: 0.5rem 0; }
+.optout-body { font-family: var(--mono); font-size: 0.88rem; white-space: pre-wrap; word-break: break-word; background: var(--paper); border: 1px solid var(--card-line); border-radius: var(--radius); padding: 0.75rem; margin: 0.5rem 0; }
 .optout-actions { display: flex; flex-wrap: wrap; gap: 0.6rem; align-items: center; margin: 0.5rem 0; }
 .optout-email-route { font-size: 0.95rem; margin: 0.5rem 0 0.25rem; display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
 .optout-send { font-weight: 600; font-size: 0.95rem; }
@@ -303,13 +500,9 @@ button.safety-intro-primary { font-weight: 600; }
 .tracker-controls { display: flex; flex-wrap: wrap; gap: 1rem; align-items: flex-end; margin-top: 0.5rem; }
 .tracker-controls label { display: flex; flex-direction: column; gap: 0.25rem; font-size: 0.85rem; }
 .tracker-controls input[type="date"] { font: inherit; padding: 0.4rem 0.5rem; border: 1px solid var(--slate); border-radius: var(--radius); background: var(--paper); color: var(--ink); }
-.state-todo { background: var(--cream); color: var(--slate); border: 1px solid var(--slate); }
-.state-sent { background: var(--marker); color: var(--on-marker); }
-.state-confirmed { background: var(--ink); color: var(--paper); }
-.state-blocked { background: var(--proof); color: var(--paper); }
-/* A grouped row whose member sites are in different states (e.g. representative
-   sent, siblings still to-do). */
-.state-mixed { background: var(--paper); color: var(--slate); border: 1px dashed var(--slate); }
+/* Tracker state styling now lives in the .stamp system above (.stamp.state-*),
+   so a grouped row whose members diverge is badged "mixed" (monitor styling)
+   and each site's own state goes in the covers line. */
 
 /* Ledger */
 .ledger { margin: 2rem 0; }
@@ -341,3 +534,286 @@ button.safety-intro-primary { font-weight: 600; }
 .optout-filter-search input { font: inherit; padding: 0.4rem 0.5rem; border: 1px solid var(--slate); border-radius: var(--radius); background: var(--paper); color: var(--ink); }
 .content-verified { font-size: 0.8rem; color: var(--slate); margin: 0.4rem 0 0; }
 .law-mechanism-status { font-size: 0.9rem; margin: 0.4rem 0; }
+
+/* ============================================================================
+   Redesign — cards, letters, chips, ledger (steps 2–3 of the visual pass).
+   These rules come last so they win the cascade over the legacy card
+   backgrounds above, without disturbing per-card margins/accents.
+   ============================================================================ */
+
+/* Cards: raised parchment surfaces with a hairline border. */
+.step-card,
+.optout,
+.tracker-item,
+.finding,
+.record,
+.platform,
+.playbook-stage {
+  background: var(--card-bg);
+  border: 1px solid var(--card-line);
+  border-radius: 6px;
+  padding: 1.1rem 1.3rem;
+}
+/* Card titles: serif 500 (the heaviest Newsreader face we ship), ~1.08rem.
+   NOT 600 — with only the 500 face hosted, a 600 request makes the browser
+   synthesize a faux bold, which smears the serifs. */
+.step-head h3,
+.optout-head h3,
+.record-head h3,
+.platform-head h3 { font-weight: 500; font-size: 1.08rem; }
+.tracker-head strong,
+.finding-head strong { font-family: var(--serif); font-weight: 500; font-size: 1.08rem; }
+.playbook-stage-head h2 { font-weight: 500; }
+
+/* Screen C — the letter body. Every user-specific insertion is washed so the
+   user can verify their own details at a glance before copying. */
+.optout-body mark.fill {
+  background: var(--fill);
+  border-radius: 2px;
+  padding: 0 0.2em;
+  color: inherit;
+}
+/* One primary action per letter; everything else quiet + underlined. */
+.optout-actions .copy-primary { font-weight: 600; }
+.optout-send { color: var(--marker); text-decoration: underline; }
+/* The "mark as sent" row sits on a hairline with the entry's stamp at the right. */
+.optout-track {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  border-top: 1px dashed var(--card-line);
+  padding-top: 0.6rem;
+}
+
+/* Screen B — quiet mono name chips. The former name itself is never rendered;
+   its chip only says it is held and hidden. */
+.name-chips { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0.5rem 0 1rem; }
+.name-chip {
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  color: var(--slate);
+  border: 1px solid var(--card-line);
+  border-radius: 2px;
+  padding: 0.16rem 0.5rem;
+  background: var(--card-bg);
+}
+.name-chip-hidden { font-style: normal; letter-spacing: 0.02em; }
+
+/* Screen B — masked deadname in a query row: the placeholder shows in proof
+   italic; the real string is only ever in the clipboard payload. */
+.query-placeholder { color: var(--proof); font-style: italic; }
+
+/* Screen D — ledger / tracker summary line + quiet filter tabs. */
+.ledger-headline, .tracker-headline {
+  font-family: var(--serif);
+  font-size: 1.05rem;
+  line-height: 1.4;
+  margin: 0.25rem 0 0.75rem;
+  text-wrap: pretty;
+}
+.ledger-headline .count, .tracker-headline .count { font-weight: 600; }
+.filter-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 1rem;
+  margin: 0.5rem 0 1rem;
+  padding: 0;
+  list-style: none;
+}
+.filter-tab {
+  background: none;
+  border: none;
+  padding: 0.1rem 0;
+  color: var(--slate);
+  font: inherit;
+  font-size: 0.92rem;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  border-radius: 0;
+}
+.filter-tab[aria-current="true"] { color: var(--ink); border-bottom-color: var(--marker); }
+.filter-tab:hover { color: var(--ink); }
+
+/* Tracker entry meta: a dashed hairline, mono dates, one teal action link. */
+.tracker-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem 1rem;
+  border-top: 1px dashed var(--card-line);
+  margin-top: 0.6rem;
+  padding-top: 0.5rem;
+}
+.tracker-dates { font-family: var(--mono); font-size: 0.8rem; color: var(--slate); }
+.tracker-attention { color: var(--proof); }
+.tracker-action { font-size: 0.9rem; }
+.tracker-desc { color: var(--slate); margin: 0.35rem 0 0; }
+
+/* ============================================================================
+   Step 4 — the landing ("errata sheet" register; appears nowhere else).
+   ============================================================================ */
+
+/* The landing opts out of the reading gutter — it has its own full-bleed
+   register. (:has lets the shared server layout stay route-agnostic.) */
+main:has(.landing) { display: block; max-width: none; padding: 0; }
+main:has(.landing)::before { display: none; }
+main:has(.landing) .main-col { max-width: none; }
+
+.landing {
+  background-color: var(--landing-bg);
+  /* faint grain, ~5% ink */
+  background-image: radial-gradient(rgba(27, 27, 26, 0.05) 0.5px, transparent 0.6px);
+  background-size: 16px 16px;
+  min-height: 60vh;
+}
+@media (prefers-color-scheme: dark) {
+  .landing {
+    background-image: radial-gradient(rgba(237, 234, 226, 0.05) 0.5px, transparent 0.6px);
+  }
+}
+.landing-inner { max-width: 46rem; margin: 0 auto; padding: 2.75rem 1.25rem; }
+
+/* Hero — the strikethrough moment. */
+.hero-head {
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: clamp(2.4rem, 6vw, 3.6rem);
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+  margin: 0.5rem 0 1.25rem;
+}
+.strike-wrap {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  vertical-align: bottom;
+  line-height: 1.02;
+}
+/* "your name" — the correction, rising in above the struck original. */
+.strike-new {
+  order: -1;
+  color: var(--proof);
+  font-style: italic;
+  font-size: 0.82em;
+  line-height: 1.05;
+  text-align: center;
+  opacity: 1;
+  animation: strike-rise 0.5s ease 1.25s both;
+}
+.strike-caret { display: block; line-height: 0.35; font-style: normal; font-size: 0.9em; }
+.strike-old { position: relative; color: var(--strike-old); }
+.strike-rule {
+  position: absolute;
+  left: -0.05em;
+  right: -0.05em;
+  top: 55%;
+  height: 3px;
+  background: var(--proof);
+  transform: rotate(-1.2deg) scaleX(1);
+  transform-origin: left center;
+  animation: strike-grow 0.7s ease 0.5s both;
+}
+@keyframes strike-grow {
+  from { transform: rotate(-1.2deg) scaleX(0); }
+  to   { transform: rotate(-1.2deg) scaleX(1); }
+}
+@keyframes strike-rise {
+  from { opacity: 0; transform: translateY(0.5em); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+/* Reduced motion: render the finished state, no animation. */
+@media (prefers-reduced-motion: reduce) {
+  .strike-rule, .strike-new { animation: none; }
+}
+/* Forced colors (Windows High Contrast) strips backgrounds, which would erase
+   the strike-rule and leave the hero reading "your name ‸ the old entry" with
+   no strike — nonsense. Fall back to a real text decoration, which forced
+   colors preserves. */
+@media (forced-colors: active) {
+  .strike-rule { display: none; }
+  .strike-old { text-decoration: line-through; text-decoration-thickness: 0.09em; }
+}
+
+.hero-support {
+  font-family: var(--mono);
+  font-size: 0.98rem;
+  line-height: 1.65;
+  max-width: 34rem;
+  color: var(--ink);
+}
+.hero-actions { display: flex; flex-wrap: wrap; gap: 0.75rem 1rem; margin: 1.75rem 0 0.5rem; align-items: center; }
+
+.btn-primary,
+.btn-secondary,
+.btn-cream {
+  display: inline-block;
+  font-weight: 600;
+  border-radius: var(--radius);
+  padding: 0.6rem 1.1rem;
+  text-decoration: none;
+  border: 2px solid transparent;
+}
+.btn-primary { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.btn-primary:hover { filter: brightness(1.1); }
+.btn-secondary { background: transparent; color: var(--ink); border-color: var(--ink); }
+.btn-secondary:hover { background: rgba(27, 27, 26, 0.06); }
+@media (prefers-color-scheme: dark) {
+  .btn-secondary:hover { background: rgba(237, 234, 226, 0.08); }
+}
+
+/* The DROP plate — a full-width band; the cream-on-teal pairing is ~8.6:1. */
+.drop-plate { width: 100%; background: var(--plate-bg); color: var(--plate-text); }
+.drop-inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem 2.5rem;
+}
+.drop-text { flex: 1 1 24rem; min-width: 0; }
+.drop-kicker {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin: 0 0 0.5rem;
+  opacity: 0.9;
+}
+.drop-plate h2 { margin: 0 0 0.6rem; font-size: 1.7rem; color: var(--plate-text); }
+.drop-body { margin: 0; max-width: 34rem; }
+.btn-cream { background: var(--plate-text); color: var(--plate-bg); border-color: var(--plate-text); flex: none; }
+.btn-cream:hover { filter: brightness(0.96); }
+@media (max-width: 44rem) {
+  .drop-inner { flex-direction: column; align-items: flex-start; }
+  .drop-text { flex: none; }
+}
+
+/* Footnotes — hairline-topped small rows with red superscript numerals. */
+.footnotes {
+  list-style: none;
+  margin: 0;
+  padding: 1.25rem 0 0;
+  border-top: 1px solid var(--card-line);
+  color: var(--slate);
+  font-size: 0.85rem;
+}
+.footnotes li { position: relative; padding-left: 1.4rem; margin: 0.5rem 0; }
+.footnote-num {
+  position: absolute;
+  left: 0;
+  top: -0.15em;
+  color: var(--proof);
+  font-weight: 600;
+  font-size: 0.72rem;
+  vertical-align: super;
+}
+
+/* Landing jump nav (the acknowledged "you're set up" links). */
+.landing-jump { margin-top: 1.5rem; }
+.landing-jump-lead { font-weight: 600; margin-bottom: 0.5rem; }
+.landing-jump ul { list-style: none; padding: 0; margin: 0 0 1rem; }
+.landing-jump li { margin: 0.4rem 0; }

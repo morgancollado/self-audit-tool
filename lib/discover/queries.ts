@@ -58,12 +58,54 @@ export function buildEngineUrl(engine: SearchEngine, query: string, deadnameAwar
   return ENGINE_URL[resolved] + encodeURIComponent(query);
 }
 
+/**
+ * One piece of a query row's *visible* rendering. A `masked` segment stands in
+ * for the former name — the real string lives only in `query` (the clipboard
+ * payload), never in the DOM (scope/docs/06 R3; the deniable-in-a-tab rule).
+ */
+export interface QueryDisplaySegment {
+  text: string;
+  masked?: boolean;
+}
+
+const DEADNAME_MASK = 'former name';
+
+/**
+ * Build the on-screen segments for a query. For a deadname-aware query the
+ * `{{deadname}}` slot renders as a neutral "former name" placeholder while every
+ * other term fills normally; a plain query renders verbatim. The former name is
+ * therefore never present in the rendered DOM.
+ */
+export function buildDisplaySegments(
+  template: string,
+  vars: QueryVars,
+  deadnameAware: boolean,
+): QueryDisplaySegment[] {
+  if (!deadnameAware) return [{ text: fillTemplate(template, vars) ?? template }];
+
+  const segments: QueryDisplaySegment[] = [];
+  let last = 0;
+  for (const m of template.matchAll(PLACEHOLDER_RE)) {
+    const key = m[1] as QueryVar;
+    const start = m.index ?? 0;
+    if (start > last) segments.push({ text: template.slice(last, start) });
+    if (key === 'deadname') segments.push({ text: DEADNAME_MASK, masked: true });
+    else segments.push({ text: (vars[key] ?? '').trim() });
+    last = start + m[0].length;
+  }
+  if (last < template.length) segments.push({ text: template.slice(last) });
+  return segments.filter((s) => s.masked || s.text !== '');
+}
+
 export interface GeneratedQuery {
   key: string;
   label: string;
   /** The engine the query actually runs on (after the deadname privacy policy). */
   engine: Exclude<SearchEngine, 'any'>;
+  /** The REAL query string — clipboard payload only; never rendered for deadname rows. */
   query: string;
+  /** How the query is shown on screen (former name masked when deadname-aware). */
+  display: QueryDisplaySegment[];
   url: string;
   deadnameAware: boolean;
 }
@@ -79,6 +121,7 @@ export function generateQueries(templates: QueryTemplate[], vars: QueryVars): Ge
       label: t.label,
       engine: resolveEngine(t.engine, t.deadnameAware),
       query,
+      display: buildDisplaySegments(t.template, vars, t.deadnameAware),
       url: buildEngineUrl(t.engine, query, t.deadnameAware),
       deadnameAware: t.deadnameAware,
     });

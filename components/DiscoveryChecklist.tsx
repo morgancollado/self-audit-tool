@@ -52,7 +52,13 @@ function StepCard({
     <li className={`step-card${done ? ' step-done' : ''}`}>
       <div className="step-head">
         <h3>{step.title}</h3>
-        <span className={`badge priority-${step.priority}`}>{step.priority}</span>
+        <span className="step-stamps">
+          {/* Source stamp: a checked source earns the corrected fill. */}
+          <span className={`stamp ${done ? 'state-confirmed' : 'state-todo'}`}>
+            {done ? 'checked' : 'to do'}
+          </span>
+          <span className={`stamp priority-${step.priority}`}>{step.priority}</span>
+        </span>
       </div>
       <p className="step-why">{step.why}</p>
 
@@ -114,9 +120,24 @@ function StepCard({
               </p>
               {queries.map((q) => (
                 <div key={q.key} className={`query-row${q.deadnameAware ? ' query-deadname' : ''}`}>
-                  <code>{q.query}</code>
+                  {/* The former name is never rendered — masked segments show a
+                      neutral placeholder; the CopyButton copies the real query. */}
+                  <code>
+                    {q.display.map((seg, i) =>
+                      seg.masked ? (
+                        <span key={i} className="query-placeholder">
+                          {seg.text}
+                        </span>
+                      ) : (
+                        <span key={i}>{seg.text}</span>
+                      ),
+                    )}
+                  </code>
                   <span className="query-actions">
-                    <CopyButton text={q.query} label="Copy query" />
+                    <CopyButton
+                      text={q.query}
+                      label={q.deadnameAware ? 'Copy the former-name search' : 'Copy the search query'}
+                    />
                     <a className="query-run" href={q.url} target="_blank" rel="noopener noreferrer">
                       Run on {ENGINE_LABEL[q.engine]} ↗
                     </a>
