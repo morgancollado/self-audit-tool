@@ -41,7 +41,7 @@ export function SafetyIntro() {
           you come back.
         </li>
         <li>
-          <strong>Clear everything</strong> is always in the top corner. It wipes Errata from this
+          <strong>Clear the desk</strong> is always in the top corner. It wipes Errata from this
           device instantly. (It can’t erase your browser history or anything you’ve downloaded.)
         </li>
         <li>You set the pace. You can stop and come back any time.</li>

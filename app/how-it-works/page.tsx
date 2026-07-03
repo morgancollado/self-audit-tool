@@ -67,7 +67,7 @@ export default function HowItWorksPage() {
         back. You can switch modes anytime in <Link href="/settings">Settings</Link>.
       </p>
 
-      <h2>“Clear everything” is always one tap away</h2>
+      <h2>“Clear the desk” is always one tap away</h2>
       <p>
         The button at the top of every screen wipes Errata’s data from this device instantly — the
         whole ledger, every draft, your settings.

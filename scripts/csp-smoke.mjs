@@ -98,7 +98,8 @@ try {
   // once the client scripts run. Give it a bounded window to get there.
   let hydrated = true;
   try {
-    await page.getByText('Find what’s published about you', { exact: false }).waitFor({ timeout: 8000 });
+    // A phrase from the landing hero's supporting copy — present only after hydration.
+    await page.getByText('correcting a publishing error', { exact: false }).waitFor({ timeout: 8000 });
   } catch {
     hydrated = false;
   }

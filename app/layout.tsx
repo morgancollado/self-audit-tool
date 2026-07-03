@@ -5,7 +5,7 @@ import type { ReactNode } from 'react';
 import { headers } from 'next/headers';
 import './globals.css';
 import { StorageProvider } from '@/lib/storage/StorageProvider';
-import { PanicButton } from '@/components/PanicButton';
+import { AppBar } from '@/components/AppBar';
 import { Footer } from '@/components/Footer';
 
 export const metadata = {
@@ -27,13 +27,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
           Skip to content
         </a>
         <StorageProvider>
-          <header className="app-bar">
-            <span className="wordmark">
-              errata <span className="caret" aria-hidden="true">‸</span>
-            </span>
-            {/* Always reachable, every screen. */}
-            <PanicButton />
-          </header>
+          <AppBar />
           {/* Two-column grid: a left "margin" gutter (aria-hidden, decorative)
               and the reading column. Below 46rem the gutter collapses and the
               column is full-width — content never depends on the gutter. */}
