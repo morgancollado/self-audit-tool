@@ -9,11 +9,16 @@
 // at most two notes per screen; no exclamation marks.
 
 import type { ReactNode } from 'react';
+import { Caret } from './Caret';
 
-export function MarginNote({ mark = '‸', children }: { mark?: string; children: ReactNode }) {
+// The default mark is the SVG caret (U+2038 isn't in the shipped font subsets).
+// Text marks render in the mono face, which — unlike the Newsreader subsets —
+// ships the dingbats pages use (✓ U+2713, → U+2192); see .margin-note-mark in
+// globals.css.
+export function MarginNote({ mark, children }: { mark?: string; children: ReactNode }) {
   return (
     <aside className="margin-note" aria-hidden="true">
-      <span className="margin-note-mark">{mark}</span>
+      <span className="margin-note-mark">{mark ?? <Caret />}</span>
       {children}
     </aside>
   );

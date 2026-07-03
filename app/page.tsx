@@ -12,6 +12,7 @@
 import Link from 'next/link';
 import { useStorage } from '@/lib/storage/StorageProvider';
 import { StorageModeToggle } from '@/components/StorageModeToggle';
+import { Caret } from '@/components/Caret';
 
 export default function HomePage() {
   const { ready, preferences } = useStorage();
@@ -33,7 +34,9 @@ export default function HomePage() {
             <span className="strike-wrap" aria-hidden="true">
               <span className="strike-new">
                 your name
-                <span className="strike-caret">‸</span>
+                <span className="strike-caret">
+                  <Caret />
+                </span>
               </span>
               <span className="strike-old">
                 the old entry

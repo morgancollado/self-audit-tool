@@ -109,6 +109,10 @@ export default function PlaybookPage() {
           <strong>{acted}</strong> action{acted === 1 ? '' : 's'} tracked
           {acted > 0 && <> ({s.byState.confirmed} confirmed)</>}
         </p>
+        {/* The margin note above says this too, but margin notes are decoration
+            (aria-hidden, gone below 46rem) — the fact must also live in the
+            accessible flow (the MarginNote duplication contract). */}
+        <p className="name-inputs-note">This reflects only what is saved on this device.</p>
       </section>
 
       <ol className="playbook">

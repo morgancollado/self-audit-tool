@@ -81,7 +81,10 @@ const base = `http://localhost:${server.address().port}/`;
 // Playwright-managed download isn't available. Unset = Playwright's default.
 const browser = await chromium.launch({ headless: true, executablePath: process.env.ERRATA_CHROMIUM || undefined });
 try {
-  const page = await browser.newPage();
+  // An explicit context (not browser.newPage()) so AxeBuilder can scan this
+  // page too — it refuses pages born from the browser's default context.
+  const landingCtx = await browser.newContext();
+  const page = await landingCtx.newPage();
   const blockedScripts = [];
   page.on('requestfailed', (r) => {
     if (r.failure()?.errorText?.includes('csp')) blockedScripts.push(r.url().replace(base, '/'));
@@ -132,6 +135,11 @@ try {
   if (probe.persisted === true) {
     fail('first load was granted persistent storage before consent.');
   }
+
+  // The redesigned landing carries the most bespoke markup in the app (the
+  // strikethrough hero, the DROP plate, footnotes) — scan it like every flow
+  // route instead of leaving the front door unchecked.
+  await axeFailures(page, '/ (landing)');
 
   // ---- /discover: safety gate + deadname-query routing (M1 hardening) ----
   const dctx = await browser.newContext();

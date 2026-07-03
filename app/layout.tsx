@@ -23,6 +23,23 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
   return (
     <html lang="en">
       <body>
+        {/* Preload the two faces that paint above the fold on every screen (the
+            serif wordmark/headings + the mono metadata voice); React hoists
+            these into <head>. Same-origin, so still no phone-home. */}
+        <link
+          rel="preload"
+          href="/fonts/Newsreader-Medium500.woff2"
+          as="font"
+          type="font/woff2"
+          crossOrigin="anonymous"
+        />
+        <link
+          rel="preload"
+          href="/fonts/IBMPlexMono-Regular.woff2"
+          as="font"
+          type="font/woff2"
+          crossOrigin="anonymous"
+        />
         <a className="skip-link" href="#main">
           Skip to content
         </a>
