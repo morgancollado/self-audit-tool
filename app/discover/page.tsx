@@ -11,6 +11,7 @@ import { StorageModeToggle } from '@/components/StorageModeToggle';
 import { NameInputs } from '@/components/NameInputs';
 import { DiscoveryChecklist } from '@/components/DiscoveryChecklist';
 import { FindingsLedger } from '@/components/FindingsLedger';
+import { MarginNote } from '@/components/MarginNote';
 import { QueryVars } from '@/lib/discover/queries';
 
 export default function DiscoverPage() {
@@ -41,6 +42,7 @@ export default function DiscoverPage() {
         <Link href="/">← Errata</Link>
       </p>
       <h1>Discover</h1>
+      <MarginNote>the ledger below keeps your place if you stop here</MarginNote>
       <p>
         Find what’s out there the way someone looking for you would. Go at your own pace — you can
         stop and come back.
@@ -57,6 +59,7 @@ export default function DiscoverPage() {
           {vars.deadname && <span className="name-chip name-chip-hidden">former name · hidden</span>}
         </p>
       )}
+      <MarginNote mark="✓">your former name is copied when you ask, never shown on screen</MarginNote>
       <DiscoveryChecklist vars={vars} />
       <FindingsLedger />
 

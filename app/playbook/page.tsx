@@ -11,6 +11,7 @@ import Link from 'next/link';
 import { useStorage } from '@/lib/storage/StorageProvider';
 import { SafetyIntro } from '@/components/SafetyIntro';
 import { StorageModeToggle } from '@/components/StorageModeToggle';
+import { MarginNote } from '@/components/MarginNote';
 import { summarizePlaybook } from '@/lib/remediate/progress';
 
 export default function PlaybookPage() {
@@ -98,6 +99,8 @@ export default function PlaybookPage() {
       </p>
 
       <StorageModeToggle />
+
+      <MarginNote>this only reflects what is already saved on your device</MarginNote>
 
       <section className="playbook-summary" aria-label="Your progress so far">
         <p>

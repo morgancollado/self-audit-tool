@@ -110,7 +110,55 @@ h1 { font-size: 1.9rem; line-height: 1.2; text-wrap: balance; }
 
 a { color: var(--marker); }
 
-main { max-width: var(--maxw); margin: 0 auto; padding: 1.5rem 1.25rem 4rem; }
+/* Two-column reading layout: a decorative left "margin" gutter + the content
+   column (≤ 42rem). The gutter is drawn by main::before (border only) so the
+   content column can stay a plain block that pages fill normally. */
+main {
+  display: grid;
+  grid-template-columns: 10rem 1fr;
+  column-gap: 1.75rem;
+  max-width: var(--maxw);
+  margin: 0 auto;
+  padding: 1.5rem 1.25rem 4rem;
+}
+main::before {
+  content: "";
+  grid-column: 1;
+  border-right: 1px solid var(--card-line);
+}
+.main-col { grid-column: 2; min-width: 0; max-width: 42rem; }
+
+/* The margin voice — floats into the gutter aligned to where it's declared. */
+.margin-note {
+  float: left;
+  clear: left;
+  width: 8rem;
+  /* pull left out of the content column into the gutter (10rem col + 1.75rem gap) */
+  margin-left: calc(-10rem - 1.75rem);
+  margin-bottom: 1rem;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 0.85rem;
+  line-height: 1.45;
+  color: var(--annotate);
+  text-align: left;
+}
+.margin-note-mark {
+  display: block;
+  font-style: normal;
+  font-size: 1rem;
+  line-height: 1;
+  margin-bottom: 0.15rem;
+}
+
+/* Below 46rem the gutter collapses; the content column goes full-width and the
+   margin notes are hidden (content never depends on them). */
+@media (max-width: 46rem) {
+  main { display: block; }
+  main::before { display: none; }
+  .main-col { max-width: none; }
+  .margin-note { display: none; }
+}
 
 /* The highlighter wash — used on AT MOST one phrase per screen (the single most
    important one). A bottom-anchored linear gradient so it reads as a marker

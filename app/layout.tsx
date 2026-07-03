@@ -34,7 +34,12 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
             {/* Always reachable, every screen. */}
             <PanicButton />
           </header>
-          <main id="main">{children}</main>
+          {/* Two-column grid: a left "margin" gutter (aria-hidden, decorative)
+              and the reading column. Below 46rem the gutter collapses and the
+              column is full-width — content never depends on the gutter. */}
+          <main id="main">
+            <div className="main-col">{children}</div>
+          </main>
           <Footer />
         </StorageProvider>
         {nonce ? <span data-nonce={nonce} hidden /> : null}
