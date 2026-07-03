@@ -28,7 +28,9 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
         </a>
         <StorageProvider>
           <header className="app-bar">
-            <span className="wordmark">errata</span>
+            <span className="wordmark">
+              errata <span className="caret" aria-hidden="true">‸</span>
+            </span>
             {/* Always reachable, every screen. */}
             <PanicButton />
           </header>

@@ -34,3 +34,18 @@ field and are contributed under CC BY-NC-SA 4.0 as well, so the whole
 Other content (`content/law/`, `content/platforms/`, `content/records/`, etc.)
 is original work contributed under CC BY-NC-SA 4.0 unless a file's `attribution`
 states otherwise.
+
+## Fonts — SIL Open Font License 1.1
+
+The web fonts under **`public/fonts/`** are self-hosted (no font CDN, per the
+no-phone-home rule) and licensed under the **SIL Open Font License, Version
+1.1**. The full license text ships alongside them:
+
+- **Newsreader** — © 2020 The Newsreader Project Authors
+  (https://github.com/productiontype/Newsreader). License:
+  [`public/fonts/OFL-Newsreader.txt`](./public/fonts/OFL-Newsreader.txt).
+  Files: `Newsreader-Medium500.woff2`, `Newsreader-Italic400.woff2`.
+- **IBM Plex Mono** — © 2017 IBM Corp., with Reserved Font Name "Plex"
+  (https://github.com/IBM/plex). License:
+  [`public/fonts/OFL-IBMPlexMono.txt`](./public/fonts/OFL-IBMPlexMono.txt).
+  Files: `IBMPlexMono-Regular.woff2`, `IBMPlexMono-SemiBold.woff2`.

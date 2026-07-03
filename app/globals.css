@@ -1,7 +1,39 @@
 /* Errata base styles — calm editorial register (scope/docs/11-brand.md).
-   Paper-and-ink, AA contrast, one restrained proof-red used only for emphasis.
-   Self-hosted fonts only (no font CDN). System stack for now; real type stack
-   lands with the design pass. */
+   Paper-and-ink, AA contrast, one restrained proof-red used only for correction.
+   Self-hosted fonts only — no font CDN, no phone-home (served from /public/fonts,
+   governed by CSP font-src 'self'). */
+
+/* --- Self-hosted type (OFL, see public/fonts/OFL-*.txt and NOTICE.md) --------
+   Newsreader → headings, wordmark, the "annotator" italic margin voice.
+   IBM Plex Mono → stamps, metadata, letter bodies, taglines. */
+@font-face {
+  font-family: "Newsreader";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("/fonts/Newsreader-Medium500.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Newsreader";
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/Newsreader-Italic400.woff2") format("woff2");
+}
+@font-face {
+  font-family: "IBM Plex Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/IBMPlexMono-Regular.woff2") format("woff2");
+}
+@font-face {
+  font-family: "IBM Plex Mono";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("/fonts/IBMPlexMono-SemiBold.woff2") format("woff2");
+}
 
 :root {
   --ink: #1b1b1a;
@@ -17,12 +49,20 @@
      stays the dark emphasis ink. */
   --on-marker: #fbfaf7;
 
-  --maxw: 42rem;
+  /* Redesign ground + surfaces (the "margin notes" system). */
+  --parchment: #f8f5ee;      /* page ground for working screens */
+  --card-bg: #fdfbf6;        /* raised card surface */
+  --card-line: #e5dfd0;      /* card borders + hairlines */
+  --hl: rgba(47, 93, 98, 0.22);   /* teal highlighter wash (one phrase / screen) */
+  --fill: rgba(47, 93, 98, 0.16); /* personal-detail wash in letters */
+  --annotate: var(--proof);  /* the margin voice */
+
+  --maxw: 54rem;
   --radius: 6px;
 
-  --serif: ui-serif, Georgia, "Times New Roman", serif;
+  --serif: "Newsreader", ui-serif, Georgia, serif;
   --sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  --mono: ui-monospace, "SFMono-Regular", "IBM Plex Mono", monospace;
+  --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", monospace;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -38,6 +78,12 @@
     --marker-ink: #0f2a2d;
     /* On the light dark-mode teal, text on a --marker fill is the dark ink. */
     --on-marker: #0f2a2d;
+
+    --parchment: #15140f;
+    --card-bg: #201d15;
+    --card-line: #34302a;
+    --hl: rgba(127, 178, 184, 0.30);
+    --fill: rgba(127, 178, 184, 0.22);
   }
 }
 
@@ -46,18 +92,37 @@
 html, body { margin: 0; padding: 0; }
 
 body {
-  background: var(--paper);
+  background: var(--parchment);
   color: var(--ink);
   font-family: var(--sans);
   font-size: 1.0625rem;
   line-height: 1.6;
 }
 
-h1, h2, h3 { font-family: var(--serif); line-height: 1.25; }
+h1, h2, h3 {
+  font-family: var(--serif);
+  font-weight: 500;
+  line-height: 1.25;
+  letter-spacing: -0.005em;
+}
+/* Page titles: a touch tighter, balanced. */
+h1 { font-size: 1.9rem; line-height: 1.2; text-wrap: balance; }
 
 a { color: var(--marker); }
 
 main { max-width: var(--maxw); margin: 0 auto; padding: 1.5rem 1.25rem 4rem; }
+
+/* The highlighter wash — used on AT MOST one phrase per screen (the single most
+   important one). A bottom-anchored linear gradient so it reads as a marker
+   stroke, not a filled block. */
+.hl {
+  background: linear-gradient(transparent 55%, var(--hl) 55%);
+  padding: 0 0.1em;
+}
+
+/* The wordmark: lowercase serif "errata" + a proof-red proofreader's caret. */
+.wordmark { font-family: var(--serif); font-weight: 500; }
+.wordmark .caret { color: var(--proof); }
 
 /* Keyboard skip link */
 .skip-link {

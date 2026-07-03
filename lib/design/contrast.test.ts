@@ -75,6 +75,16 @@ const PAIRS: [string, string, string][] = [
   ['text on a proof fill (panic, high-priority, blocked)', 'paper', 'proof'],
   ['warn text on page', 'proof', 'paper'],
   ['warn text on card', 'proof', 'cream'],
+  // Redesign ground + surfaces: body text now sits on --parchment, cards on
+  // --card-bg. Every text role that lands on them must still clear AA.
+  ['body text on parchment', 'ink', 'parchment'],
+  ['muted text on parchment', 'slate', 'parchment'],
+  ['link on parchment', 'marker', 'parchment'],
+  ['margin voice on parchment', 'proof', 'parchment'],
+  ['body text on card', 'ink', 'card-bg'],
+  ['muted text on card surface', 'slate', 'card-bg'],
+  ['link on card surface', 'marker', 'card-bg'],
+  ['stamp / warn text on card surface', 'proof', 'card-bg'],
 ];
 
 for (const [themeName, palette] of Object.entries(themes(CSS))) {
