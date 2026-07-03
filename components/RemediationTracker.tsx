@@ -13,7 +13,8 @@ import { getBroker } from '@/lib/content/data';
 import { Pillar, Remediation, RemediationState } from '@/lib/model/types';
 
 // Plain-word stamp labels — no proofreader jargon (scope/docs/11-brand.md).
-const STATE_LABEL: Record<RemediationState, string> = {
+// Exported so the opt-out card's stamp (OptOutGenerator) speaks the same words.
+export const STATE_LABEL: Record<RemediationState, string> = {
   todo: 'to do',
   sent: 'sent',
   confirmed: 'corrected',
@@ -28,7 +29,7 @@ const PILLAR_HREF: Record<Pillar, string> = {
   deadname: '/records',
 };
 
-type Filter = 'attention' | 'waiting' | 'corrected' | 'all';
+type Filter = 'attention' | 'waiting' | 'draft' | 'corrected' | 'all';
 
 interface TrackerGroup {
   key: string;
@@ -59,7 +60,16 @@ function groupRows(remediations: Remediation[]): TrackerGroup[] {
   return groups;
 }
 
-const TODAY = () => new Date().toISOString().slice(0, 10);
+// The user's LOCAL calendar day — not toISOString(), which is UTC and would
+// flag a follow-up due tomorrow as overdue from early evening in the Americas.
+const TODAY = () => {
+  const d = new Date();
+  return [
+    d.getFullYear(),
+    String(d.getMonth() + 1).padStart(2, '0'),
+    String(d.getDate()).padStart(2, '0'),
+  ].join('-');
+};
 
 function shortDate(iso: string): string {
   const d = new Date(`${iso}T00:00:00`);
@@ -68,14 +78,33 @@ function shortDate(iso: string): string {
 }
 
 /** A group's bucket for the filter tabs + summary; mutually exclusive. */
-function bucketOf(g: TrackerGroup, today: string): Filter {
+function bucketOf(g: TrackerGroup, today: string): Exclude<Filter, 'all'> {
   if (g.rows.every((r) => r.state === 'confirmed')) return 'corrected';
   const attention = g.rows.some(
     (r) => r.state !== 'confirmed' && r.recheckAt && r.recheckAt <= today,
   );
   if (attention) return 'attention';
   if (g.rows.some((r) => r.state === 'sent')) return 'waiting';
-  return 'all'; // still-to-draft (todo / blocked)
+  return 'draft'; // still-to-draft (todo / blocked)
+}
+
+/**
+ * The date shown in a group's meta line. When the group needs attention, it is
+ * the EARLIEST overdue recheck among unresolved rows (a mixed group's first
+ * row may hold a future date — showing that after "follow-up was" would read
+ * as nonsense); otherwise the earliest planned recheck. ISO dates sort
+ * lexicographically.
+ */
+function recheckOf(g: TrackerGroup, today: string): string | undefined {
+  const overdue = g.rows
+    .filter((r) => r.state !== 'confirmed' && r.recheckAt && r.recheckAt <= today)
+    .map((r) => r.recheckAt!)
+    .sort();
+  if (overdue.length > 0) return overdue[0];
+  return g.rows
+    .map((r) => r.recheckAt)
+    .filter((d): d is string => !!d)
+    .sort()[0];
 }
 
 export function RemediationTracker() {
@@ -102,6 +131,7 @@ export function RemediationTracker() {
     f === 'all' ? groups.length : groups.filter((g) => buckets.get(g.key) === f).length;
   const attentionN = count('attention');
   const waitingN = count('waiting');
+  const draftN = count('draft');
   const correctedN = count('corrected');
 
   // Entries needing attention sort first; the rest keep insertion order.
@@ -111,9 +141,11 @@ export function RemediationTracker() {
   const visible =
     filter === 'all' ? ordered : ordered.filter((g) => buckets.get(g.key) === filter);
 
+  // Every bucket the headline can name has a tab — "to draft" included.
   const TABS: [Filter, string, number][] = [
     ['attention', 'Needs attention', attentionN],
     ['waiting', 'Waiting', waitingN],
+    ['draft', 'To draft', draftN],
     ['corrected', 'Corrected', correctedN],
     ['all', 'All', groups.length],
   ];
@@ -126,8 +158,7 @@ export function RemediationTracker() {
         <span className="count">
           {groups.length} {groups.length === 1 ? 'entry' : 'entries'}.
         </span>{' '}
-        {correctedN} corrected, {waitingN} waiting on replies, {count('all') - correctedN - waitingN - attentionN}{' '}
-        to draft —{' '}
+        {correctedN} corrected, {waitingN} waiting on replies, {draftN} to draft —{' '}
         {attentionN > 0 ? (
           <>
             {attentionN} {attentionN === 1 ? 'needs' : 'need'} a follow-up now, below.
@@ -166,7 +197,7 @@ export function RemediationTracker() {
             // rows at once — one batch write, no per-row races.
             const uniform = g.rows.every((r) => r.state === lead.state);
             const bucket = buckets.get(g.key);
-            const recheck = g.rows.find((r) => r.recheckAt)?.recheckAt;
+            const recheck = recheckOf(g, today);
             const setAll = (patch: Partial<Pick<Remediation, 'state' | 'recheckAt'>>) =>
               updateRemediations(ids, patch);
             const removeAll = () => removeRemediations(ids);

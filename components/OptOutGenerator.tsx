@@ -22,6 +22,7 @@ import {
   pairSharesContact,
 } from '@/lib/remediate/optout';
 import { CopyButton } from './CopyButton';
+import { STATE_LABEL } from './RemediationTracker';
 
 type ListedUnderChoice = ListedUnder | 'both';
 
@@ -155,6 +156,17 @@ export function OptOutGenerator({
   const tracked = inputs.every((t) =>
     remediations.some((r) => r.pillar === 'optout' && r.refId === t.refId),
   );
+  // The card's stamp mirrors the tracker's ACTUAL state for these rows — a user
+  // who later marks the entry corrected or blocked in the tracker must not keep
+  // seeing "sent" here. Untracked → "to do"; diverging grouped rows → "mixed".
+  const trackedRows = remediations.filter(
+    (r) => r.pillar === 'optout' && inputs.some((t) => t.refId === r.refId),
+  );
+  const stampState = !tracked
+    ? 'todo'
+    : trackedRows.every((r) => r.state === trackedRows[0].state)
+      ? trackedRows[0].state
+      : 'mixed';
 
   const template = broker.optOut.templateKey ? getOptOutTemplate(broker.optOut.templateKey) : undefined;
   const both = listedUnder === 'both';
@@ -351,8 +363,8 @@ export function OptOutGenerator({
                 I’ve sent this — track it
               </button>
             )}
-            <span className={`stamp ${tracked ? 'state-sent' : 'state-todo'}`}>
-              {tracked ? 'sent' : 'to do'}
+            <span className={`stamp state-${stampState}`}>
+              {stampState === 'mixed' ? 'mixed' : STATE_LABEL[stampState]}
             </span>
           </div>
         </>
