@@ -1,14 +1,16 @@
 'use client';
 
 // M0 landing — the "errata sheet" register (scope/docs/11-brand.md): a louder,
-// editorial front page that appears nowhere else in the app. It still carries the
-// first-run safety intro, the storage-mode control, and the jump links — restyled
-// and re-arranged, never removed. Deniable by design: nothing on screen names the
-// tool's purpose.
+// editorial front page that appears nowhere else in the app. The first-run safety
+// intro is NOT shown here: it opens the moment the visitor clicks into a flow
+// ("Begin the correction" → /playbook, etc.), which is where the shared-device
+// choice actually matters and where the sensitive inputs live. The app still
+// starts session-only and writes nothing until that choice is made. The
+// storage-mode control + jump links appear once the intro has been acknowledged.
+// Deniable by design: nothing on screen names the tool's purpose.
 
 import Link from 'next/link';
 import { useStorage } from '@/lib/storage/StorageProvider';
-import { SafetyIntro } from '@/components/SafetyIntro';
 import { StorageModeToggle } from '@/components/StorageModeToggle';
 
 export default function HomePage() {
@@ -56,8 +58,6 @@ export default function HomePage() {
             </Link>
           </div>
         </section>
-
-        <SafetyIntro />
 
         {preferences.safetyIntroAcknowledged && (
           <nav className="landing-jump" aria-label="Jump to a step">
