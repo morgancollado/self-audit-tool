@@ -7,19 +7,11 @@
 // the data stays one row per broker, only the presentation folds.
 
 import { useState } from 'react';
-import Link from 'next/link';
+import { useLocale, useTranslations } from 'next-intl';
+import { Link } from '@/i18n/navigation';
 import { useStorage } from '@/lib/storage/StorageProvider';
 import { getBroker } from '@/lib/content/data';
 import { Pillar, Remediation, RemediationState } from '@/lib/model/types';
-
-// Plain-word stamp labels — no proofreader jargon (scope/docs/11-brand.md).
-// Exported so the opt-out card's stamp (OptOutGenerator) speaks the same words.
-export const STATE_LABEL: Record<RemediationState, string> = {
-  todo: 'to do',
-  sent: 'sent',
-  confirmed: 'corrected',
-  blocked: 'blocked',
-};
 
 // Where "follow up" leads, per pillar — an existing route, never a dead end.
 const PILLAR_HREF: Record<Pillar, string> = {
@@ -71,10 +63,10 @@ const TODAY = () => {
   ].join('-');
 };
 
-function shortDate(iso: string): string {
+function shortDate(iso: string, locale: string): string {
   const d = new Date(`${iso}T00:00:00`);
   if (Number.isNaN(d.getTime())) return iso;
-  return d.toLocaleDateString('en-US', { month: 'short', day: '2-digit' }).toLowerCase();
+  return d.toLocaleDateString(locale, { month: 'short', day: '2-digit' }).toLowerCase();
 }
 
 /** A group's bucket for the filter tabs + summary; mutually exclusive. */
@@ -108,6 +100,9 @@ function recheckOf(g: TrackerGroup, today: string): string | undefined {
 }
 
 export function RemediationTracker() {
+  const t = useTranslations('tracker');
+  const tc = useTranslations('common');
+  const locale = useLocale();
   const { state, updateRemediations, removeRemediations } = useStorage();
   const [filter, setFilter] = useState<Filter>('all');
   const remediations = state?.remediations ?? [];
@@ -115,11 +110,8 @@ export function RemediationTracker() {
   if (remediations.length === 0) {
     return (
       <section className="tracker" aria-labelledby="tracker-title">
-        <h2 id="tracker-title">Your tracker</h2>
-        <p className="name-inputs-note">
-          Nothing tracked yet. When you send an opt-out, add it here so you remember to re-check —
-          brokers often re-list.
-        </p>
+        <h2 id="tracker-title">{t('title')}</h2>
+        <p className="name-inputs-note">{t('empty')}</p>
       </section>
     );
   }
@@ -143,32 +135,28 @@ export function RemediationTracker() {
 
   // Every bucket the headline can name has a tab — "to draft" included.
   const TABS: [Filter, string, number][] = [
-    ['attention', 'Needs attention', attentionN],
-    ['waiting', 'Waiting', waitingN],
-    ['draft', 'To draft', draftN],
-    ['corrected', 'Corrected', correctedN],
-    ['all', 'All', groups.length],
+    ['attention', t('tabAttention'), attentionN],
+    ['waiting', t('tabWaiting'), waitingN],
+    ['draft', t('tabDraft'), draftN],
+    ['corrected', t('tabCorrected'), correctedN],
+    ['all', t('tabAll'), groups.length],
   ];
 
   return (
     <section className="tracker" aria-labelledby="tracker-title">
-      <h2 id="tracker-title">Your tracker</h2>
+      <h2 id="tracker-title">{t('title')}</h2>
 
       <p className="tracker-headline">
-        <span className="count">
-          {groups.length} {groups.length === 1 ? 'entry' : 'entries'}.
-        </span>{' '}
-        {correctedN} corrected, {waitingN} waiting on replies, {draftN} to draft —{' '}
+        <span className="count">{t('entriesCount', { count: groups.length })}</span>{' '}
+        {t('headlineCounts', { corrected: correctedN, waiting: waitingN, draft: draftN })}
         {attentionN > 0 ? (
-          <>
-            {attentionN} {attentionN === 1 ? 'needs' : 'need'} a follow-up now, below.
-          </>
+          <>{t('headlineAttention', { count: attentionN })}</>
         ) : (
-          <span className="hl">nothing needs you today</span>
+          <span className="hl">{t('headlineNone')}</span>
         )}
       </p>
 
-      <ul className="filter-tabs" aria-label="Filter tracked entries">
+      <ul className="filter-tabs" aria-label={t('tabsAria')}>
         {TABS.map(([f, label, n]) => (
           <li key={f}>
             <button
@@ -184,7 +172,7 @@ export function RemediationTracker() {
       </ul>
 
       {visible.length === 0 ? (
-        <p className="name-inputs-note">Nothing in this view.</p>
+        <p className="name-inputs-note">{t('emptyView')}</p>
       ) : (
         <ul className="tracker-list">
           {visible.map((g) => {
@@ -206,43 +194,43 @@ export function RemediationTracker() {
                 <div className="tracker-head">
                   <strong>{g.heading ?? lead.action}</strong>
                   {uniform ? (
-                    <span className={`stamp state-${lead.state}`}>{STATE_LABEL[lead.state]}</span>
+                    <span className={`stamp state-${lead.state}`}>{tc(`state.${lead.state}`)}</span>
                   ) : (
-                    <span className="stamp state-mixed">mixed</span>
+                    <span className="stamp state-mixed">{tc('state.mixed')}</span>
                   )}
                 </div>
                 {g.heading && (
                   <p className="name-inputs-note">
-                    Covers{' '}
-                    {g.rows
-                      .map((r) => {
-                        const name = (r.refId && getBroker(r.refId)?.name) || r.refId;
-                        return uniform ? name : `${name} (${STATE_LABEL[r.state].toLowerCase()})`;
-                      })
-                      .join(', ')}
-                    .
+                    {t('covers', {
+                      list: g.rows
+                        .map((r) => {
+                          const name = (r.refId && getBroker(r.refId)?.name) || r.refId;
+                          return uniform ? name : `${name} (${tc(`state.${r.state}`).toLowerCase()})`;
+                        })
+                        .join(', '),
+                    })}
                   </p>
                 )}
                 <div className="tracker-controls">
                   <label>
-                    Status
+                    {t('status')}
                     <select
                       value={uniform ? lead.state : 'mixed'}
                       onChange={(e) => setAll({ state: e.target.value as RemediationState })}
                     >
                       {!uniform && (
                         <option value="mixed" disabled>
-                          Mixed — pick one to set all
+                          {t('mixedOption')}
                         </option>
                       )}
-                      <option value="todo">To do</option>
-                      <option value="sent">Sent</option>
-                      <option value="confirmed">Corrected</option>
-                      <option value="blocked">Blocked</option>
+                      <option value="todo">{t('optionTodo')}</option>
+                      <option value="sent">{t('optionSent')}</option>
+                      <option value="confirmed">{t('optionConfirmed')}</option>
+                      <option value="blocked">{t('optionBlocked')}</option>
                     </select>
                   </label>
                   <label>
-                    Re-check on
+                    {t('recheckOn')}
                     <input
                       type="date"
                       value={lead.recheckAt ?? ''}
@@ -250,21 +238,23 @@ export function RemediationTracker() {
                     />
                   </label>
                   <button type="button" className="report-broken-link" onClick={removeAll}>
-                    Remove
+                    {t('remove')}
                   </button>
                 </div>
                 {recheck && (
                   <div className="tracker-meta">
                     <span className="tracker-dates">
                       {bucket === 'attention' ? (
-                        <span className="tracker-attention">follow-up was {shortDate(recheck)}</span>
+                        <span className="tracker-attention">
+                          {t('followupWas', { date: shortDate(recheck, locale) })}
+                        </span>
                       ) : (
-                        <>follow-up {shortDate(recheck)}</>
+                        <>{t('followup', { date: shortDate(recheck, locale) })}</>
                       )}
                     </span>
                     {bucket === 'attention' && (
                       <Link className="tracker-action" href={PILLAR_HREF[lead.pillar]}>
-                        Draft the follow-up →
+                        {t('draftFollowup')}
                       </Link>
                     )}
                   </div>

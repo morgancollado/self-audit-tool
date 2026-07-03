@@ -7,6 +7,7 @@
 // and is honest about coverage: a 'shared-backbone' network's siblings become
 // re-check to-dos, never "sent" (see groupTrackInputs).
 
+import { useTranslations } from 'next-intl';
 import { OptOutVars } from '@/lib/remediate/optout';
 import { Broker } from '@/lib/content/types';
 import { BrokerGroup, groupTrackInputs } from '@/lib/remediate/networks';
@@ -21,6 +22,7 @@ export function NetworkOptOutCard({
   vars: OptOutVars;
   findingBySlug: Map<string, string>;
 }) {
+  const t = useTranslations('network');
   const rep = group.representative;
 
   if (!group.isNetwork) {
@@ -33,7 +35,7 @@ export function NetworkOptOutCard({
       <span key={m.slug}>
         {i > 0 && ', '}
         {m.name}
-        {findingBySlug.has(m.slug) && <strong> (in your findings)</strong>}
+        {findingBySlug.has(m.slug) && <strong> {t('inFindings')}</strong>}
       </span>
     ));
 
@@ -42,19 +44,23 @@ export function NetworkOptOutCard({
       {group.note && <p className="name-inputs-note">{group.note}</p>}
       {group.coverage === 'single-submission' ? (
         <p className="optout-network-covers">
-          One request covers: {memberList(group.members)}. Tracking it marks every site sent.
+          {t.rich('coversSingle', {
+            members: () => <>{memberList(group.members)}</>,
+          })}
         </p>
       ) : (
         // Shared backbone, unverified family-wide removal: promise only what one
         // submission is known to do, and say what tracking will actually record.
         <p className="optout-network-covers">
-          One request to this family’s privacy contact asks for removal from all of them, but only{' '}
-          <strong>{rep.name}</strong>’s own removal is verified. Tracking it marks {rep.name} sent
-          and adds {memberList(siblings)} as re-check to-dos.
+          {t.rich('coversBackbone', {
+            rep: rep.name,
+            siblings: () => <>{memberList(siblings)}</>,
+            strong: (chunks) => <strong>{chunks}</strong>,
+          })}
         </p>
       )}
       <details className="optout-network-members">
-        <summary>Site-by-site links</summary>
+        <summary>{t('siteLinks')}</summary>
         <ul>
           {group.members.map((m) => (
             <li key={m.slug}>
@@ -63,7 +69,7 @@ export function NetworkOptOutCard({
                 <>
                   {' · '}
                   <a href={m.searchUrl} target="_blank" rel="noopener noreferrer">
-                    search ↗
+                    {t('searchLink')}
                   </a>
                 </>
               )}
@@ -71,7 +77,7 @@ export function NetworkOptOutCard({
                 <>
                   {' · '}
                   <a href={m.optOut.webFormUrl} target="_blank" rel="noopener noreferrer">
-                    opt-out form ↗
+                    {t('formLink')}
                   </a>
                 </>
               )}

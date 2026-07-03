@@ -12,7 +12,8 @@
 // first, and a filter so the list stays usable as the dataset grows.
 
 import { useMemo, useState } from 'react';
-import Link from 'next/link';
+import { useTranslations } from 'next-intl';
+import { Link } from '@/i18n/navigation';
 import { useStorage } from '@/lib/storage/StorageProvider';
 import { getBrokers } from '@/lib/content/data';
 import { SafetyIntro } from '@/components/SafetyIntro';
@@ -28,6 +29,8 @@ import { groupBrokers } from '@/lib/remediate/networks';
 import { countGroupsTracked } from '@/lib/remediate/progress';
 
 export default function RemediatePage() {
+  const t = useTranslations('remediate');
+  const tc = useTranslations('common');
   const { ready, preferences, state, mode, durable } = useStorage();
   const [vars, setVars] = useState<OptOutVars>({});
   const [onlyFlagged, setOnlyFlagged] = useState(true);
@@ -46,13 +49,13 @@ export default function RemediatePage() {
   }, [state]);
   const hasFindings = findingBySlug.size > 0;
 
-  if (!ready) return <p>Loading…</p>;
+  if (!ready) return <p>{tc('loading')}</p>;
 
   if (!preferences.safetyIntroAcknowledged) {
     return (
       <>
         <p className="breadcrumb">
-          <Link href="/">← Errata</Link>
+          <Link href="/">{tc('backToErrata')}</Link>
         </p>
         <SafetyIntro />
       </>
@@ -74,40 +77,29 @@ export default function RemediatePage() {
   return (
     <>
       <p className="breadcrumb">
-        <Link href="/">← Errata</Link> · <Link href="/playbook">Playbook</Link> ·{' '}
-        <Link href="/discover">Discover</Link>
+        <Link href="/">{tc('backToErrata')}</Link> · <Link href="/playbook">{tc('breadcrumb.playbook')}</Link> ·{' '}
+        <Link href="/discover">{tc('breadcrumb.discover')}</Link>
       </p>
-      <h1>Remediate</h1>
-      <p>
-        For each broker, Errata prepares a removal request from your details. Read it, decide which
-        name the listing is under, then send it yourself.
-      </p>
+      <h1>{t('title')}</h1>
+      <p>{t('intro')}</p>
 
       <StorageModeToggle />
-      {mode === 'ephemeral' && durable && (
-        <p className="name-inputs-note">
-          Most people need more than one sitting for this — saving keeps your tracker for next time.
-        </p>
-      )}
+      {mode === 'ephemeral' && durable && <p className="name-inputs-note">{t('ephemeralNote')}</p>}
       <StateRights />
       <OptOutInputs vars={vars} onChange={setVars} />
 
-      <h2>Prepare your removal requests</h2>
-      <MarginNote>each request is drafted on this device — nothing sends until you press send</MarginNote>
+      <h2>{t('prepareHead')}</h2>
+      <MarginNote>{t('marginDrafted')}</MarginNote>
 
       <p className="ledger-summary">
-        {trackedCount} of {allGroups.length} opt-out targets tracked
+        {t('targetsTracked', { tracked: trackedCount, total: allGroups.length })}
       </p>
 
       {/* User-testing feedback: broker paywalls stopped people from even confirming
           a listing. Sending anyway is legitimate — brokers must process the request
           whether or not you saw the report. R13 nuance: the request stays keyed on
           one name, so an unconfirmed send doesn't hand over the linkage. */}
-      <p className="name-inputs-note">
-        Couldn’t confirm a listing because the site wanted payment or a sign-up? Send the request
-        anyway — brokers have to process it whether or not you saw the report. Each request carries
-        only the one name you choose below, so you’re not handing them anything new.
-      </p>
+      <p className="name-inputs-note">{t('paywallNote')}</p>
 
       {/* The tester's own strategy — email everyone in one sweep — as a first-class
           path instead of a card-by-card slog. */}
@@ -115,8 +107,9 @@ export default function RemediatePage() {
 
       {!hasFindings && (
         <p className="name-inputs-note">
-          These are the brokers Errata covers. Tip: <Link href="/discover">run Discover</Link> first to
-          focus on the ones you’re actually listed on.
+          {t.rich('noFindingsTip', {
+            link: (chunks) => <Link href="/discover">{chunks}</Link>,
+          })}
         </p>
       )}
 
@@ -128,16 +121,16 @@ export default function RemediatePage() {
               checked={onlyFlagged}
               onChange={(e) => setOnlyFlagged(e.target.checked)}
             />
-            Show only brokers from my Discover findings
+            {t('onlyFlagged')}
           </label>
         )}
         <label className="optout-filter-search">
-          Filter by name
+          {t('filterByName')}
           <input
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="e.g. Spokeo"
+            placeholder={t('filterPlaceholder')}
             autoComplete="off"
           />
         </label>
@@ -145,7 +138,7 @@ export default function RemediatePage() {
 
       <div className="optout-list">
         {groups.length === 0 ? (
-          <p className="name-inputs-note">No brokers match that filter.</p>
+          <p className="name-inputs-note">{t('noMatch')}</p>
         ) : (
           groups.map((g) => (
             <NetworkOptOutCard key={g.key} group={g} vars={vars} findingBySlug={findingBySlug} />
@@ -154,11 +147,14 @@ export default function RemediatePage() {
       </div>
 
       <p className="discover-next">
-        Listed on platforms too? <Link href="/harden">Harden your accounts & remove your former name →</Link>
+        {t.rich('nextHarden', {
+          link: (chunks) => <Link href="/harden">{chunks}</Link>,
+        })}
       </p>
       <p className="discover-next">
-        Deadname in a court order, name-change petition, or web archive?{' '}
-        <Link href="/records">Tackle public records →</Link>
+        {t.rich('nextRecords', {
+          link: (chunks) => <Link href="/records">{chunks}</Link>,
+        })}
       </p>
 
       <RemediationTracker />

@@ -3,6 +3,7 @@
 // Inline form to add a finding to the ledger, prefilled from a discovery step.
 
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { useStorage } from '@/lib/storage/StorageProvider';
 import { FindingSource, Priority } from '@/lib/model/types';
 
@@ -15,6 +16,8 @@ export interface AddFindingDefaults {
 }
 
 export function AddFindingForm({ defaults, onDone }: { defaults: AddFindingDefaults; onDone?: () => void }) {
+  const t = useTranslations('addFinding');
+  const tc = useTranslations('common');
   const { addFinding } = useStorage();
   const [label, setLabel] = useState(defaults.label ?? '');
   const [whatFound, setWhatFound] = useState('');
@@ -39,7 +42,7 @@ export function AddFindingForm({ defaults, onDone }: { defaults: AddFindingDefau
       }}
     >
       <label>
-        Where (e.g. “Spokeo”, “old LinkedIn”)
+        {t('where')}
         <input
           type="text"
           autoComplete="off"
@@ -52,7 +55,7 @@ export function AddFindingForm({ defaults, onDone }: { defaults: AddFindingDefau
         />
       </label>
       <label>
-        What you found
+        {t('what')}
         <input
           type="text"
           autoComplete="off"
@@ -61,32 +64,29 @@ export function AddFindingForm({ defaults, onDone }: { defaults: AddFindingDefau
           spellCheck={false}
           value={whatFound}
           onChange={(e) => setWhatFound(e.target.value)}
-          placeholder="in your own words"
+          placeholder={t('whatPlaceholder')}
         />
       </label>
-      <p className="report-broken-hint">
-        You don’t need to type your former name here — tick the box below and it’s recorded without
-        writing the name down.
-      </p>
+      <p className="report-broken-hint">{t('hint')}</p>
       <label className="add-finding-checkbox">
         <input type="checkbox" checked={exposesDeadname} onChange={(e) => setExposesDeadname(e.target.checked)} />
-        This exposes my former name
+        {t('exposes')}
       </label>
       <label>
-        Priority
+        {t('priority')}
         <select value={priority} onChange={(e) => setPriority(e.target.value as Priority)}>
-          <option value="high">High</option>
-          <option value="medium">Medium</option>
-          <option value="low">Low</option>
+          <option value="high">{tc('priorityOption.high')}</option>
+          <option value="medium">{tc('priorityOption.medium')}</option>
+          <option value="low">{tc('priorityOption.low')}</option>
         </select>
       </label>
       <div className="add-finding-actions">
         <button type="submit" className="safety-intro-primary">
-          Add to ledger
+          {t('submit')}
         </button>
         {onDone && (
           <button type="button" className="report-broken-link" onClick={onDone}>
-            Cancel
+            {t('cancel')}
           </button>
         )}
       </div>

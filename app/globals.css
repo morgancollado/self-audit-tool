@@ -241,6 +241,19 @@ main::before {
 }
 @media (max-width: 40rem) { .app-tagline { display: none; } }
 
+/* Language switch: quiet mono link next to the panic control — a neutral
+   control that names nothing (deniability, like the rest of the chrome). */
+.lang-switch {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  color: var(--slate);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  white-space: nowrap;
+}
+.lang-switch:hover { color: var(--ink); }
+
 /* The panic control: the correction gesture's twin — a solid proof-red fill,
    instant and unconfirmed by design (scope/docs/04-data-model.md). */
 .panic-button {

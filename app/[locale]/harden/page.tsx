@@ -5,7 +5,8 @@
 // Gated behind the shared-device safety intro like /discover and /remediate, and
 // shares the remediation tracker so platform actions land in the same record.
 
-import Link from 'next/link';
+import { useTranslations } from 'next-intl';
+import { Link } from '@/i18n/navigation';
 import { useStorage } from '@/lib/storage/StorageProvider';
 import { getPlatforms } from '@/lib/content/data';
 import { SafetyIntro } from '@/components/SafetyIntro';
@@ -14,15 +15,17 @@ import { PlatformGuide } from '@/components/PlatformGuide';
 import { RemediationTracker } from '@/components/RemediationTracker';
 
 export default function HardenPage() {
+  const t = useTranslations('harden');
+  const tc = useTranslations('common');
   const { ready, preferences } = useStorage();
 
-  if (!ready) return <p>Loading…</p>;
+  if (!ready) return <p>{tc('loading')}</p>;
 
   if (!preferences.safetyIntroAcknowledged) {
     return (
       <>
         <p className="breadcrumb">
-          <Link href="/">← Errata</Link>
+          <Link href="/">{tc('backToErrata')}</Link>
         </p>
         <SafetyIntro />
       </>
@@ -34,15 +37,11 @@ export default function HardenPage() {
   return (
     <>
       <p className="breadcrumb">
-        <Link href="/">← Errata</Link> · <Link href="/playbook">Playbook</Link> ·{' '}
-        <Link href="/discover">Discover</Link> · <Link href="/remediate">Remediate</Link>
+        <Link href="/">{tc('backToErrata')}</Link> · <Link href="/playbook">{tc('breadcrumb.playbook')}</Link> ·{' '}
+        <Link href="/discover">{tc('breadcrumb.discover')}</Link> · <Link href="/remediate">{tc('breadcrumb.remediate')}</Link>
       </p>
-      <h1>Harden platforms</h1>
-      <p>
-        Update your accounts so they carry your current name, and lock down what others can see. Each
-        platform leads with removing your former name, then hardening. Go at your own pace — the
-        easiest wins are first.
-      </p>
+      <h1>{t('title')}</h1>
+      <p>{t('intro')}</p>
 
       <StorageModeToggle />
 
@@ -53,8 +52,9 @@ export default function HardenPage() {
       </div>
 
       <p className="discover-next">
-        The most permanent sources — court orders, name changes, archives —{' '}
-        <Link href="/records">are handled here →</Link>
+        {t.rich('nextRecords', {
+          link: (chunks) => <Link href="/records">{chunks}</Link>,
+        })}
       </p>
 
       <RemediationTracker />

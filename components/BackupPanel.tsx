@@ -8,6 +8,7 @@
 // never leaves the device except when the user saves or opens it.
 
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { useStorage } from '@/lib/storage/StorageProvider';
 import { isEncryptedBackup, ImportMode } from '@/lib/storage/backup';
 
@@ -16,6 +17,7 @@ function todayStr(): string {
 }
 
 export function BackupPanel() {
+  const t = useTranslations('backup');
   const { exportBackup, importBackup } = useStorage();
 
   // Export state
@@ -36,7 +38,7 @@ export function BackupPanel() {
     setExportMsg('');
     setExportErr('');
     if (encrypt && passphrase.trim() === '') {
-      setExportErr('Enter a passphrase, or choose to export without one.');
+      setExportErr(t('needPassphrase'));
       return;
     }
     try {
@@ -50,13 +52,9 @@ export function BackupPanel() {
       a.click();
       a.remove();
       URL.revokeObjectURL(url);
-      setExportMsg(
-        encrypt
-          ? 'Encrypted backup downloaded. Keep the passphrase somewhere safe — without it the file can’t be opened.'
-          : 'Plaintext backup downloaded. Anyone who opens this file can read your data, including your former name.',
-      );
+      setExportMsg(encrypt ? t('exportedEncrypted') : t('exportedPlain'));
     } catch {
-      setExportErr('Couldn’t create the backup. Try again.');
+      setExportErr(t('exportFailed'));
     }
   };
 
@@ -76,38 +74,29 @@ export function BackupPanel() {
     setImportMsg('');
     setImportErr('');
     if (!fileText) {
-      setImportErr('Choose a backup file first.');
+      setImportErr(t('chooseFirst'));
       return;
     }
     try {
       await importBackup(fileText, { passphrase: fileEncrypted ? importPass : undefined, mode });
-      setImportMsg(
-        mode === 'replace'
-          ? 'Backup restored — it replaced what was here.'
-          : 'Backup merged into your current data.',
-      );
+      setImportMsg(mode === 'replace' ? t('importedReplace') : t('importedMerge'));
     } catch (e) {
-      setImportErr(e instanceof Error ? e.message : 'Couldn’t import that file.');
+      setImportErr(e instanceof Error ? e.message : t('importFailed'));
     }
   };
 
   return (
     <section className="backup" aria-labelledby="backup-title">
-      <h2 id="backup-title">Backup &amp; restore</h2>
-      <p className="name-inputs-note">
-        Your data lives only on this device. A backup is the durable copy you control — and on some
-        browsers (notably iOS Safari) local data is cleared after about a week of not visiting, so an
-        occasional export is the safe way to “resume later.”
-      </p>
+      <h2 id="backup-title">{t('title')}</h2>
+      <p className="name-inputs-note">{t('intro')}</p>
 
       <div className="backup-block">
-        <h3>Export</h3>
+        <h3>{t('exportHead')}</h3>
         <p className="backup-warn" role="note">
-          A backup can contain your former name. Encrypting it is the default for a reason — a
-          downloaded file often syncs to iCloud or Google Drive.
+          {t('exportWarn')}
         </p>
         <label className="optout-field">
-          Passphrase
+          {t('passphrase')}
           <input
             type="password"
             autoComplete="new-password"
@@ -118,16 +107,16 @@ export function BackupPanel() {
           />
         </label>
         <p id="backup-passphrase-hint" className="name-inputs-note">
-          You’ll need this exact passphrase to restore. There’s no recovery if you lose it.
+          {t('passphraseHint')}
         </p>
         <label className="optout-aliases">
           <input type="checkbox" checked={!encrypt} onChange={(e) => setEncrypt(!e.target.checked)} />
-          Export without a passphrase
-          <span className="optout-aliases-warn"> — not recommended; the file will be readable by anyone</span>
+          {t('noPassphrase')}
+          <span className="optout-aliases-warn">{t('noPassphraseWarn')}</span>
         </label>
         <div className="backup-actions">
           <button type="button" className="safety-intro-primary" onClick={() => void doExport()}>
-            Download backup
+            {t('download')}
           </button>
         </div>
         <p className="visually-hidden" role="status" aria-live="polite">
@@ -142,14 +131,14 @@ export function BackupPanel() {
       </div>
 
       <div className="backup-block">
-        <h3>Import</h3>
+        <h3>{t('importHead')}</h3>
         <label className="optout-field">
-          Backup file
+          {t('backupFile')}
           <input type="file" accept="application/json,.json" onChange={(e) => void onFile(e.target.files?.[0])} />
         </label>
         {fileEncrypted && (
           <label className="optout-field">
-            Passphrase
+            {t('passphrase')}
             <input
               type="password"
               autoComplete="off"
@@ -159,19 +148,19 @@ export function BackupPanel() {
           </label>
         )}
         <fieldset className="backup-mode">
-          <legend>How should it be applied?</legend>
+          <legend>{t('modeLegend')}</legend>
           <label>
             <input type="radio" name="import-mode" checked={mode === 'replace'} onChange={() => setMode('replace')} />
-            Replace what’s here
+            {t('modeReplace')}
           </label>
           <label>
             <input type="radio" name="import-mode" checked={mode === 'merge'} onChange={() => setMode('merge')} />
-            Merge into what’s here
+            {t('modeMerge')}
           </label>
         </fieldset>
         <div className="backup-actions">
           <button type="button" onClick={() => void doImport()}>
-            Import backup
+            {t('importButton')}
           </button>
         </div>
         <p className="visually-hidden" role="status" aria-live="polite">

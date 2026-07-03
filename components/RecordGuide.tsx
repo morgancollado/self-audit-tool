@@ -6,25 +6,16 @@
 // harm-reduction (enforced in content). Acting is tracked locally under the
 // deadname pillar.
 
+import { useTranslations } from 'next-intl';
 import { useStorage } from '@/lib/storage/StorageProvider';
-import { DeadnameRecord, RecordClass } from '@/lib/content/types';
-
-const CLASS_LABEL: Record<RecordClass, string> = {
-  'court-record': 'Court record',
-  'name-change': 'Legal name change',
-  school: 'School record',
-  'licensing-board': 'Licensing board',
-  byline: 'Byline / authorship',
-  archive: 'Web archive',
-  'search-cache': 'Search cache',
-  breach: 'Data breach',
-  other: 'Public record',
-};
+import { DeadnameRecord } from '@/lib/content/types';
 
 export function RecordGuide({ record }: { record: DeadnameRecord }) {
+  const t = useTranslations('recordGuide');
+  const tc = useTranslations('common');
   const { state, addRemediation } = useStorage();
   const monitorOnly = record.monitorOnly === true;
-  const label = CLASS_LABEL[record.class];
+  const label = t(`className.${record.class}`);
   // Derive "tracked" from the shared tracker (keyed by pillar+refId), not local
   // state — so removing the row in the tracker re-renders the button here.
   const tracked = (state?.remediations ?? []).some(
@@ -36,7 +27,7 @@ export function RecordGuide({ record }: { record: DeadnameRecord }) {
       findingId: undefined,
       pillar: 'deadname',
       refId: record.slug,
-      action: `Records: ${label}`,
+      action: t('trackerAction', { label }),
       state: 'sent',
     });
   };
@@ -46,7 +37,9 @@ export function RecordGuide({ record }: { record: DeadnameRecord }) {
       <div className="record-head">
         <h3 id={`record-${record.slug}`}>{label}</h3>
         {record.exposesDeadnameRisk && (
-          <span className={`stamp priority-${record.exposesDeadnameRisk}`}>{record.exposesDeadnameRisk} risk</span>
+          <span className={`stamp priority-${record.exposesDeadnameRisk}`}>
+            {tc('riskStamp', { risk: record.exposesDeadnameRisk })}
+          </span>
         )}
       </div>
 
@@ -54,15 +47,19 @@ export function RecordGuide({ record }: { record: DeadnameRecord }) {
 
       {record.sealedPetitionAvailable && (
         <p className="record-sealed" role="note">
-          <strong>Sealed / confidential petitions:</strong> some states let people at risk change their
-          name without it becoming a public record — ask your court or a legal-aid org <em>before</em>{' '}
-          you file, since it’s far harder to undo afterward.
+          {t.rich('sealedNote', {
+            strong: (chunks) => <strong>{chunks}</strong>,
+            em: (chunks) => <em>{chunks}</em>,
+          })}
         </p>
       )}
 
       {monitorOnly ? (
         <p className="record-monitor" role="note">
-          <strong>Can’t be removed — monitor only.</strong> {record.harmReduction}
+          {t.rich('monitorNote', {
+            harmReduction: record.harmReduction ?? '',
+            strong: (chunks) => <strong>{chunks}</strong>,
+          })}
         </p>
       ) : (
         <ol className="record-steps">
@@ -73,15 +70,15 @@ export function RecordGuide({ record }: { record: DeadnameRecord }) {
       )}
 
       {record.disclaimer && <p className="optout-disclaimer">{record.disclaimer}</p>}
-      <p className="content-verified">Last verified {record.lastVerified}.</p>
+      <p className="content-verified">{tc('lastVerified', { date: record.lastVerified })}</p>
 
       {!monitorOnly && (
         <div className="optout-track">
           {tracked ? (
-            <span className="optout-tracked">Added to your tracker ✓</span>
+            <span className="optout-tracked">{t('tracked')}</span>
           ) : (
             <button type="button" onClick={track}>
-              I’ve handled this — track it
+              {t('trackIt')}
             </button>
           )}
         </div>

@@ -7,7 +7,8 @@
 // carries the standing not-yet-reviewed / verify-locally banner — name-change and
 // sealing content is gated on legal review (R4/R11).
 
-import Link from 'next/link';
+import { useTranslations } from 'next-intl';
+import { Link } from '@/i18n/navigation';
 import { useStorage } from '@/lib/storage/StorageProvider';
 import { getRecords } from '@/lib/content/data';
 import { SafetyIntro } from '@/components/SafetyIntro';
@@ -17,15 +18,17 @@ import { RecordGuide } from '@/components/RecordGuide';
 import { RemediationTracker } from '@/components/RemediationTracker';
 
 export default function RecordsPage() {
+  const t = useTranslations('records');
+  const tc = useTranslations('common');
   const { ready, preferences } = useStorage();
 
-  if (!ready) return <p>Loading…</p>;
+  if (!ready) return <p>{tc('loading')}</p>;
 
   if (!preferences.safetyIntroAcknowledged) {
     return (
       <>
         <p className="breadcrumb">
-          <Link href="/">← Errata</Link>
+          <Link href="/">{tc('backToErrata')}</Link>
         </p>
         <SafetyIntro />
       </>
@@ -38,26 +41,20 @@ export default function RecordsPage() {
   return (
     <>
       <p className="breadcrumb">
-        <Link href="/">← Errata</Link> · <Link href="/playbook">Playbook</Link> ·{' '}
-        <Link href="/discover">Discover</Link> · <Link href="/remediate">Remediate</Link> ·{' '}
-        <Link href="/harden">Harden</Link>
+        <Link href="/">{tc('backToErrata')}</Link> · <Link href="/playbook">{tc('breadcrumb.playbook')}</Link> ·{' '}
+        <Link href="/discover">{tc('breadcrumb.discover')}</Link> · <Link href="/remediate">{tc('breadcrumb.remediate')}</Link> ·{' '}
+        <Link href="/harden">{tc('breadcrumb.harden')}</Link>
       </p>
-      <h1>Public records & name change</h1>
-      <p>
-        These are the hardest, most permanent deadname sources — the indexed court order, the
-        name-change petition’s publication, and the archives and caches that keep old copies alive.
-        Some can be sealed or removed; some can only be monitored. Errata is honest about which.
-      </p>
+      <h1>{t('title')}</h1>
+      <p>{t('intro')}</p>
 
       <StorageModeToggle />
 
       <p className="rights-banner" role="note">
-        Informational only — not legal advice, and not yet reviewed by a lawyer. Name-change and
-        record-sealing rules vary by state and county and change often; verify with your court or a
-        legal-aid org before acting.
+        {t('banner')}
       </p>
 
-      <StateSelect note="Pick your state to see state-specific court-record guidance. Archive and cache removals work regardless of where you live." />
+      <StateSelect note={t('stateNote')} />
 
       <div className="record-list">
         {records.map((r) => (

@@ -10,6 +10,7 @@
 // independent requests — never one request carrying both names.
 
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { useStorage } from '@/lib/storage/StorageProvider';
 import { getOptOutTemplate } from '@/lib/content/data';
 import { Broker } from '@/lib/content/types';
@@ -22,7 +23,6 @@ import {
   pairSharesContact,
 } from '@/lib/remediate/optout';
 import { CopyButton } from './CopyButton';
-import { STATE_LABEL } from './RemediationTracker';
 
 type ListedUnderChoice = ListedUnder | 'both';
 
@@ -63,16 +63,18 @@ function Artifact({
   /** User-specific values to wash in the letter body (names, location, email). */
   highlight?: string[];
 }) {
-  const forLabel = label ? `${label} for ${broker.name}` : `for ${broker.name}`;
+  const t = useTranslations('optout');
   return (
     <>
-      <p className="optout-format-note">{label ? `${label} — subject and message:` : 'Subject and message:'}</p>
+      <p className="optout-format-note">
+        {label ? t('labeledSubjectAndMessage', { label }) : t('subjectAndMessage')}
+      </p>
 
       <label className="optout-field">
-        Subject
-        <input type="text" readOnly value={gen.subject} aria-label={`Subject ${forLabel}`} />
+        {t('subject')}
+        <input type="text" readOnly value={gen.subject} aria-label={t('subjectAria', { broker: broker.name })} />
       </label>
-      <pre className="optout-body" aria-label={`Request body ${forLabel}`}>
+      <pre className="optout-body" aria-label={t('bodyAria', { broker: broker.name })}>
         {washInsertions(gen.body, highlight)}
       </pre>
 
@@ -81,32 +83,32 @@ function Artifact({
           mailto: links go nowhere for webmail users. */}
       {gen.mailtoUrl && broker.optOut.email && (
         <p className="optout-email-route">
-          Email it to <strong>{broker.optOut.email}</strong>{' '}
-          <CopyButton text={broker.optOut.email} label="Copy address" variant="quiet" />
+          {t.rich('emailTo', {
+            email: broker.optOut.email,
+            strong: (chunks) => <strong>{chunks}</strong>,
+          })}{' '}
+          <CopyButton text={broker.optOut.email} label={t('copyAddress')} variant="quiet" />
         </p>
       )}
 
       {/* One emphasized action — copy the whole letter; everything else is quiet. */}
       <div className="optout-actions">
-        <CopyButton text={gen.body} label="Copy the letter" variant="primary" />
-        <CopyButton text={gen.subject} label="Copy subject only" variant="quiet" />
+        <CopyButton text={gen.body} label={t('copyLetter')} variant="primary" />
+        <CopyButton text={gen.subject} label={t('copySubject')} variant="quiet" />
         {gen.mailtoUrl && (
           <a className="optout-send" href={gen.mailtoUrl}>
-            Open in email ↗
+            {t('openEmail')}
           </a>
         )}
         {broker.optOut.webFormUrl && (
           <a className="optout-send" href={broker.optOut.webFormUrl} target="_blank" rel="noopener noreferrer">
-            Open opt-out form ↗
+            {t('openForm')}
           </a>
         )}
       </div>
 
       {gen.mailtoUrl && broker.optOut.webFormUrl && (
-        <p className="optout-format-note">
-          If the form errors or won’t show your listing, email them directly instead — the request
-          works either way.
-        </p>
+        <p className="optout-format-note">{t('formFallback')}</p>
       )}
     </>
   );
@@ -133,6 +135,8 @@ export function OptOutGenerator({
    */
   trackInputs?: NewRemediationInput[];
 }) {
+  const t = useTranslations('optout');
+  const tc = useTranslations('common');
   const { state, addRemediations } = useStorage();
   const exposesLinkage = broker.optOut.optOutExposesLinkage ?? false;
   const [listedUnder, setListedUnder] = useState<ListedUnderChoice>('current');
@@ -145,7 +149,7 @@ export function OptOutGenerator({
       findingId,
       pillar: 'optout',
       refId: broker.slug,
-      action: `Opt-out request to ${broker.name}`,
+      action: t('trackerAction', { broker: broker.name }),
       state: 'sent',
     },
   ];
@@ -153,14 +157,14 @@ export function OptOutGenerator({
   // state — so removing the row in the tracker re-renders the button here. A
   // network card is tracked only when every covered site has its row.
   const remediations = state?.remediations ?? [];
-  const tracked = inputs.every((t) =>
-    remediations.some((r) => r.pillar === 'optout' && r.refId === t.refId),
+  const tracked = inputs.every((input) =>
+    remediations.some((r) => r.pillar === 'optout' && r.refId === input.refId),
   );
   // The card's stamp mirrors the tracker's ACTUAL state for these rows — a user
   // who later marks the entry corrected or blocked in the tracker must not keep
   // seeing "sent" here. Untracked → "to do"; diverging grouped rows → "mixed".
   const trackedRows = remediations.filter(
-    (r) => r.pillar === 'optout' && inputs.some((t) => t.refId === r.refId),
+    (r) => r.pillar === 'optout' && inputs.some((input) => input.refId === r.refId),
   );
   const stampState = !tracked
     ? 'todo'
@@ -189,7 +193,8 @@ export function OptOutGenerator({
     setIncludeOtherName(false);
   };
 
-  const otherLabel = listedUnder === 'current' ? 'former name' : 'current name';
+  // Which of the user's names is "the other one" for the ICU select strings.
+  const other = listedUnder === 'current' ? 'former' : 'current';
 
   // The user-specific values that get washed in the letter body so they can be
   // verified at a glance (Screen C). Only values actually written into a given
@@ -207,31 +212,30 @@ export function OptOutGenerator({
     <section className="optout" aria-labelledby={`optout-${broker.slug}`}>
       <div className="optout-head">
         <h3 id={`optout-${broker.slug}`}>{heading ?? broker.name}</h3>
-        <span className={`stamp priority-${broker.exposesDeadnameRisk}`}>{broker.exposesDeadnameRisk} risk</span>
+        <span className={`stamp priority-${broker.exposesDeadnameRisk}`}>
+          {tc('riskStamp', { risk: broker.exposesDeadnameRisk })}
+        </span>
       </div>
       {intro}
 
       {/* The opt-out paradox, stated plainly with a real "leave it" path. */}
       {exposesLinkage && (
         <div className="optout-paradox" role="note">
-          <strong>Opting out here can reveal the link itself.</strong>{' '}
-          {broker.optOut.leaveItGuidance ??
-            'Submitting this request may tell the broker your current and former names are the same person.'}{' '}
-          Leaving a low-reach listing alone and monitoring it is a legitimate choice — not a failure.
+          <strong>{t('paradoxHead')}</strong>{' '}
+          {broker.optOut.leaveItGuidance ?? t('paradoxDefault')} {t('paradoxLeave')}
         </div>
       )}
 
       {broker.optOut.requiresId && (
         <p className="optout-warn" role="note">
-          This broker asks for ID. Send only what is strictly required — redact everything else, and
-          never include more than they ask for.
+          {t('requiresId')}
         </p>
       )}
 
       {gen || genPair ? (
         <>
           <fieldset className="optout-listedunder">
-            <legend>Which name is this listing filed under?</legend>
+            <legend>{t('listedUnderLegend')}</legend>
             <label>
               <input
                 type="radio"
@@ -239,7 +243,7 @@ export function OptOutGenerator({
                 checked={listedUnder === 'current'}
                 onChange={() => changeListedUnder('current')}
               />
-              My current name
+              {t('listedCurrent')}
             </label>
             <label>
               <input
@@ -248,7 +252,7 @@ export function OptOutGenerator({
                 checked={listedUnder === 'former'}
                 onChange={() => changeListedUnder('former')}
               />
-              My former name
+              {t('listedFormer')}
             </label>
             <label>
               <input
@@ -257,15 +261,13 @@ export function OptOutGenerator({
                 checked={both}
                 onChange={() => changeListedUnder('both')}
               />
-              Both names — I found separate listings
+              {t('listedBoth')}
             </label>
           </fieldset>
 
           {listedUnder === 'former' && (
             <p className="optout-warn" role="note">
-              This request will contain your former name, because the listing is filed under it — that
-              is necessary to ask for this specific record’s removal. Your current name stays out unless
-              you add it below.
+              {t('formerWarning')}
             </p>
           )}
 
@@ -280,23 +282,22 @@ export function OptOutGenerator({
                   checked={includeOtherName}
                   onChange={(e) => setIncludeOtherName(e.target.checked)}
                 />
-                Also include my {otherLabel} in this request
-                <span className="optout-aliases-warn"> — off by default; adding it discloses the link</span>
+                {t('includeOther', { other })}
+                <span className="optout-aliases-warn">{t('includeOtherWarn')}</span>
               </label>
 
               {/* Concise, screen-reader-announced status for the toggle above. */}
               <p className="visually-hidden" role="status" aria-live="polite">
                 {includeOtherName
-                  ? `Your ${otherLabel} will be included in the ${broker.name} request.`
-                  : `Your ${otherLabel} is left out of the ${broker.name} request.`}
+                  ? t('includeStatusOn', { other, broker: broker.name })
+                  : t('includeStatusOff', { other, broker: broker.name })}
               </p>
             </>
           )}
 
           {gen && gen.missingPrimaryName && (
             <p className="optout-warn" role="note">
-              Add your {listedUnder === 'former' ? 'former name' : 'current name'} in “Your details”
-              above so Errata can fill this request in.
+              {t('missingPrimary', { which: listedUnder === 'former' ? 'former' : 'current' })}
             </p>
           )}
 
@@ -305,40 +306,35 @@ export function OptOutGenerator({
           {genPair && (
             <>
               <p className="optout-warn" role="note">
-                You’ll send two separate requests — one per listing, each carrying only that
-                listing’s name. Send them as two separate messages, ideally not back-to-back, so
-                the broker can’t pair them up.
+                {t('bothWarning')}
               </p>
               {pairSharesContact(vars) ? (
                 <p className="optout-warn" role="note">
-                  Both requests would carry the same reply-to email — that alone links your names
-                  for this broker. Use a different address for the former-name request, or send one
-                  of the two through the web form instead.
+                  {t('bothSharedEmail')}
                 </p>
               ) : (
                 // Even with no email written into the requests, emailing both from
                 // one mail account links the names by the sender address alone.
                 genPair.current.mailtoUrl && (
                   <p className="optout-warn" role="note">
-                    If you email both, the sender address links your names all by itself. Send them
-                    from two different addresses, or send one of the two through the web form
-                    instead.
+                    {t('bothSenderLinks')}
                   </p>
                 )
               )}
               {(genPair.current.missingPrimaryName || genPair.former.missingPrimaryName) && (
                 <p className="optout-warn" role="note">
-                  Add your{' '}
-                  {genPair.current.missingPrimaryName && genPair.former.missingPrimaryName
-                    ? 'current and former names'
-                    : genPair.current.missingPrimaryName
-                      ? 'current name'
-                      : 'former name'}{' '}
-                  in “Your details” above so Errata can fill both requests in.
+                  {t('bothMissing', {
+                    which:
+                      genPair.current.missingPrimaryName && genPair.former.missingPrimaryName
+                        ? 'both'
+                        : genPair.current.missingPrimaryName
+                          ? 'current'
+                          : 'former',
+                  })}
                 </p>
               )}
-              <Artifact broker={broker} gen={genPair.current} label="Request 1 (current-name listing)" highlight={highlight} />
-              <Artifact broker={broker} gen={genPair.former} label="Request 2 (former-name listing)" highlight={highlight} />
+              <Artifact broker={broker} gen={genPair.current} label={t('request1')} highlight={highlight} />
+              <Artifact broker={broker} gen={genPair.former} label={t('request2')} highlight={highlight} />
             </>
           )}
 
@@ -351,21 +347,19 @@ export function OptOutGenerator({
           )}
 
           <p className="optout-disclaimer">{(gen ?? genPair!.current).disclaimer}</p>
-          <p className="content-verified">Broker details last verified {broker.lastVerified}.</p>
+          <p className="content-verified">{t('lastVerifiedBroker', { date: broker.lastVerified })}</p>
 
           {/* Hairline-topped row: the send control on the left, the entry's
               current stamp on the right (Screen C). */}
           <div className="optout-track">
             {tracked ? (
-              <span className="optout-tracked">Added to your tracker ✓</span>
+              <span className="optout-tracked">{t('tracked')}</span>
             ) : (
               <button type="button" onClick={track}>
-                I’ve sent this — track it
+                {t('trackIt')}
               </button>
             )}
-            <span className={`stamp state-${stampState}`}>
-              {stampState === 'mixed' ? 'mixed' : STATE_LABEL[stampState]}
-            </span>
+            <span className={`stamp state-${stampState}`}>{tc(`state.${stampState}`)}</span>
           </div>
         </>
       ) : (
@@ -377,7 +371,7 @@ export function OptOutGenerator({
           {broker.optOut.webFormUrl && (
             <li>
               <a href={broker.optOut.webFormUrl} target="_blank" rel="noopener noreferrer">
-                Open opt-out form ↗
+                {t('openForm')}
               </a>
             </li>
           )}

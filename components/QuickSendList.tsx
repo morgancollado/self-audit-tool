@@ -10,6 +10,7 @@
 // below, where that disclosure is an explicit choice. The send is still always
 // the user's keystroke (the 95% rule).
 
+import { useTranslations } from 'next-intl';
 import { useStorage } from '@/lib/storage/StorageProvider';
 import { getOptOutTemplate } from '@/lib/content/data';
 import { BrokerGroup, groupTrackInputs } from '@/lib/remediate/networks';
@@ -25,6 +26,7 @@ export function QuickSendList({
   vars: OptOutVars;
   findingBySlug: Map<string, string>;
 }) {
+  const t = useTranslations('quicksend');
   const { state, addRemediations } = useStorage();
   const remediations = state?.remediations ?? [];
   const isTracked = (g: BrokerGroup) =>
@@ -47,15 +49,11 @@ export function QuickSendList({
 
   return (
     <details className="quicksend">
-      <summary>Quick pass — email every target in one sitting</summary>
-      <p className="name-inputs-note">
-        The same removal request the cards below prepare, one per target, keyed on your current
-        name only — your former name is never included here. Found a listing under your former
-        name? Use that broker’s card below, where including it is an explicit choice.
-      </p>
+      <summary>{t('summary')}</summary>
+      <p className="name-inputs-note">{t('note')}</p>
       {missingName ? (
         <p className="optout-warn" role="note">
-          Add your current name in “Your details” above and the requests fill in here.
+          {t('missingName')}
         </p>
       ) : (
         <ul className="quicksend-list">
@@ -63,17 +61,17 @@ export function QuickSendList({
             <li key={group.key}>
               <strong>{group.name}</strong> — {email}
               <div className="optout-actions">
-                <CopyButton text={email!} label="Copy address" />
-                <CopyButton text={gen!.subject} label="Copy subject" />
-                <CopyButton text={gen!.body} label="Copy message" />
+                <CopyButton text={email!} label={t('copyAddress')} />
+                <CopyButton text={gen!.subject} label={t('copySubject')} />
+                <CopyButton text={gen!.body} label={t('copyMessage')} />
                 <a className="optout-send" href={gen!.mailtoUrl}>
-                  Open in email ↗
+                  {t('openEmail')}
                 </a>
                 {isTracked(group) ? (
-                  <span className="optout-tracked">Tracked ✓</span>
+                  <span className="optout-tracked">{t('tracked')}</span>
                 ) : (
                   <button type="button" onClick={() => addRemediations(groupTrackInputs(group, findingBySlug))}>
-                    I’ve sent this — track it
+                    {t('trackIt')}
                   </button>
                 )}
               </div>
@@ -83,9 +81,10 @@ export function QuickSendList({
       )}
       {formOnly.length > 0 && (
         <p className="name-inputs-note">
-          {formOnly.map((r) => r.group.name).join(' and ')}{' '}
-          {formOnly.length === 1 ? 'takes' : 'take'} a web form only — use{' '}
-          {formOnly.length === 1 ? 'its card' : 'their cards'} below.
+          {t('formOnly', {
+            names: formOnly.map((r) => r.group.name).join(' · '),
+            count: formOnly.length,
+          })}
         </p>
       )}
     </details>

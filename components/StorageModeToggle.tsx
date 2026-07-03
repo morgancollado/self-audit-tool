@@ -3,21 +3,23 @@
 // Persistent <-> session-only (ephemeral) toggle. Switching to session-only
 // offers to wipe anything already saved (scope/docs/04-data-model.md).
 
+import { useTranslations } from 'next-intl';
 import { useStorage } from '@/lib/storage/StorageProvider';
 
 export function StorageModeToggle() {
+  const t = useTranslations('storageMode');
   const { durable, mode, setMode } = useStorage();
 
   if (!durable) {
-    return <p className="mode-toggle-note">Session-only (this browser isn’t saving data).</p>;
+    return <p className="mode-toggle-note">{t('notDurable')}</p>;
   }
 
   if (mode === 'ephemeral') {
     return (
       <div className="mode-toggle">
-        <p>Session-only mode — nothing is saved to this device.</p>
+        <p>{t('ephemeralStatus')}</p>
         <button type="button" onClick={() => void setMode('persistent')}>
-          Save progress on this device
+          {t('saveButton')}
         </button>
       </div>
     );
@@ -25,15 +27,15 @@ export function StorageModeToggle() {
 
   return (
     <div className="mode-toggle">
-      <p>Saving progress on this device.</p>
+      <p>{t('persistentStatus')}</p>
       <button
         type="button"
         onClick={() => {
-          const wipe = window.confirm('Switch to session-only and delete what’s already saved on this device?');
+          const wipe = window.confirm(t('confirmWipe'));
           void setMode('ephemeral', { wipeExisting: wipe });
         }}
       >
-        Switch to session-only
+        {t('switchButton')}
       </button>
     </div>
   );

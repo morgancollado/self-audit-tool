@@ -10,6 +10,8 @@
 //
 // The app code is identical in both modes; only how the CSP is delivered differs.
 
+import createNextIntlPlugin from 'next-intl/plugin';
+
 const isStatic = process.env.STATIC_EXPORT === '1';
 
 /** @type {import('next').NextConfig} */
@@ -24,4 +26,8 @@ const nextConfig = {
   // the generated _headers file.
 };
 
-export default nextConfig;
+// next-intl's build plugin only wires the request config (i18n/request.ts) into
+// the bundle — no runtime middleware, no network, identical in both build modes.
+const withNextIntl = createNextIntlPlugin('./i18n/request.ts');
+
+export default withNextIntl(nextConfig);

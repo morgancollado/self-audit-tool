@@ -6,19 +6,21 @@
 // (scope/docs/04-data-model.md). Export-first lives elsewhere for non-panic
 // situations.
 
+import { useTranslations } from 'next-intl';
 import { useStorage } from '@/lib/storage/StorageProvider';
 
 export function PanicButton() {
+  const t = useTranslations('panic');
   const { panic } = useStorage();
   return (
     <button
       type="button"
       className="panic-button"
       onClick={() => void panic()}
-      aria-label="Clear the desk: instantly delete all Errata data on this device and reload"
-      title="Instantly delete all data on this device and reload"
+      aria-label={t('aria')}
+      title={t('title')}
     >
-      Clear&nbsp;the&nbsp;desk
+      {t('label')}
     </button>
   );
 }

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { useStorage } from '@/lib/storage/StorageProvider';
 import { getDiscoverySteps, getBroker, getQueryTemplate } from '@/lib/content/data';
 import { DiscoveryStep, DiscoveryCategory } from '@/lib/content/types';
@@ -41,12 +42,18 @@ function StepCard({
   vars: QueryVars;
   onToggle: (done: boolean) => void;
 }) {
+  const t = useTranslations('checklist');
+  const tc = useTranslations('common');
   const [openAdd, setOpenAdd] = useState<string | null>(null);
   const brokers = step.category === 'broker' ? (step.refIds ?? []).map(getBroker).filter(Boolean) : [];
   const templates = (step.queryTemplateKeys ?? []).map(getQueryTemplate).filter(Boolean) as NonNullable<
     ReturnType<typeof getQueryTemplate>
   >[];
-  const queries = templates.length ? generateQueries(templates, vars) : [];
+  // The on-screen mask for the former name is user-visible — pass the localized
+  // wording; the real string still lives only in the clipboard payload.
+  const queries = templates.length
+    ? generateQueries(templates, vars, { deadnameMask: t('deadnameMask') })
+    : [];
 
   return (
     <li className={`step-card${done ? ' step-done' : ''}`}>
@@ -55,9 +62,9 @@ function StepCard({
         <span className="step-stamps">
           {/* Source stamp: a checked source earns the corrected fill. */}
           <span className={`stamp ${done ? 'state-confirmed' : 'state-todo'}`}>
-            {done ? 'checked' : 'to do'}
+            {done ? t('stampChecked') : t('stampTodo')}
           </span>
-          <span className={`stamp priority-${step.priority}`}>{step.priority}</span>
+          <span className={`stamp priority-${step.priority}`}>{tc(`priority.${step.priority}`)}</span>
         </span>
       </div>
       <p className="step-why">{step.why}</p>
@@ -69,7 +76,7 @@ function StepCard({
       </ol>
 
       {step.deadnamePrompts && step.deadnamePrompts.length > 0 && (
-        <ul className="step-prompts" aria-label="Things to look for">
+        <ul className="step-prompts" aria-label={t('promptsAria')}>
           {step.deadnamePrompts.map((p, i) => (
             <li key={i}>{p}</li>
           ))}
@@ -83,11 +90,11 @@ function StepCard({
               <span>{b!.name}</span>
               {b!.searchUrl && (
                 <a href={b!.searchUrl} target="_blank" rel="noopener noreferrer">
-                  Open search ↗
+                  {t('openSearch')}
                 </a>
               )}
               <button type="button" className="report-broken-link" onClick={() => setOpenAdd(`b:${b!.slug}`)}>
-                Add to ledger
+                {t('addToLedger')}
               </button>
               {openAdd === `b:${b!.slug}` && (
                 <AddFindingForm
@@ -109,14 +116,11 @@ function StepCard({
       {templates.length > 0 && (
         <div className="step-queries">
           {queries.length === 0 ? (
-            <p className="name-inputs-note">Fill in your details above and your search strings appear here.</p>
+            <p className="name-inputs-note">{t('fillDetails')}</p>
           ) : (
             <>
               <p className="query-privacy-note">
-                Safest is to <strong>copy</strong> a query and paste it into a private / incognito
-                window. “Run” opens the search in a new tab — it’s sent to the search engine and shows
-                up in your browsing history. Searches for your former name always open in DuckDuckGo,
-                which doesn’t profile you.
+                {t.rich('privacyNote', { strong: (chunks) => <strong>{chunks}</strong> })}
               </p>
               {queries.map((q) => (
                 <div key={q.key} className={`query-row${q.deadnameAware ? ' query-deadname' : ''}`}>
@@ -136,10 +140,10 @@ function StepCard({
                   <span className="query-actions">
                     <CopyButton
                       text={q.query}
-                      label={q.deadnameAware ? 'Copy the former-name search' : 'Copy the search query'}
+                      label={q.deadnameAware ? t('copyFormer') : t('copyQuery')}
                     />
                     <a className="query-run" href={q.url} target="_blank" rel="noopener noreferrer">
-                      Run on {ENGINE_LABEL[q.engine]} ↗
+                      {t('runOn', { engine: ENGINE_LABEL[q.engine] })}
                     </a>
                   </span>
                 </div>
@@ -152,11 +156,11 @@ function StepCard({
       <div className="step-footer">
         <label className="step-done-toggle">
           <input type="checkbox" checked={done} onChange={(e) => onToggle(e.target.checked)} />
-          Mark this step done
+          {t('markDone')}
         </label>
         {openAdd !== 'generic' ? (
           <button type="button" onClick={() => setOpenAdd('generic')}>
-            Add a finding
+            {t('addFinding')}
           </button>
         ) : (
           <AddFindingForm

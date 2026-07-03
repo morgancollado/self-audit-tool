@@ -12,7 +12,7 @@ import { Preferences, StorageMode, DEFAULT_PREFERENCES } from '../model/types';
 import { KeyValueBackend, MemoryBackend } from './backend';
 import { AuditStore } from './audit-store';
 
-const PREFS_KEY = 'prefs';
+export const PREFS_KEY = 'prefs';
 
 export interface StorageBackends {
   persistentAudit: KeyValueBackend;

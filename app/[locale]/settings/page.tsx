@@ -4,22 +4,25 @@
 // Panic-delete lives in the always-visible app bar, not here, so it's reachable
 // from every screen. Gated behind the safety intro like the rest of the app.
 
-import Link from 'next/link';
+import { useTranslations } from 'next-intl';
+import { Link } from '@/i18n/navigation';
 import { useStorage } from '@/lib/storage/StorageProvider';
 import { SafetyIntro } from '@/components/SafetyIntro';
 import { StorageModeToggle } from '@/components/StorageModeToggle';
 import { BackupPanel } from '@/components/BackupPanel';
 
 export default function SettingsPage() {
+  const t = useTranslations('settings');
+  const tc = useTranslations('common');
   const { ready, preferences } = useStorage();
 
-  if (!ready) return <p>Loading…</p>;
+  if (!ready) return <p>{tc('loading')}</p>;
 
   if (!preferences.safetyIntroAcknowledged) {
     return (
       <>
         <p className="breadcrumb">
-          <Link href="/">← Errata</Link>
+          <Link href="/">{tc('backToErrata')}</Link>
         </p>
         <SafetyIntro />
       </>
@@ -29,20 +32,16 @@ export default function SettingsPage() {
   return (
     <>
       <p className="breadcrumb">
-        <Link href="/">← Errata</Link> · <Link href="/playbook">Playbook</Link>
+        <Link href="/">{tc('backToErrata')}</Link> · <Link href="/playbook">{tc('breadcrumb.playbook')}</Link>
       </p>
-      <h1>Settings</h1>
+      <h1>{t('title')}</h1>
 
-      <h2>Storage</h2>
+      <h2>{t('storageHead')}</h2>
       <StorageModeToggle />
 
       <BackupPanel />
 
-      <p className="optout-disclaimer">
-        The red “Delete everything” button at the top of every screen wipes Errata’s data on this
-        device instantly. It can’t reach your browser history, an already-downloaded backup, or the
-        fact that the site was visited — export first if you want a copy you can restore.
-      </p>
+      <p className="optout-disclaimer">{t('panicNote')}</p>
     </>
   );
 }

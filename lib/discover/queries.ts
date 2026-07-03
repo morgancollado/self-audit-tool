@@ -74,12 +74,14 @@ const DEADNAME_MASK = 'former name';
  * Build the on-screen segments for a query. For a deadname-aware query the
  * `{{deadname}}` slot renders as a neutral "former name" placeholder while every
  * other term fills normally; a plain query renders verbatim. The former name is
- * therefore never present in the rendered DOM.
+ * therefore never present in the rendered DOM. The mask text is displayed to the
+ * user, so callers pass the localized wording (defaults to English).
  */
 export function buildDisplaySegments(
   template: string,
   vars: QueryVars,
   deadnameAware: boolean,
+  mask: string = DEADNAME_MASK,
 ): QueryDisplaySegment[] {
   if (!deadnameAware) return [{ text: fillTemplate(template, vars) ?? template }];
 
@@ -89,7 +91,7 @@ export function buildDisplaySegments(
     const key = m[1] as QueryVar;
     const start = m.index ?? 0;
     if (start > last) segments.push({ text: template.slice(last, start) });
-    if (key === 'deadname') segments.push({ text: DEADNAME_MASK, masked: true });
+    if (key === 'deadname') segments.push({ text: mask, masked: true });
     else segments.push({ text: (vars[key] ?? '').trim() });
     last = start + m[0].length;
   }
@@ -111,7 +113,11 @@ export interface GeneratedQuery {
 }
 
 /** Generate all runnable queries from the given templates + vars (skips incomplete ones). */
-export function generateQueries(templates: QueryTemplate[], vars: QueryVars): GeneratedQuery[] {
+export function generateQueries(
+  templates: QueryTemplate[],
+  vars: QueryVars,
+  opts?: { deadnameMask?: string },
+): GeneratedQuery[] {
   const out: GeneratedQuery[] = [];
   for (const t of templates) {
     const query = fillTemplate(t.template, vars);
@@ -121,7 +127,7 @@ export function generateQueries(templates: QueryTemplate[], vars: QueryVars): Ge
       label: t.label,
       engine: resolveEngine(t.engine, t.deadnameAware),
       query,
-      display: buildDisplaySegments(t.template, vars, t.deadnameAware),
+      display: buildDisplaySegments(t.template, vars, t.deadnameAware, opts?.deadnameMask),
       url: buildEngineUrl(t.engine, query, t.deadnameAware),
       deadnameAware: t.deadnameAware,
     });

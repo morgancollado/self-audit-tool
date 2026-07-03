@@ -7,10 +7,12 @@
 // helps rather than a bare "can't". Acting is tracked locally via the shared
 // remediation tracker.
 
+import { useTranslations } from 'next-intl';
 import { useStorage } from '@/lib/storage/StorageProvider';
 import { Platform } from '@/lib/content/types';
 
 export function PlatformGuide({ platform }: { platform: Platform }) {
+  const t = useTranslations('platformGuide');
   const { state, addRemediation } = useStorage();
   const dr = platform.deadnameRemoval;
 
@@ -31,21 +33,23 @@ export function PlatformGuide({ platform }: { platform: Platform }) {
       <div className="platform-head">
         <h3 id={`platform-${platform.slug}`}>{platform.name}</h3>
         {platform.difficulty && (
-          <span className={`stamp priority-${platform.difficulty}`}>{platform.difficulty} effort</span>
+          <span className={`stamp priority-${platform.difficulty}`}>
+            {t('effortStamp', { difficulty: platform.difficulty })}
+          </span>
         )}
       </div>
 
       {dr && (
         <div className="platform-deadname">
           <div className="platform-subhead">
-            <h4>Remove your former name</h4>
+            <h4>{t('removeHead')}</h4>
             <span className={`stamp ${dr.supported ? 'state-sent' : 'priority-low'}`}>
-              {dr.supported ? (dr.tool ?? 'supported') : 'no direct change'}
+              {dr.supported ? (dr.tool ?? t('supported')) : t('noDirectChange')}
             </span>
           </div>
           {!dr.supported && (
             <p className="platform-note" role="note">
-              This platform can’t change that directly — but these steps still reduce what’s exposed.
+              {t('noteIndirect')}
             </p>
           )}
           <ol className="platform-steps">
@@ -56,42 +60,47 @@ export function PlatformGuide({ platform }: { platform: Platform }) {
           {dr.url && (
             <p>
               <a href={dr.url} target="_blank" rel="noopener noreferrer">
-                Open {platform.name} settings ↗
+                {t('openSettings', { platform: platform.name })}
               </a>
             </p>
           )}
-          {dr.limits && <p className="platform-limits">Limits: {dr.limits}</p>}
-          {dr.escalation && <p className="platform-escalation">If it resists: {dr.escalation}</p>}
+          {dr.limits && <p className="platform-limits">{t('limits', { limits: dr.limits })}</p>}
+          {dr.escalation && (
+            <p className="platform-escalation">{t('escalation', { escalation: dr.escalation })}</p>
+          )}
           {deadnameTracked ? (
-            <span className="optout-tracked">Tracked ✓</span>
+            <span className="optout-tracked">{t('tracked')}</span>
           ) : (
-            <button type="button" onClick={() => track('deadname', `Removed former name on ${platform.name}`)}>
-              Mark former-name removal done
+            <button
+              type="button"
+              onClick={() => track('deadname', t('actionRemoved', { platform: platform.name }))}
+            >
+              {t('markRemovalDone')}
             </button>
           )}
         </div>
       )}
 
       <div className="platform-hardening">
-        <h4>Harden the account</h4>
+        <h4>{t('hardenHead')}</h4>
         <ol className="platform-steps">
           {platform.hardening.steps.map((s, i) => (
             <li key={i}>{s}</li>
           ))}
         </ol>
         {hardeningTracked ? (
-          <span className="optout-tracked">Tracked ✓</span>
+          <span className="optout-tracked">{t('tracked')}</span>
         ) : (
-          <button type="button" onClick={() => track('platform', `Hardened ${platform.name}`)}>
-            Mark hardening done
+          <button
+            type="button"
+            onClick={() => track('platform', t('actionHardened', { platform: platform.name }))}
+          >
+            {t('markHardeningDone')}
           </button>
         )}
       </div>
 
-      <p className="content-verified">
-        Steps last verified {platform.lastVerified}. Platform settings move often — if a step looks
-        different, follow the closest equivalent and let us know.
-      </p>
+      <p className="content-verified">{t('verifiedNote', { date: platform.lastVerified })}</p>
     </section>
   );
 }

@@ -9,80 +9,72 @@
 // storage-mode control + jump links appear once the intro has been acknowledged.
 // Deniable by design: nothing on screen names the tool's purpose.
 
-import Link from 'next/link';
+import { useTranslations } from 'next-intl';
+import { Link } from '@/i18n/navigation';
 import { useStorage } from '@/lib/storage/StorageProvider';
 import { StorageModeToggle } from '@/components/StorageModeToggle';
 import { Caret } from '@/components/Caret';
 
 export default function HomePage() {
+  const t = useTranslations('landing');
+  const tc = useTranslations('common');
   const { ready, preferences } = useStorage();
 
   if (!ready) {
-    return <p>Loading…</p>;
+    return <p>{tc('loading')}</p>;
   }
 
   return (
     <div className="landing">
       <div className="landing-inner">
         <section className="hero" aria-labelledby="hero-head">
-          <h1
-            className="hero-head"
-            id="hero-head"
-            aria-label="The record says the old entry — corrected to your name."
-          >
-            <span aria-hidden="true">The record says </span>
+          <h1 className="hero-head" id="hero-head" aria-label={t('heroAria')}>
+            <span aria-hidden="true">{t('heroPrefix')}</span>
             <span className="strike-wrap" aria-hidden="true">
               <span className="strike-new">
-                your name
+                {t('heroNew')}
                 <span className="strike-caret">
                   <Caret />
                 </span>
               </span>
               <span className="strike-old">
-                the old entry
+                {t('heroOld')}
                 <span className="strike-rule" />
               </span>
             </span>
             <span aria-hidden="true">.</span>
           </h1>
 
-          <p className="hero-support">
-            You are not scrubbing a secret. You are correcting a publishing error — with the
-            authority of the person the record is about. Errata drafts every correction; you press
-            send.
-          </p>
+          <p className="hero-support">{t('heroSupport')}</p>
 
           <div className="hero-actions">
             <Link className="btn-primary" href="/playbook">
-              Begin the correction →
+              {t('begin')}
             </Link>
             <Link className="btn-secondary" href="/how-it-works">
-              Read how it works first
+              {t('readHow')}
             </Link>
           </div>
         </section>
 
         {preferences.safetyIntroAcknowledged && (
-          <nav className="landing-jump" aria-label="Jump to a step">
-            <p className="landing-jump-lead">You’re set up. Jump straight to a step:</p>
+          <nav className="landing-jump" aria-label={t('jumpAria')}>
+            <p className="landing-jump-lead">{t('jumpLead')}</p>
             <ul>
               <li>
-                <Link href="/discover">Discover what’s out there →</Link>
+                <Link href="/discover">{t('jumpDiscover')}</Link>
               </li>
               <li>
-                Already know where you’re listed?{' '}
-                <Link href="/remediate">Go straight to removal requests →</Link>
+                {t('jumpRemediateLead')} <Link href="/remediate">{t('jumpRemediate')}</Link>
               </li>
               <li>
-                Want to clean up your accounts?{' '}
-                <Link href="/harden">Harden platforms &amp; remove your former name →</Link>
+                {t('jumpHardenLead')} <Link href="/harden">{t('jumpHarden')}</Link>
               </li>
               <li>
-                Deadname in court records or archives?{' '}
-                <Link href="/records">Tackle public records &amp; name change →</Link>
+                {t('jumpRecordsLead')} <Link href="/records">{t('jumpRecords')}</Link>
               </li>
               <li>
-                <Link href="/settings">Settings — storage &amp; encrypted backup →</Link>
+                <Link href="/settings">{t('jumpSettings')}</Link>
               </li>
             </ul>
             <StorageModeToggle />
@@ -93,15 +85,12 @@ export default function HomePage() {
       <section className="drop-plate" aria-labelledby="drop-head">
         <div className="landing-inner drop-inner">
           <div className="drop-text">
-            <p className="drop-kicker">THE HERO PATH · CALIFORNIA RESIDENTS</p>
-            <h2 id="drop-head">File one correction for all.</h2>
-            <p className="drop-body">
-              The Delete Act lets you order every registered data broker to delete your record in a
-              single request. Errata walks you through it in about fifteen minutes.
-            </p>
+            <p className="drop-kicker">{t('dropKicker')}</p>
+            <h2 id="drop-head">{t('dropHead')}</h2>
+            <p className="drop-body">{t('dropBody')}</p>
           </div>
           <Link className="btn-cream" href="/remediate">
-            Start the DROP request →
+            {t('dropCta')}
           </Link>
         </div>
       </section>
@@ -112,14 +101,13 @@ export default function HomePage() {
             <span className="footnote-num" aria-hidden="true">
               1
             </span>
-            Every search and draft is prepared in this tab; Errata has no server to send it to.
+            {t('footnote1')}
           </li>
           <li>
             <span className="footnote-num" aria-hidden="true">
               2
             </span>
-            “Clear the desk” wipes local data instantly. It is always one click away, on every
-            screen.
+            {t('footnote2')}
           </li>
         </ol>
       </div>

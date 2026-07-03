@@ -4,7 +4,8 @@
 // query generator, feeding a local findings ledger. All client-side.
 
 import { useState } from 'react';
-import Link from 'next/link';
+import { useTranslations } from 'next-intl';
+import { Link } from '@/i18n/navigation';
 import { useStorage } from '@/lib/storage/StorageProvider';
 import { SafetyIntro } from '@/components/SafetyIntro';
 import { StorageModeToggle } from '@/components/StorageModeToggle';
@@ -15,10 +16,12 @@ import { MarginNote } from '@/components/MarginNote';
 import { QueryVars } from '@/lib/discover/queries';
 
 export default function DiscoverPage() {
+  const t = useTranslations('discover');
+  const tc = useTranslations('common');
   const { ready, preferences } = useStorage();
   const [vars, setVars] = useState<QueryVars>({});
 
-  if (!ready) return <p>Loading…</p>;
+  if (!ready) return <p>{tc('loading')}</p>;
 
   // The deadname-input surface must never be reachable without the shared-device
   // safety choice. A first-time visitor who deep-links straight here (bookmark,
@@ -29,7 +32,7 @@ export default function DiscoverPage() {
     return (
       <>
         <p className="breadcrumb">
-          <Link href="/">← Errata</Link>
+          <Link href="/">{tc('backToErrata')}</Link>
         </p>
         <SafetyIntro />
       </>
@@ -39,14 +42,11 @@ export default function DiscoverPage() {
   return (
     <>
       <p className="breadcrumb">
-        <Link href="/">← Errata</Link>
+        <Link href="/">{tc('backToErrata')}</Link>
       </p>
-      <h1>Discover</h1>
-      <MarginNote>the ledger below keeps your place if you stop here</MarginNote>
-      <p>
-        Find what’s out there the way someone looking for you would. Go at your own pace — you can
-        stop and come back.
-      </p>
+      <h1>{t('title')}</h1>
+      <MarginNote>{t('marginLedger')}</MarginNote>
+      <p>{t('intro')}</p>
 
       {/* Keep the shared-device mode choice reachable on this sensitive page. */}
       <StorageModeToggle />
@@ -54,18 +54,19 @@ export default function DiscoverPage() {
       {/* Quiet confirmation chips. The former name itself is NEVER rendered — its
           chip only confirms it is held in memory and kept off screen. */}
       {(vars.name || vars.deadname) && (
-        <p className="name-chips" aria-label="Names in use">
+        <p className="name-chips" aria-label={t('nameChipsAria')}>
           {vars.name && <span className="name-chip">{vars.name}</span>}
-          {vars.deadname && <span className="name-chip name-chip-hidden">former name · hidden</span>}
+          {vars.deadname && <span className="name-chip name-chip-hidden">{t('formerNameChip')}</span>}
         </p>
       )}
-      <MarginNote mark="✓">your former name is copied when you ask, never shown on screen</MarginNote>
+      <MarginNote mark="✓">{t('marginCopy')}</MarginNote>
       <DiscoveryChecklist vars={vars} />
       <FindingsLedger />
 
       <p className="discover-next">
-        When you’re ready to act on what you found,{' '}
-        <Link href="/remediate">prepare removal requests →</Link>
+        {t.rich('next', {
+          link: (chunks) => <Link href="/remediate">{chunks}</Link>,
+        })}
       </p>
     </>
   );
