@@ -1,0 +1,9 @@
+{
+  "whatItIs": "The sex component of the civil registry can be corrected through a notary thanks to Decreto 1227 de 2015: an adult presents a declaration of intent before a notary and the registry is corrected by public deed, with no trial and no medical evaluations. A further correction only proceeds after ten years, and at most twice. The corrected registry replaces the old one for official procedures — but old copies of the data can persist in third-party databases.",
+  "actions": [
+    "Gather: a plain copy of your birth civil registry, a copy of your cédula, and the sex-component correction declaration (the notary has the form).",
+    "File the request with a notary; the public deed corrects the civil registry, and with it you process the new cédula at the Registraduría.",
+    "Then update the derived databases (EPS, bank, credit bureaus, university, employer) with the rectification claims above."
+  ],
+  "disclaimer": "Informational only — not legal advice, and not yet reviewed by a lawyer. Decreto 1227 de 2015 sets precise requirements and timelines; verify with the notary or a legal-aid organization before acting."
+}

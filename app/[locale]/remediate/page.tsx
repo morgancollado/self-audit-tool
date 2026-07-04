@@ -37,7 +37,8 @@ export default function RemediatePage() {
   const [onlyFlagged, setOnlyFlagged] = useState(true);
   const [query, setQuery] = useState('');
 
-  const allBrokers = useMemo(() => getBrokers('us', locale), [locale]);
+  const country = preferences.jurisdiction?.country ?? 'us';
+  const allBrokers = useMemo(() => getBrokers(country, locale), [country, locale]);
 
   // Map broker slug -> the discovery finding that flagged it, so we can lead with
   // (and tie remediations back to) where the user was actually found.

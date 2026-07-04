@@ -69,10 +69,10 @@
     "jumpRecordsLead": "Deadname in court records or archives?",
     "jumpRecords": "Tackle public records & name change →",
     "jumpSettings": "Settings — storage & encrypted backup →",
-    "dropKicker": "THE HERO PATH · CALIFORNIA RESIDENTS",
+    "dropKicker": "THE HERO PATHS · ONE REQUEST GOES FAR",
     "dropHead": "File one correction for all.",
-    "dropBody": "The Delete Act lets you order every registered data broker to delete your record in a single request. Errata walks you through it in about fifteen minutes.",
-    "dropCta": "Start the DROP request →",
+    "dropBody": "In California, the Delete Act's DROP orders every registered data broker to delete your record in a single request. In Colombia, habeas data (Ley 1581) obliges any data holder to act on your deletion claim within 15 business days. Errata prepares both — you press send.",
+    "dropCta": "Start your request →",
     "footnote1": "Every search and draft is prepared in this tab; Errata has no server to send it to.",
     "footnote2": "“Clear the desk” wipes local data instantly. It is always one click away, on every screen."
   },
@@ -110,7 +110,8 @@
     "title": "Public records & name change",
     "intro": "These are the hardest, most permanent deadname sources — the indexed court order, the name-change petition’s publication, and the archives and caches that keep old copies alive. Some can be sealed or removed; some can only be monitored. Errata is honest about which.",
     "banner": "Informational only — not legal advice, and not yet reviewed by a lawyer. Name-change and record-sealing rules vary by state and county and change often; verify with your court or a legal-aid org before acting.",
-    "stateNote": "Pick your state to see state-specific court-record guidance. Archive and cache removals work regardless of where you live."
+    "stateNote": "Pick your state to see state-specific court-record guidance. Archive and cache removals work regardless of where you live.",
+    "coNote": "Colombia's guidance is national — name change and the sex-marker correction go through a notary, not a public court case. Archive and cache removals work regardless of where you live."
   },
   "playbook": {
     "title": "Your deadname-removal playbook",
@@ -354,10 +355,9 @@
   },
   "rights": {
     "title": "Your rights where you live",
-    "yourState": "Your state",
-    "selectState": "Select your state…",
-    "banner": "Informational only — not legal advice, and not yet reviewed by a lawyer. Deletion rights vary by state and change often; verify your own before relying on any wording here.",
+    "banner": "Informational only — not legal advice, and not yet reviewed by a lawyer. Deletion rights vary by place and change often; verify your own before relying on any wording here.",
     "showingFor": "Showing deletion rights for {state}.",
+    "showingCo": "Showing rights for Colombia (national).",
     "noneSelected": "No state selected; showing the national baseline only.",
     "pickPrompt": "Pick your state to see the deletion rights you can use. You don’t need to — the broker opt-outs below work regardless — but in some states the law gives you much stronger tools.",
     "noGuidance": "We don’t have verified deletion-rights guidance for {state} yet. Your state may still grant rights we haven’t written up — and the broker opt-outs below work regardless of where you live.",
@@ -365,10 +365,14 @@
     "availability": "Availability:",
     "openOfficial": "Open the official site ↗"
   },
-  "stateSelect": {
+  "jurisdiction": {
+    "country": "Country",
+    "countryUs": "United States",
+    "countryCo": "Colombia",
     "yourState": "Your state",
     "selectState": "Select your state…",
-    "showingFor": "Showing guidance for {state}.",
+    "showingState": "Showing guidance for {state}.",
+    "showingCo": "Showing guidance for Colombia (national).",
     "noneSelected": "No state selected; showing national and global guidance only."
   },
   "recordGuide": {

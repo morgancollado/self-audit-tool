@@ -1,0 +1,15 @@
+{
+  "title": "Colombia: habeas data — Ley 1581 de 2012 (and Ley 1266 de 2008 for financial data)",
+  "summary": "In Colombia, habeas data is a constitutional right (art. 15). Ley 1581 de 2012 and Decreto 1377 de 2013 give you the right to know, update, rectify, and delete (suprimir) your personal data with any controller that processes it. The path has two steps: first a direct claim (reclamo) to the controller, which must be resolved within 15 business days (extendable by 8 more if they notify you); if they don't respond or the response doesn't satisfy you, a complaint (queja) to the Superintendencia de Industria y Comercio (SIC). Deletion doesn't apply where a legal or contractual duty to keep the data exists — for example credit history, which is governed by Ley 1266 de 2008 and gets corrected (rectified), not erased.",
+  "specialMechanisms": [
+    {
+      "title": "Direct claim (reclamo) to the data controller",
+      "summary": "Any entity processing your data in Colombia must receive your deletion or rectification claim, mark it \"claim in process\" within 2 business days, and resolve it within 15 business days. Errata prepares the letter above — you send it."
+    },
+    {
+      "title": "Complaint (queja) to the SIC (Superintendencia de Industria y Comercio)",
+      "summary": "The SIC is the data-protection authority: it can order deletion or correction and impose sanctions. The complaint only proceeds after the direct claim to the controller is exhausted — keep your claim and the response (or the silence) as evidence."
+    }
+  ],
+  "disclaimer": "General information, not legal advice, and not yet independently reviewed. The authority is the SIC, not Errata — verify the current process at sic.gov.co before relying on this."
+}

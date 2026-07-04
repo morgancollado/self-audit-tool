@@ -8,6 +8,134 @@ import { Broker, DeadnameRecord, DiscoveryStep, Law, OptOutTemplate, Platform, Q
 // is the real schema gate; data-integrity unit tests assert the safety invariants.
 export const BROKERS = [
   {
+    "baseLocale": "es",
+    "slug": "datacredito",
+    "jurisdiction": {
+      "country": "co"
+    },
+    "name": "DataCrédito (Experian Colombia)",
+    "category": "credit-bureau",
+    "exposesDeadnameRisk": "medium",
+    "searchUrl": "https://www.midatacredito.com/",
+    "optOut": {
+      "methods": [
+        "web-form",
+        "email",
+        "mail"
+      ],
+      "webFormUrl": "https://www.datacredito.com.co/habeas-data",
+      "email": "serviciociudadano@experian.com",
+      "mailingAddress": "Carrera 7 No. 76-35, piso 10, Bogotá",
+      "requiresId": true,
+      "optOutExposesLinkage": false,
+      "steps": [
+        "Esto es una RECTIFICACIÓN, no un borrado: tu historia de crédito no se elimina por cambiar de nombre, pero tienes derecho a que figure con tu nombre legal actual (Ley 1266 de 2008 y Ley 1581 de 2012).",
+        "Primero actualiza tu cédula en la Registraduría — la central verifica contra el documento.",
+        "Entra a datacredito.com.co → «Habeas Data» → «Módulo de Reclamos» (gratuito) y radica un reclamo de actualización/rectificación del nombre, adjuntando tu cédula vigente.",
+        "También puedes radicarlo por escrito (firma autenticada ante notario + copia de la cédula) a la dirección de Bogotá, o al correo de servicio al ciudadano.",
+        "Deben responder en máximo 15 días hábiles; mientras se tramita, el reclamo aparece marcado en tu historia.",
+        "Si no responden o la respuesta no corrige el nombre, presenta una queja ante la SIC (sic.gov.co) — solo procede tras agotar el reclamo directo."
+      ],
+      "templateKey": "reclamo-rectificacion-co"
+    },
+    "notes": "La central identifica los registros por número de documento, así que el vínculo entre tus nombres ya existe en su base — rectificar no revela nada nuevo. Al enviar, incluye tu número de cédula tú misma/o: Errata no lo pide ni lo guarda.",
+    "lastVerified": "2026-07-04",
+    "attribution": "Independently authored from the service's own removal/claims flow (not BADBOL-derived)."
+  },
+  {
+    "baseLocale": "es",
+    "slug": "getcontact",
+    "jurisdiction": {
+      "country": "co"
+    },
+    "name": "Getcontact",
+    "category": "other",
+    "exposesDeadnameRisk": "high",
+    "optOut": {
+      "methods": [
+        "web-form"
+      ],
+      "webFormUrl": "https://getcontact.com/manage",
+      "email": null,
+      "mailingAddress": null,
+      "requiresId": false,
+      "optOutExposesLinkage": false,
+      "steps": [
+        "Abre getcontact.com/manage en el navegador.",
+        "Escribe tu número con el código de país (+57) y continúa.",
+        "Verifica el número escaneando el código QR con WhatsApp desde tu teléfono.",
+        "En «Visibility Settings», apaga la visibilidad de búsqueda («Search Visibility») y confirma.",
+        "Revisa también las «etiquetas» (tags): son los nombres con que otras personas te guardaron — ahí es donde suele vivir un nombre anterior. Puedes pedir la eliminación de etiquetas desde el mismo panel."
+      ]
+    },
+    "notes": "Getcontact muestra las «etiquetas» con que otros usuarios te tienen guardada/o en sus agendas — una filtración directa del nombre anterior si tus contactos viejos nunca te actualizaron. La gestión se hace con el número verificado por WhatsApp, sin revelar tu historial de nombres. Empresa extranjera: la palanca práctica es su propio panel; la queja ante la SIC aplica en la medida en que trate datos en Colombia.",
+    "lastVerified": "2026-07-04",
+    "attribution": "Independently authored from the service's own removal/claims flow (not BADBOL-derived)."
+  },
+  {
+    "baseLocale": "es",
+    "slug": "transunion-co",
+    "jurisdiction": {
+      "country": "co"
+    },
+    "name": "TransUnion Colombia (antes CIFIN)",
+    "category": "credit-bureau",
+    "exposesDeadnameRisk": "medium",
+    "optOut": {
+      "methods": [
+        "web-form",
+        "email"
+      ],
+      "webFormUrl": "https://www.transunion.co/producto/solicitudes-quejas-y-reclamos-persona-natural",
+      "email": "solioficial@transunion.com",
+      "mailingAddress": null,
+      "requiresId": true,
+      "optOutExposesLinkage": false,
+      "steps": [
+        "Esto es una RECTIFICACIÓN, no un borrado: tu historia de crédito no se elimina por cambiar de nombre, pero tienes derecho a que figure con tu nombre legal actual (Ley 1266 de 2008 y Ley 1581 de 2012).",
+        "Primero actualiza tu cédula en la Registraduría — la central verifica contra el documento.",
+        "Radica la solicitud (SQR) de actualización del nombre en el canal de persona natural de transunion.co, describiendo los hechos y adjuntando copia de tu cédula vigente.",
+        "Algunas solicitudes exigen autenticación notarial de la firma — el canal te lo indica.",
+        "Deben responder en máximo 15 días hábiles.",
+        "Si no responden o la respuesta no corrige el nombre, presenta una queja ante la SIC (sic.gov.co) — solo procede tras agotar el reclamo directo."
+      ],
+      "templateKey": "reclamo-rectificacion-co"
+    },
+    "notes": "La central identifica los registros por número de documento, así que rectificar el nombre no revela un vínculo nuevo. Al enviar, incluye tu número de cédula tú misma/o: Errata no lo pide ni lo guarda.",
+    "lastVerified": "2026-07-04",
+    "attribution": "Independently authored from the service's own removal/claims flow (not BADBOL-derived)."
+  },
+  {
+    "baseLocale": "es",
+    "slug": "truecaller",
+    "jurisdiction": {
+      "country": "co"
+    },
+    "name": "Truecaller",
+    "category": "other",
+    "exposesDeadnameRisk": "high",
+    "optOut": {
+      "methods": [
+        "web-form"
+      ],
+      "webFormUrl": "https://www.truecaller.com/unlisting",
+      "email": null,
+      "mailingAddress": null,
+      "requiresId": false,
+      "optOutExposesLinkage": false,
+      "steps": [
+        "Si usas la app de Truecaller, primero desactiva tu cuenta desde la app (Configuración → Privacidad → Desactivar cuenta) — la baja no funciona mientras la cuenta esté activa.",
+        "Abre truecaller.com/unlisting en el navegador.",
+        "Escribe tu número completo con el código de país (+57 para Colombia) y confirma la baja.",
+        "La baja tarda hasta 24 horas en aplicarse en la base de datos global.",
+        "Después, comprueba desde el teléfono de una persona de confianza que tu número ya no muestra ningún nombre."
+      ]
+    },
+    "notes": "Truecaller arma su directorio con las agendas de contactos de otros usuarios: tu número puede aparecer con el nombre con que alguien te guardó hace años — a menudo el nombre anterior. La baja se hace solo con el número, así que no revela tu historial de nombres. Es una empresa sueca: la palanca práctica es su propia baja; la queja ante la SIC aplica en la medida en que trate datos en Colombia.",
+    "lastVerified": "2026-07-04",
+    "attribution": "Independently authored from the service's own removal/claims flow (not BADBOL-derived)."
+  },
+  {
     "slug": "addresses",
     "jurisdiction": {
       "country": "us"
@@ -534,6 +662,32 @@ export const BROKERS = [
 ] as unknown as Broker[];
 
 export const LAWS = [
+  {
+    "baseLocale": "es",
+    "jurisdiction": {
+      "country": "co"
+    },
+    "appliesNationally": true,
+    "key": "co-habeas-data",
+    "title": "Colombia: habeas data — Ley 1581 de 2012 (y Ley 1266 de 2008 para datos financieros)",
+    "summary": "En Colombia el habeas data es un derecho constitucional (art. 15). La Ley 1581 de 2012 y el Decreto 1377 de 2013 te dan derecho a conocer, actualizar, rectificar y suprimir tus datos personales ante cualquier responsable que los trate. El camino tiene dos pasos: primero el reclamo directo al responsable, que debe resolverse en máximo 15 días hábiles (prorrogables 8 días hábiles más si te lo informan); si no responden o la respuesta no te satisface, la queja ante la Superintendencia de Industria y Comercio (SIC). La supresión no procede cuando existe un deber legal o contractual de conservar los datos — por ejemplo, la historia de crédito, que se rige por la Ley 1266 de 2008 y se corrige (rectificación), no se borra.",
+    "authorizedAgent": true,
+    "specialMechanisms": [
+      {
+        "key": "co-reclamo",
+        "title": "Reclamo directo al responsable de los datos",
+        "summary": "Cualquier entidad que trate tus datos en Colombia debe recibir tu reclamo de supresión o rectificación, marcarlo como «reclamo en trámite» en máximo 2 días hábiles y resolverlo en máximo 15 días hábiles. Errata te prepara la carta arriba — tú la envías."
+      },
+      {
+        "key": "co-sic-queja",
+        "title": "Queja ante la SIC (Superintendencia de Industria y Comercio)",
+        "summary": "La SIC es la autoridad de protección de datos: puede ordenar la supresión o corrección e imponer sanciones. La queja solo procede después de agotar el reclamo directo ante el responsable — guarda tu reclamo y la respuesta (o el silencio) como prueba.",
+        "url": "https://www.sic.gov.co/tema/proteccion-de-datos-personales"
+      }
+    ],
+    "disclaimer": "Información general, no asesoría legal, y aún sin revisión independiente. La autoridad es la SIC, no Errata — verifica el proceso vigente en sic.gov.co antes de confiar en esto.",
+    "lastVerified": "2026-07-04"
+  },
   {
     "jurisdiction": {
       "country": "us",
@@ -1379,6 +1533,63 @@ export const PLATFORMS = [
 
 export const RECORDS = [
   {
+    "baseLocale": "es",
+    "slug": "cedula-update-co",
+    "jurisdiction": {
+      "country": "co"
+    },
+    "class": "other",
+    "exposesDeadnameRisk": "high",
+    "permanence": "medium",
+    "whatItIs": "Tras el cambio de nombre o la corrección del componente sexo, la cédula se reexpide en la Registraduría con tus datos actuales — el número de cédula no cambia. Ese mismo número es la llave con la que bancos, centrales de riesgo, EPS y empleadores guardaron tu nombre anterior: cada base que copió tus datos antes del cambio lo conserva hasta que la actualices una por una.",
+    "actions": [
+      "Solicita la reexpedición de la cédula en la Registraduría (registraduria.gov.co) con el registro civil ya corregido.",
+      "Haz una lista de dónde vive tu número de documento: banco, centrales de riesgo (DataCrédito, TransUnion), EPS y salud, RUT/DIAN, empleador, universidad y títulos, telefonía.",
+      "Actualiza cada una con tu cédula reexpedida — para las centrales de riesgo usa los reclamos de rectificación preparados arriba; para las demás suele bastar el trámite de actualización de datos con copia del documento."
+    ],
+    "sealedPetitionAvailable": false,
+    "disclaimer": "Solo informativo — no es asesoría legal. Los trámites de la Registraduría y de cada entidad cambian; verifica el procedimiento vigente antes de actuar.",
+    "lastVerified": "2026-07-04"
+  },
+  {
+    "baseLocale": "es",
+    "slug": "gender-marker-co",
+    "jurisdiction": {
+      "country": "co"
+    },
+    "class": "other",
+    "exposesDeadnameRisk": "medium",
+    "permanence": "high",
+    "whatItIs": "El componente sexo del registro civil se puede corregir por vía notarial gracias al Decreto 1227 de 2015: una persona mayor de edad presenta una declaración de voluntad ante notaría y se corrige el registro por escritura pública, sin juicio ni peritajes médicos. Una nueva corrección solo procede pasados diez años, y máximo dos veces. El registro corregido reemplaza al anterior para trámites — pero las copias viejas del dato pueden persistir en bases de terceros.",
+    "actions": [
+      "Reúne: copia simple del registro civil de nacimiento, copia de la cédula y la declaración de corrección del componente sexo (la notaría tiene el formato).",
+      "Presenta la solicitud ante notaría; la escritura pública corrige el registro civil y con él tramitas la nueva cédula en la Registraduría.",
+      "Después actualiza las bases derivadas (EPS, banco, centrales de riesgo, universidad, empleador) con los reclamos de rectificación de arriba."
+    ],
+    "sealedPetitionAvailable": false,
+    "disclaimer": "Solo informativo — no es asesoría legal y aún no ha sido revisado por un abogado. El Decreto 1227 de 2015 fija requisitos y plazos precisos; verifica con la notaría o una organización de ayuda legal antes de actuar.",
+    "lastVerified": "2026-07-04"
+  },
+  {
+    "baseLocale": "es",
+    "slug": "name-change-co",
+    "jurisdiction": {
+      "country": "co"
+    },
+    "class": "name-change",
+    "exposesDeadnameRisk": "high",
+    "permanence": "high",
+    "whatItIs": "En Colombia el cambio de nombre no pasa por un juicio público: se hace por escritura pública ante notaría (Decreto 999 de 1988) y se inscribe en el registro civil. Por esa vía voluntaria procede por regla general una sola vez; la Corte Constitucional ha amparado que las personas trans puedan cambiarlo de nuevo cuando el cambio corresponde a su identidad de género (sentencia T-063 de 2015). A diferencia de EE. UU., no hay publicación en prensa — pero el nombre anterior sobrevive en todas las bases que copiaron tus datos antes del cambio.",
+    "actions": [
+      "Lleva a la notaría tu registro civil de nacimiento y tu cédula; solicita la escritura pública de cambio de nombre y su inscripción en el registro civil.",
+      "Si ya usaste el cambio voluntario y el nuevo cambio corresponde a tu identidad de género, invoca la jurisprudencia constitucional (T-063 de 2015) — una organización de ayuda legal LGBTQ puede acompañarte si la notaría se niega.",
+      "Con el registro civil actualizado, tramita la reexpedición de la cédula en la Registraduría, y luego recorre las bases derivadas: centrales de riesgo, banco, EPS, empleador, universidad (los reclamos de arriba sirven para eso)."
+    ],
+    "sealedPetitionAvailable": false,
+    "disclaimer": "Solo informativo — no es asesoría legal y aún no ha sido revisado por un abogado. Los requisitos notariales varían y cambian; verifica con la notaría o una organización de ayuda legal antes de actuar.",
+    "lastVerified": "2026-07-04"
+  },
+  {
     "slug": "search-cache",
     "class": "search-cache",
     "exposesDeadnameRisk": "medium",
@@ -1599,6 +1810,55 @@ export const RECORDS = [
 
 export const DISCOVERY_STEPS = [
   {
+    "baseLocale": "es",
+    "slug": "co-caller-id-apps",
+    "jurisdiction": {
+      "country": "co"
+    },
+    "category": "broker",
+    "title": "Apps de identificación de llamadas (Truecaller, Getcontact)",
+    "why": "En Colombia la mayor filtración del nombre anterior no son los sitios de búsqueda de personas al estilo estadounidense: son las apps de identificación de llamadas, que muestran tu número con el nombre con que otras personas te guardaron en sus agendas — a menudo el nombre de hace años.",
+    "instructions": [
+      "Pide a una persona de confianza que busque tu número en Truecaller y Getcontact desde su teléfono, y anota qué nombre aparece.",
+      "En Getcontact puedes verlo tú: verifica tu número en getcontact.com/manage y revisa las «etiquetas» — son los nombres con que otros te guardaron.",
+      "Si aparece tu nombre anterior, añádelo a tu registro; la baja se prepara en la fase de corrección."
+    ],
+    "deadnameAware": true,
+    "deadnamePrompts": [
+      "¿El nombre que muestra tu número es tu nombre anterior?",
+      "¿Las etiquetas de Getcontact incluyen variantes viejas de tu nombre?"
+    ],
+    "refIds": [
+      "truecaller",
+      "getcontact"
+    ],
+    "priority": "high",
+    "lastVerified": "2026-07-04"
+  },
+  {
+    "baseLocale": "es",
+    "slug": "co-public-sources",
+    "jurisdiction": {
+      "country": "co"
+    },
+    "category": "search",
+    "title": "Fuentes públicas colombianas",
+    "why": "Listas de grado y admitidos, actas, gacetas y boletines oficiales, prensa regional y sitios que republican registros públicos suelen conservar un nombre anterior por años — y los buscadores los indexan.",
+    "instructions": [
+      "Usa las cadenas de búsqueda de arriba añadiendo «site:.co», el nombre de tu universidad o tu ciudad.",
+      "Revisa listas de admitidos y graduados, actas y resoluciones publicadas en PDF — busca dentro del documento, no solo el título.",
+      "Los sitios de consulta de cédula (agregadores que republican datos de registros públicos) rara vez ofrecen eliminación: anótalos como vigilancia; si publican un contacto, el reclamo de supresión de la fase de corrección aplica, y la queja ante la SIC si no responden.",
+      "Añade a tu registro cada hallazgo que muestre tu nombre anterior, marcando los que solo se pueden vigilar."
+    ],
+    "deadnameAware": true,
+    "deadnamePrompts": [
+      "¿Apareces en la lista de grado o de admitidos de tu universidad con el nombre anterior?",
+      "¿Una resolución, acta o gaceta en PDF menciona tu nombre anterior?"
+    ],
+    "priority": "high",
+    "lastVerified": "2026-07-04"
+  },
+  {
     "slug": "platforms-self-search",
     "category": "platform",
     "title": "Búscate en las plataformas que has usado",
@@ -1773,5 +2033,43 @@ export const OPTOUT_TEMPLATES = [
       "brokerName"
     ],
     "disclaimer": "Esto es información general, no asesoría legal. Tus derechos exactos dependen de tu estado — verifica el proceso vigente del broker antes de enviar, y nunca incluyas más información identificatoria de la estrictamente necesaria. La carta va en inglés a propósito: el broker que la recibe procesa solicitudes en inglés."
+  },
+  {
+    "baseLocale": "es",
+    "key": "reclamo-rectificacion-co",
+    "formats": [
+      "text",
+      "mailto",
+      "letter"
+    ],
+    "subject": "Reclamo de rectificación y actualización de datos personales — {{brokerName}}",
+    "body": "Señores {{brokerName}}:\n\nEn ejercicio del derecho de habeas data reconocido por el artículo 15 de la Constitución Política y regulado por la Ley 1581 de 2012 (artículos 8, 14 y 15), el Decreto 1377 de 2013 y — para información financiera y crediticia — la Ley 1266 de 2008, presento RECLAMO para que rectifiquen y actualicen la información personal que tienen sobre mí, de modo que refleje mi nombre legal actual.\n\nNombre legal actual: {{name}}\nSus registros pueden figurar a nombre de: {{aliases}}\nUbicación: {{location}}\nCorreo de notificación: {{email}}\n\nAdjuntaré copia de mi documento de identidad vigente como soporte. Les recuerdo que deben atender este reclamo en un término máximo de quince (15) días hábiles. Solicito confirmación escrita de la corrección y que toda comunicación futura use únicamente mi nombre legal actual.\n\nDe no recibir respuesta satisfactoria, acudiré en queja ante la Superintendencia de Industria y Comercio.\n\nAtentamente,\n{{name}}",
+    "placeholders": [
+      "name",
+      "aliases",
+      "location",
+      "email",
+      "brokerName"
+    ],
+    "disclaimer": "Información general, no asesoría legal. La rectificación actualiza el registro a tu nombre legal actual; no borra la historia (p. ej. crediticia) que la entidad tiene el deber de conservar. Adjunta tú misma/o el número y copia de tu documento al enviar — Errata no lo pide ni lo guarda."
+  },
+  {
+    "baseLocale": "es",
+    "key": "reclamo-supresion-co",
+    "formats": [
+      "text",
+      "mailto",
+      "letter"
+    ],
+    "subject": "Reclamo de supresión de datos personales — {{brokerName}} (Ley 1581 de 2012)",
+    "body": "Señores {{brokerName}}:\n\nEn ejercicio del derecho de habeas data reconocido por el artículo 15 de la Constitución Política y regulado por la Ley 1581 de 2012 (artículos 8, 15 y 16) y el Decreto 1377 de 2013, presento RECLAMO para que supriman de sus bases de datos toda la información personal que tengan sobre mí, y para que cesen su tratamiento, circulación y venta.\n\nNombre: {{name}}\nTambién puedo figurar como: {{aliases}}\nUbicación: {{location}}\nCorreo de notificación: {{email}}\n\nLes recuerdo que, conforme al artículo 15 de la Ley 1581 de 2012, deben atender este reclamo en un término máximo de quince (15) días hábiles. Solicito confirmación escrita de la supresión, que no vuelvan a incorporar esta información, y que no me exijan más identificación de la estrictamente necesaria para tramitar este reclamo.\n\nDe no recibir respuesta satisfactoria, acudiré en queja ante la Superintendencia de Industria y Comercio.\n\nAtentamente,\n{{name}}",
+    "placeholders": [
+      "name",
+      "aliases",
+      "location",
+      "email",
+      "brokerName"
+    ],
+    "disclaimer": "Información general, no asesoría legal. La supresión no procede cuando hay un deber legal o contractual de conservar los datos. Verifica el canal vigente del responsable antes de enviar, y nunca incluyas más información identificatoria de la estrictamente necesaria."
   }
 ] as unknown as OptOutTemplate[];

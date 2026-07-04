@@ -1,0 +1,33 @@
+{
+  "baseLocale": "es",
+  "slug": "transunion-co",
+  "jurisdiction": {
+    "country": "co"
+  },
+  "name": "TransUnion Colombia (antes CIFIN)",
+  "category": "credit-bureau",
+  "exposesDeadnameRisk": "medium",
+  "optOut": {
+    "methods": [
+      "web-form",
+      "email"
+    ],
+    "webFormUrl": "https://www.transunion.co/producto/solicitudes-quejas-y-reclamos-persona-natural",
+    "email": "solioficial@transunion.com",
+    "mailingAddress": null,
+    "requiresId": true,
+    "optOutExposesLinkage": false,
+    "steps": [
+      "Esto es una RECTIFICACIÓN, no un borrado: tu historia de crédito no se elimina por cambiar de nombre, pero tienes derecho a que figure con tu nombre legal actual (Ley 1266 de 2008 y Ley 1581 de 2012).",
+      "Primero actualiza tu cédula en la Registraduría — la central verifica contra el documento.",
+      "Radica la solicitud (SQR) de actualización del nombre en el canal de persona natural de transunion.co, describiendo los hechos y adjuntando copia de tu cédula vigente.",
+      "Algunas solicitudes exigen autenticación notarial de la firma — el canal te lo indica.",
+      "Deben responder en máximo 15 días hábiles.",
+      "Si no responden o la respuesta no corrige el nombre, presenta una queja ante la SIC (sic.gov.co) — solo procede tras agotar el reclamo directo."
+    ],
+    "templateKey": "reclamo-rectificacion-co"
+  },
+  "notes": "La central identifica los registros por número de documento, así que rectificar el nombre no revela un vínculo nuevo. Al enviar, incluye tu número de cédula tú misma/o: Errata no lo pide ni lo guarda.",
+  "lastVerified": "2026-07-04",
+  "attribution": "Independently authored from the service's own removal/claims flow (not BADBOL-derived)."
+}

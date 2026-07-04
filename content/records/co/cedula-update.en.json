@@ -1,0 +1,9 @@
+{
+  "whatItIs": "After the name change or sex-component correction, the cédula is reissued by the Registraduría with your current data — the cédula number doesn't change. That same number is the key under which banks, credit bureaus, EPS, and employers stored your former name: every database that copied your data before the change keeps it until you update them one by one.",
+  "actions": [
+    "Request the cédula reissue at the Registraduría (registraduria.gov.co) with the already-corrected civil registry.",
+    "List where your document number lives: bank, credit bureaus (DataCrédito, TransUnion), EPS and health, RUT/DIAN, employer, university and diplomas, phone carrier.",
+    "Update each one with your reissued cédula — for the credit bureaus use the rectification claims prepared above; for the rest the standard data-update procedure with a copy of the document is usually enough."
+  ],
+  "disclaimer": "Informational only — not legal advice. Registraduría and per-entity procedures change; verify the current process before acting."
+}

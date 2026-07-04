@@ -1,0 +1,19 @@
+{
+  "baseLocale": "es",
+  "slug": "cedula-update-co",
+  "jurisdiction": {
+    "country": "co"
+  },
+  "class": "other",
+  "exposesDeadnameRisk": "high",
+  "permanence": "medium",
+  "whatItIs": "Tras el cambio de nombre o la corrección del componente sexo, la cédula se reexpide en la Registraduría con tus datos actuales — el número de cédula no cambia. Ese mismo número es la llave con la que bancos, centrales de riesgo, EPS y empleadores guardaron tu nombre anterior: cada base que copió tus datos antes del cambio lo conserva hasta que la actualices una por una.",
+  "actions": [
+    "Solicita la reexpedición de la cédula en la Registraduría (registraduria.gov.co) con el registro civil ya corregido.",
+    "Haz una lista de dónde vive tu número de documento: banco, centrales de riesgo (DataCrédito, TransUnion), EPS y salud, RUT/DIAN, empleador, universidad y títulos, telefonía.",
+    "Actualiza cada una con tu cédula reexpedida — para las centrales de riesgo usa los reclamos de rectificación preparados arriba; para las demás suele bastar el trámite de actualización de datos con copia del documento."
+  ],
+  "sealedPetitionAvailable": false,
+  "disclaimer": "Solo informativo — no es asesoría legal. Los trámites de la Registraduría y de cada entidad cambian; verifica el procedimiento vigente antes de actuar.",
+  "lastVerified": "2026-07-04"
+}

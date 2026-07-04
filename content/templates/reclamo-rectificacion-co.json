@@ -1,0 +1,19 @@
+{
+  "baseLocale": "es",
+  "key": "reclamo-rectificacion-co",
+  "formats": [
+    "text",
+    "mailto",
+    "letter"
+  ],
+  "subject": "Reclamo de rectificación y actualización de datos personales — {{brokerName}}",
+  "body": "Señores {{brokerName}}:\n\nEn ejercicio del derecho de habeas data reconocido por el artículo 15 de la Constitución Política y regulado por la Ley 1581 de 2012 (artículos 8, 14 y 15), el Decreto 1377 de 2013 y — para información financiera y crediticia — la Ley 1266 de 2008, presento RECLAMO para que rectifiquen y actualicen la información personal que tienen sobre mí, de modo que refleje mi nombre legal actual.\n\nNombre legal actual: {{name}}\nSus registros pueden figurar a nombre de: {{aliases}}\nUbicación: {{location}}\nCorreo de notificación: {{email}}\n\nAdjuntaré copia de mi documento de identidad vigente como soporte. Les recuerdo que deben atender este reclamo en un término máximo de quince (15) días hábiles. Solicito confirmación escrita de la corrección y que toda comunicación futura use únicamente mi nombre legal actual.\n\nDe no recibir respuesta satisfactoria, acudiré en queja ante la Superintendencia de Industria y Comercio.\n\nAtentamente,\n{{name}}",
+  "placeholders": [
+    "name",
+    "aliases",
+    "location",
+    "email",
+    "brokerName"
+  ],
+  "disclaimer": "Información general, no asesoría legal. La rectificación actualiza el registro a tu nombre legal actual; no borra la historia (p. ej. crediticia) que la entidad tiene el deber de conservar. Adjunta tú misma/o el número y copia de tu documento al enviar — Errata no lo pide ni lo guarda."
+}

@@ -8,6 +8,134 @@ import { Broker, DeadnameRecord, DiscoveryStep, Law, OptOutTemplate, Platform, Q
 // is the real schema gate; data-integrity unit tests assert the safety invariants.
 export const BROKERS = [
   {
+    "baseLocale": "es",
+    "slug": "datacredito",
+    "jurisdiction": {
+      "country": "co"
+    },
+    "name": "DataCrédito (Experian Colombia)",
+    "category": "credit-bureau",
+    "exposesDeadnameRisk": "medium",
+    "searchUrl": "https://www.midatacredito.com/",
+    "optOut": {
+      "methods": [
+        "web-form",
+        "email",
+        "mail"
+      ],
+      "webFormUrl": "https://www.datacredito.com.co/habeas-data",
+      "email": "serviciociudadano@experian.com",
+      "mailingAddress": "Carrera 7 No. 76-35, piso 10, Bogotá",
+      "requiresId": true,
+      "optOutExposesLinkage": false,
+      "steps": [
+        "This is a RECTIFICATION, not an erasure: your credit history is not deleted when you change your name, but you have the right to have it carry your current legal name (Ley 1266 de 2008 and Ley 1581 de 2012).",
+        "First update your cédula with the Registraduría — the bureau verifies against the document.",
+        "Go to datacredito.com.co → “Habeas Data” → “Módulo de Reclamos” (free) and file a name update/rectification claim, attaching your current cédula.",
+        "You can also file it in writing (signature authenticated before a notary + a copy of your cédula) to the Bogotá address, or to the citizen-service email.",
+        "They must respond within 15 business days; while it is processed, the claim shows as pending on your history.",
+        "If they do not respond, or the response does not fix the name, file a complaint with the SIC (sic.gov.co) — it only proceeds after the direct claim is exhausted."
+      ],
+      "templateKey": "reclamo-rectificacion-co"
+    },
+    "notes": "The bureau keys records on the document number, so the link between your names already exists in its database — rectifying discloses nothing new. When you send, include your cédula number yourself: Errata never asks for or stores it.",
+    "lastVerified": "2026-07-04",
+    "attribution": "Independently authored from the service's own removal/claims flow (not BADBOL-derived)."
+  },
+  {
+    "baseLocale": "es",
+    "slug": "getcontact",
+    "jurisdiction": {
+      "country": "co"
+    },
+    "name": "Getcontact",
+    "category": "other",
+    "exposesDeadnameRisk": "high",
+    "optOut": {
+      "methods": [
+        "web-form"
+      ],
+      "webFormUrl": "https://getcontact.com/manage",
+      "email": null,
+      "mailingAddress": null,
+      "requiresId": false,
+      "optOutExposesLinkage": false,
+      "steps": [
+        "Open getcontact.com/manage in your browser.",
+        "Enter your number with the country code (+57) and continue.",
+        "Verify the number by scanning the QR code with WhatsApp on your phone.",
+        "Under “Visibility Settings”, turn “Search Visibility” off and confirm.",
+        "Also review the “tags”: they are the names other people saved you under — that is where a former name usually lives. You can request tag removal from the same panel."
+      ]
+    },
+    "notes": "Getcontact shows the “tags” other users have you saved under in their address books — a direct former-name leak if old contacts never updated you. Management is done with the WhatsApp-verified number, without disclosing your name history. Foreign company: the practical lever is its own panel; an SIC complaint applies to the extent it processes data in Colombia.",
+    "lastVerified": "2026-07-04",
+    "attribution": "Independently authored from the service's own removal/claims flow (not BADBOL-derived)."
+  },
+  {
+    "baseLocale": "es",
+    "slug": "transunion-co",
+    "jurisdiction": {
+      "country": "co"
+    },
+    "name": "TransUnion Colombia (antes CIFIN)",
+    "category": "credit-bureau",
+    "exposesDeadnameRisk": "medium",
+    "optOut": {
+      "methods": [
+        "web-form",
+        "email"
+      ],
+      "webFormUrl": "https://www.transunion.co/producto/solicitudes-quejas-y-reclamos-persona-natural",
+      "email": "solioficial@transunion.com",
+      "mailingAddress": null,
+      "requiresId": true,
+      "optOutExposesLinkage": false,
+      "steps": [
+        "This is a RECTIFICATION, not an erasure: your credit history is not deleted when you change your name, but you have the right to have it carry your current legal name (Ley 1266 de 2008 and Ley 1581 de 2012).",
+        "First update your cédula with the Registraduría — the bureau verifies against the document.",
+        "File the name-update request (SQR) through transunion.co's individual channel, describing the facts and attaching a copy of your current cédula.",
+        "Some requests require notarial authentication of your signature — the channel will tell you.",
+        "They must respond within 15 business days.",
+        "If they do not respond, or the response does not fix the name, file a complaint with the SIC (sic.gov.co) — it only proceeds after the direct claim is exhausted."
+      ],
+      "templateKey": "reclamo-rectificacion-co"
+    },
+    "notes": "The bureau keys records on the document number, so rectifying the name discloses no new link. When you send, include your cédula number yourself: Errata never asks for or stores it.",
+    "lastVerified": "2026-07-04",
+    "attribution": "Independently authored from the service's own removal/claims flow (not BADBOL-derived)."
+  },
+  {
+    "baseLocale": "es",
+    "slug": "truecaller",
+    "jurisdiction": {
+      "country": "co"
+    },
+    "name": "Truecaller",
+    "category": "other",
+    "exposesDeadnameRisk": "high",
+    "optOut": {
+      "methods": [
+        "web-form"
+      ],
+      "webFormUrl": "https://www.truecaller.com/unlisting",
+      "email": null,
+      "mailingAddress": null,
+      "requiresId": false,
+      "optOutExposesLinkage": false,
+      "steps": [
+        "If you use the Truecaller app, deactivate your account in the app first (Settings → Privacy → Deactivate account) — unlisting doesn't work while the account is active.",
+        "Open truecaller.com/unlisting in your browser.",
+        "Enter your full number with the country code (+57 for Colombia) and confirm the unlisting.",
+        "Unlisting takes up to 24 hours to apply across the global database.",
+        "Afterwards, check from a trusted person's phone that your number no longer shows a name."
+      ]
+    },
+    "notes": "Truecaller builds its directory from other users' address books: your number can surface under whatever name someone saved you as years ago — often the former name. Unlisting is done with the number alone, so it doesn't disclose your name history. It is a Swedish company: the practical lever is its own unlisting flow; an SIC complaint applies to the extent it processes data in Colombia.",
+    "lastVerified": "2026-07-04",
+    "attribution": "Independently authored from the service's own removal/claims flow (not BADBOL-derived)."
+  },
+  {
     "slug": "addresses",
     "jurisdiction": {
       "country": "us"
@@ -534,6 +662,32 @@ export const BROKERS = [
 ] as unknown as Broker[];
 
 export const LAWS = [
+  {
+    "baseLocale": "es",
+    "jurisdiction": {
+      "country": "co"
+    },
+    "appliesNationally": true,
+    "key": "co-habeas-data",
+    "title": "Colombia: habeas data — Ley 1581 de 2012 (and Ley 1266 de 2008 for financial data)",
+    "summary": "In Colombia, habeas data is a constitutional right (art. 15). Ley 1581 de 2012 and Decreto 1377 de 2013 give you the right to know, update, rectify, and delete (suprimir) your personal data with any controller that processes it. The path has two steps: first a direct claim (reclamo) to the controller, which must be resolved within 15 business days (extendable by 8 more if they notify you); if they don't respond or the response doesn't satisfy you, a complaint (queja) to the Superintendencia de Industria y Comercio (SIC). Deletion doesn't apply where a legal or contractual duty to keep the data exists — for example credit history, which is governed by Ley 1266 de 2008 and gets corrected (rectified), not erased.",
+    "authorizedAgent": true,
+    "specialMechanisms": [
+      {
+        "key": "co-reclamo",
+        "title": "Direct claim (reclamo) to the data controller",
+        "summary": "Any entity processing your data in Colombia must receive your deletion or rectification claim, mark it \"claim in process\" within 2 business days, and resolve it within 15 business days. Errata prepares the letter above — you send it."
+      },
+      {
+        "key": "co-sic-queja",
+        "title": "Complaint (queja) to the SIC (Superintendencia de Industria y Comercio)",
+        "summary": "The SIC is the data-protection authority: it can order deletion or correction and impose sanctions. The complaint only proceeds after the direct claim to the controller is exhausted — keep your claim and the response (or the silence) as evidence.",
+        "url": "https://www.sic.gov.co/tema/proteccion-de-datos-personales"
+      }
+    ],
+    "disclaimer": "General information, not legal advice, and not yet independently reviewed. The authority is the SIC, not Errata — verify the current process at sic.gov.co before relying on this.",
+    "lastVerified": "2026-07-04"
+  },
   {
     "jurisdiction": {
       "country": "us",
@@ -1379,6 +1533,63 @@ export const PLATFORMS = [
 
 export const RECORDS = [
   {
+    "baseLocale": "es",
+    "slug": "cedula-update-co",
+    "jurisdiction": {
+      "country": "co"
+    },
+    "class": "other",
+    "exposesDeadnameRisk": "high",
+    "permanence": "medium",
+    "whatItIs": "After the name change or sex-component correction, the cédula is reissued by the Registraduría with your current data — the cédula number doesn't change. That same number is the key under which banks, credit bureaus, EPS, and employers stored your former name: every database that copied your data before the change keeps it until you update them one by one.",
+    "actions": [
+      "Request the cédula reissue at the Registraduría (registraduria.gov.co) with the already-corrected civil registry.",
+      "List where your document number lives: bank, credit bureaus (DataCrédito, TransUnion), EPS and health, RUT/DIAN, employer, university and diplomas, phone carrier.",
+      "Update each one with your reissued cédula — for the credit bureaus use the rectification claims prepared above; for the rest the standard data-update procedure with a copy of the document is usually enough."
+    ],
+    "sealedPetitionAvailable": false,
+    "disclaimer": "Informational only — not legal advice. Registraduría and per-entity procedures change; verify the current process before acting.",
+    "lastVerified": "2026-07-04"
+  },
+  {
+    "baseLocale": "es",
+    "slug": "gender-marker-co",
+    "jurisdiction": {
+      "country": "co"
+    },
+    "class": "other",
+    "exposesDeadnameRisk": "medium",
+    "permanence": "high",
+    "whatItIs": "The sex component of the civil registry can be corrected through a notary thanks to Decreto 1227 de 2015: an adult presents a declaration of intent before a notary and the registry is corrected by public deed, with no trial and no medical evaluations. A further correction only proceeds after ten years, and at most twice. The corrected registry replaces the old one for official procedures — but old copies of the data can persist in third-party databases.",
+    "actions": [
+      "Gather: a plain copy of your birth civil registry, a copy of your cédula, and the sex-component correction declaration (the notary has the form).",
+      "File the request with a notary; the public deed corrects the civil registry, and with it you process the new cédula at the Registraduría.",
+      "Then update the derived databases (EPS, bank, credit bureaus, university, employer) with the rectification claims above."
+    ],
+    "sealedPetitionAvailable": false,
+    "disclaimer": "Informational only — not legal advice, and not yet reviewed by a lawyer. Decreto 1227 de 2015 sets precise requirements and timelines; verify with the notary or a legal-aid organization before acting.",
+    "lastVerified": "2026-07-04"
+  },
+  {
+    "baseLocale": "es",
+    "slug": "name-change-co",
+    "jurisdiction": {
+      "country": "co"
+    },
+    "class": "name-change",
+    "exposesDeadnameRisk": "high",
+    "permanence": "high",
+    "whatItIs": "In Colombia a name change doesn't go through a public court case: it's done by public deed (escritura pública) before a notary (Decreto 999 de 1988) and recorded in the civil registry. That voluntary route is generally available once; the Constitutional Court has protected trans people's ability to change it again when the change reflects their gender identity (ruling T-063 de 2015). Unlike the US there is no newspaper publication — but the former name survives in every database that copied your data before the change.",
+    "actions": [
+      "Take your birth civil registry and cédula to a notary; request the public deed of name change and its recording in the civil registry.",
+      "If you already used the voluntary change and the new change reflects your gender identity, invoke the constitutional case law (T-063 de 2015) — an LGBTQ legal-aid organization can back you up if the notary refuses.",
+      "With the civil registry updated, get your cédula reissued at the Registraduría, then work through the derived databases: credit bureaus, bank, EPS, employer, university (the claims above are for exactly that)."
+    ],
+    "sealedPetitionAvailable": false,
+    "disclaimer": "Informational only — not legal advice, and not yet reviewed by a lawyer. Notarial requirements vary and change; verify with the notary or a legal-aid organization before acting.",
+    "lastVerified": "2026-07-04"
+  },
+  {
     "slug": "search-cache",
     "class": "search-cache",
     "exposesDeadnameRisk": "medium",
@@ -1599,6 +1810,55 @@ export const RECORDS = [
 
 export const DISCOVERY_STEPS = [
   {
+    "baseLocale": "es",
+    "slug": "co-caller-id-apps",
+    "jurisdiction": {
+      "country": "co"
+    },
+    "category": "broker",
+    "title": "Caller-ID apps (Truecaller, Getcontact)",
+    "why": "In Colombia the biggest former-name leak isn't US-style people-search sites: it's caller-ID apps, which show your number under whatever name other people saved you as in their address books — often the name from years ago.",
+    "instructions": [
+      "Ask a trusted person to look your number up in Truecaller and Getcontact from their phone, and note which name appears.",
+      "On Getcontact you can see it yourself: verify your number at getcontact.com/manage and review the “tags” — they are the names others saved you under.",
+      "If your former name appears, add it to your ledger; the unlisting is prepared in the correction phase."
+    ],
+    "deadnameAware": true,
+    "deadnamePrompts": [
+      "Is the name your number shows your former name?",
+      "Do Getcontact's tags include old variants of your name?"
+    ],
+    "refIds": [
+      "truecaller",
+      "getcontact"
+    ],
+    "priority": "high",
+    "lastVerified": "2026-07-04"
+  },
+  {
+    "baseLocale": "es",
+    "slug": "co-public-sources",
+    "jurisdiction": {
+      "country": "co"
+    },
+    "category": "search",
+    "title": "Colombian public sources",
+    "why": "Graduation and admission lists, official gazettes and bulletins, regional press, and sites that republish public records often keep a former name for years — and search engines index them.",
+    "instructions": [
+      "Use the search strings above adding “site:.co”, your university name, or your city.",
+      "Check admission and graduation lists, resolutions and minutes published as PDFs — search inside the document, not just the title.",
+      "Cédula-lookup sites (aggregators republishing public-registry data) rarely offer removal: note them as monitor-only; if they publish a contact, the deletion claim from the correction phase applies, and the SIC complaint if they don't respond.",
+      "Add every finding that shows your former name to your ledger, marking the ones that can only be monitored."
+    ],
+    "deadnameAware": true,
+    "deadnamePrompts": [
+      "Do you appear on your university's graduation or admission list under the former name?",
+      "Does a resolution, minutes document, or gazette PDF mention your former name?"
+    ],
+    "priority": "high",
+    "lastVerified": "2026-07-04"
+  },
+  {
     "slug": "platforms-self-search",
     "category": "platform",
     "title": "Look yourself up on the platforms you've used",
@@ -1773,5 +2033,43 @@ export const OPTOUT_TEMPLATES = [
       "brokerName"
     ],
     "disclaimer": "This is general information, not legal advice. Your exact rights depend on your state — verify the broker's current process before you send, and never include more identifying information than is strictly required."
+  },
+  {
+    "baseLocale": "es",
+    "key": "reclamo-rectificacion-co",
+    "formats": [
+      "text",
+      "mailto",
+      "letter"
+    ],
+    "subject": "Reclamo de rectificación y actualización de datos personales — {{brokerName}}",
+    "body": "Señores {{brokerName}}:\n\nEn ejercicio del derecho de habeas data reconocido por el artículo 15 de la Constitución Política y regulado por la Ley 1581 de 2012 (artículos 8, 14 y 15), el Decreto 1377 de 2013 y — para información financiera y crediticia — la Ley 1266 de 2008, presento RECLAMO para que rectifiquen y actualicen la información personal que tienen sobre mí, de modo que refleje mi nombre legal actual.\n\nNombre legal actual: {{name}}\nSus registros pueden figurar a nombre de: {{aliases}}\nUbicación: {{location}}\nCorreo de notificación: {{email}}\n\nAdjuntaré copia de mi documento de identidad vigente como soporte. Les recuerdo que deben atender este reclamo en un término máximo de quince (15) días hábiles. Solicito confirmación escrita de la corrección y que toda comunicación futura use únicamente mi nombre legal actual.\n\nDe no recibir respuesta satisfactoria, acudiré en queja ante la Superintendencia de Industria y Comercio.\n\nAtentamente,\n{{name}}",
+    "placeholders": [
+      "name",
+      "aliases",
+      "location",
+      "email",
+      "brokerName"
+    ],
+    "disclaimer": "General information, not legal advice. Rectification updates the record to your current legal name; it doesn't erase history (e.g. credit history) the entity has a duty to keep. Attach your document number and copy yourself when you send — Errata never asks for or stores it. The letter is in Spanish on purpose: the receiving Colombian entity processes claims in Spanish."
+  },
+  {
+    "baseLocale": "es",
+    "key": "reclamo-supresion-co",
+    "formats": [
+      "text",
+      "mailto",
+      "letter"
+    ],
+    "subject": "Reclamo de supresión de datos personales — {{brokerName}} (Ley 1581 de 2012)",
+    "body": "Señores {{brokerName}}:\n\nEn ejercicio del derecho de habeas data reconocido por el artículo 15 de la Constitución Política y regulado por la Ley 1581 de 2012 (artículos 8, 15 y 16) y el Decreto 1377 de 2013, presento RECLAMO para que supriman de sus bases de datos toda la información personal que tengan sobre mí, y para que cesen su tratamiento, circulación y venta.\n\nNombre: {{name}}\nTambién puedo figurar como: {{aliases}}\nUbicación: {{location}}\nCorreo de notificación: {{email}}\n\nLes recuerdo que, conforme al artículo 15 de la Ley 1581 de 2012, deben atender este reclamo en un término máximo de quince (15) días hábiles. Solicito confirmación escrita de la supresión, que no vuelvan a incorporar esta información, y que no me exijan más identificación de la estrictamente necesaria para tramitar este reclamo.\n\nDe no recibir respuesta satisfactoria, acudiré en queja ante la Superintendencia de Industria y Comercio.\n\nAtentamente,\n{{name}}",
+    "placeholders": [
+      "name",
+      "aliases",
+      "location",
+      "email",
+      "brokerName"
+    ],
+    "disclaimer": "General information, not legal advice. Deletion doesn't apply where a legal or contractual duty to keep the data exists. Verify the controller's current channel before sending, and never include more identifying information than strictly necessary. The letter is in Spanish on purpose: the receiving Colombian entity processes claims in Spanish."
   }
 ] as unknown as OptOutTemplate[];

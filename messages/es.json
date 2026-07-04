@@ -69,10 +69,10 @@
     "jumpRecordsLead": "¿Tu nombre anterior aparece en registros judiciales o archivos?",
     "jumpRecords": "Atender registros públicos y cambio de nombre →",
     "jumpSettings": "Configuración — almacenamiento y respaldo cifrado →",
-    "dropKicker": "LA RUTA PRINCIPAL · RESIDENTES DE CALIFORNIA",
+    "dropKicker": "LAS RUTAS PRINCIPALES · UNA SOLICITUD LLEGA LEJOS",
     "dropHead": "Presenta una corrección para todos.",
-    "dropBody": "La Delete Act te permite ordenar que todos los data brokers registrados eliminen tu registro con una sola solicitud. Errata te guía en unos quince minutos.",
-    "dropCta": "Iniciar la solicitud DROP →",
+    "dropBody": "En California, DROP de la Delete Act ordena a todos los data brokers registrados eliminar tu registro con una sola solicitud. En Colombia, el habeas data (Ley 1581) obliga a cualquier responsable a atender tu reclamo de supresión en 15 días hábiles. Errata prepara ambas — tú presionas enviar.",
+    "dropCta": "Inicia tu solicitud →",
     "footnote1": "Cada búsqueda y borrador se prepara en esta pestaña; Errata no tiene servidor al que enviarlos.",
     "footnote2": "«Despejar el escritorio» borra los datos locales al instante. Siempre está a un clic, en cada pantalla."
   },
@@ -110,7 +110,8 @@
     "title": "Registros públicos y cambio de nombre",
     "intro": "Estas son las fuentes más difíciles y permanentes del nombre anterior: la orden judicial indexada, la publicación de la petición de cambio de nombre, y los archivos y cachés que mantienen vivas las copias viejas. Algunas se pueden sellar o eliminar; otras solo se pueden vigilar. Errata es honesta sobre cuáles.",
     "banner": "Solo informativo — no es asesoría legal y aún no ha sido revisado por un abogado. Las reglas de cambio de nombre y sellado de registros varían según el estado y el condado y cambian a menudo; verifica con tu tribunal o una organización de ayuda legal antes de actuar.",
-    "stateNote": "Elige tu estado para ver la guía específica sobre registros judiciales. Las eliminaciones de archivos y cachés funcionan sin importar dónde vivas."
+    "stateNote": "Elige tu estado para ver la guía específica sobre registros judiciales. Las eliminaciones de archivos y cachés funcionan sin importar dónde vivas.",
+    "coNote": "La guía para Colombia es nacional — el cambio de nombre y la corrección del componente sexo se hacen ante notaría, no en un juicio público. Las eliminaciones de archivos y cachés funcionan sin importar dónde vivas."
   },
   "playbook": {
     "title": "Tu guía para eliminar el nombre anterior",
@@ -354,10 +355,9 @@
   },
   "rights": {
     "title": "Tus derechos donde vives",
-    "yourState": "Tu estado",
-    "selectState": "Elige tu estado…",
-    "banner": "Solo informativo — no es asesoría legal y aún no ha sido revisado por un abogado. Los derechos de eliminación varían según el estado y cambian a menudo; verifica los tuyos antes de confiar en cualquier redacción de aquí.",
+    "banner": "Solo informativo — no es asesoría legal y aún no ha sido revisado por un abogado. Los derechos de eliminación varían según el lugar y cambian a menudo; verifica los tuyos antes de confiar en cualquier redacción de aquí.",
     "showingFor": "Mostrando derechos de eliminación para {state}.",
+    "showingCo": "Mostrando derechos para Colombia (nacional).",
     "noneSelected": "Ningún estado seleccionado; se muestra solo la base nacional.",
     "pickPrompt": "Elige tu estado para ver los derechos de eliminación que puedes usar. No es obligatorio — las exclusiones de brokers de abajo funcionan igual — pero en algunos estados la ley te da herramientas mucho más fuertes.",
     "noGuidance": "Todavía no tenemos guía verificada de derechos de eliminación para {state}. Tu estado puede otorgar derechos que aún no hemos redactado — y las exclusiones de brokers de abajo funcionan sin importar dónde vivas.",
@@ -365,10 +365,14 @@
     "availability": "Disponibilidad:",
     "openOfficial": "Abrir el sitio oficial ↗"
   },
-  "stateSelect": {
+  "jurisdiction": {
+    "country": "País",
+    "countryUs": "Estados Unidos",
+    "countryCo": "Colombia",
     "yourState": "Tu estado",
     "selectState": "Elige tu estado…",
-    "showingFor": "Mostrando guía para {state}.",
+    "showingState": "Mostrando guía para {state}.",
+    "showingCo": "Mostrando guía para Colombia (nacional).",
     "noneSelected": "Ningún estado seleccionado; se muestra solo la guía nacional y global."
   },
   "recordGuide": {

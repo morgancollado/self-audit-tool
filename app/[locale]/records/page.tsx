@@ -13,7 +13,7 @@ import { useStorage } from '@/lib/storage/StorageProvider';
 import { getRecords } from '@/lib/content/data';
 import { SafetyIntro } from '@/components/SafetyIntro';
 import { StorageModeToggle } from '@/components/StorageModeToggle';
-import { StateSelect } from '@/components/StateSelect';
+import { JurisdictionSelect } from '@/components/JurisdictionSelect';
 import { RecordGuide } from '@/components/RecordGuide';
 import { RemediationTracker } from '@/components/RemediationTracker';
 
@@ -55,7 +55,9 @@ export default function RecordsPage() {
         {t('banner')}
       </p>
 
-      <StateSelect note={t('stateNote')} />
+      <JurisdictionSelect
+        note={jurisdiction.country === 'us' ? t('stateNote') : t('coNote')}
+      />
 
       <div className="record-list">
         {records.map((r) => (

@@ -20,8 +20,11 @@ const SOURCE_BY_CATEGORY: Record<DiscoveryCategory, FindingSource> = {
 
 export function DiscoveryChecklist({ vars }: { vars: QueryVars }) {
   const locale = useLocale();
-  const { state, setStepDone } = useStorage();
-  const steps = getDiscoverySteps('us', locale);
+  const { state, setStepDone, preferences } = useStorage();
+  // Discovery is jurisdiction-scoped like everything else: global steps plus
+  // this country's — never another country's.
+  const country = preferences.jurisdiction?.country ?? 'us';
+  const steps = getDiscoverySteps(country, locale);
   const completed = new Set(state?.progress.discoverCompletedSteps ?? []);
 
   return (

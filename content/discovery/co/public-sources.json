@@ -1,0 +1,23 @@
+{
+  "baseLocale": "es",
+  "slug": "co-public-sources",
+  "jurisdiction": {
+    "country": "co"
+  },
+  "category": "search",
+  "title": "Fuentes públicas colombianas",
+  "why": "Listas de grado y admitidos, actas, gacetas y boletines oficiales, prensa regional y sitios que republican registros públicos suelen conservar un nombre anterior por años — y los buscadores los indexan.",
+  "instructions": [
+    "Usa las cadenas de búsqueda de arriba añadiendo «site:.co», el nombre de tu universidad o tu ciudad.",
+    "Revisa listas de admitidos y graduados, actas y resoluciones publicadas en PDF — busca dentro del documento, no solo el título.",
+    "Los sitios de consulta de cédula (agregadores que republican datos de registros públicos) rara vez ofrecen eliminación: anótalos como vigilancia; si publican un contacto, el reclamo de supresión de la fase de corrección aplica, y la queja ante la SIC si no responden.",
+    "Añade a tu registro cada hallazgo que muestre tu nombre anterior, marcando los que solo se pueden vigilar."
+  ],
+  "deadnameAware": true,
+  "deadnamePrompts": [
+    "¿Apareces en la lista de grado o de admitidos de tu universidad con el nombre anterior?",
+    "¿Una resolución, acta o gaceta en PDF menciona tu nombre anterior?"
+  ],
+  "priority": "high",
+  "lastVerified": "2026-07-04"
+}

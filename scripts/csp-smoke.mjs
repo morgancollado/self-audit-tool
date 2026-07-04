@@ -469,6 +469,36 @@ try {
   await axeFailures(setpage, '/settings');
   await setctx.close();
 
+  // ---- Colombia jurisdiction: no cross-country leakage, CO set renders (M3) ----
+  const coctx = await browser.newContext();
+  const copage = await coctx.newPage();
+  await copage.goto(base + 'en/remediate', { waitUntil: 'networkidle' });
+  await copage.getByText('Before you start').waitFor({ timeout: 8000 });
+  await copage.getByRole('button', { name: /session-only/i }).click();
+  await copage.getByLabel('Country').waitFor({ timeout: 8000 });
+  await copage.getByLabel('Country').selectOption('co');
+  await copage.waitForTimeout(400);
+  const coRights = await copage.locator('section.rights').innerText();
+  const coBrokers = await copage.locator('section.optout h3').allInnerTexts();
+  console.log(`[csp-smoke] CO jurisdiction: rights show habeas data=${coRights.includes('habeas data')}, brokers=${JSON.stringify(coBrokers)}`);
+  if (!coRights.includes('habeas data')) fail('a Colombia user did not get the habeas-data rights card.');
+  if (coRights.toUpperCase().includes('CCPA') || coRights.includes('DROP')) {
+    fail('a Colombia user was shown US-law framing (cross-country leakage).');
+  }
+  if (!coBrokers.some((h) => h.includes('Truecaller'))) fail('the Colombian broker set did not render Truecaller.');
+  if (coBrokers.some((h) => h.includes('Spokeo'))) fail('a US broker (Spokeo) leaked into the Colombian view.');
+  // The state selector must be gone in CO mode (no region axis there).
+  const coStateSelects = await copage.getByLabel('Your state').count();
+  if (coStateSelects > 0) fail('the US state selector is still shown to a Colombia user.');
+  // The credit-bureau card prepares the Spanish rectification letter (recipient language).
+  const dcCard = copage.locator('section.optout', { hasText: 'DataCrédito' }).first();
+  const dcBody = await dcCard.locator('pre.optout-body').innerText().catch(() => '');
+  if (!dcBody.includes('Ley 1581 de 2012')) {
+    fail('the DataCrédito card did not prepare the Spanish habeas-data letter.');
+  }
+  await axeFailures(copage, '/en/remediate (Colombia)');
+  await coctx.close();
+
   // ---- /es: the Spanish locale renders, hydrates, and is axe-clean (i18n) ----
   const esctx = await browser.newContext();
   const espage = await esctx.newPage();

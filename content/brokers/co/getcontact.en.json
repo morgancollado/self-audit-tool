@@ -1,0 +1,12 @@
+{
+  "optOut": {
+    "steps": [
+      "Open getcontact.com/manage in your browser.",
+      "Enter your number with the country code (+57) and continue.",
+      "Verify the number by scanning the QR code with WhatsApp on your phone.",
+      "Under “Visibility Settings”, turn “Search Visibility” off and confirm.",
+      "Also review the “tags”: they are the names other people saved you under — that is where a former name usually lives. You can request tag removal from the same panel."
+    ]
+  },
+  "notes": "Getcontact shows the “tags” other users have you saved under in their address books — a direct former-name leak if old contacts never updated you. Management is done with the WhatsApp-verified number, without disclosing your name history. Foreign company: the practical lever is its own panel; an SIC complaint applies to the extent it processes data in Colombia."
+}
