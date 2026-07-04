@@ -1,0 +1,30 @@
+{
+  "baseLocale": "es",
+  "slug": "truecaller",
+  "jurisdiction": {
+    "country": "co"
+  },
+  "name": "Truecaller",
+  "category": "other",
+  "exposesDeadnameRisk": "high",
+  "optOut": {
+    "methods": [
+      "web-form"
+    ],
+    "webFormUrl": "https://www.truecaller.com/unlisting",
+    "email": null,
+    "mailingAddress": null,
+    "requiresId": false,
+    "optOutExposesLinkage": false,
+    "steps": [
+      "Si usas la app de Truecaller, primero desactiva tu cuenta desde la app (Configuración → Privacidad → Desactivar cuenta) — la baja no funciona mientras la cuenta esté activa.",
+      "Abre truecaller.com/unlisting en el navegador.",
+      "Escribe tu número completo con el código de país (+57 para Colombia) y confirma la baja.",
+      "La baja tarda hasta 24 horas en aplicarse en la base de datos global.",
+      "Después, comprueba desde el teléfono de una persona de confianza que tu número ya no muestra ningún nombre."
+    ]
+  },
+  "notes": "Truecaller arma su directorio con las agendas de contactos de otros usuarios: tu número puede aparecer con el nombre con que alguien te guardó hace años — a menudo el nombre anterior. La baja se hace solo con el número, así que no revela tu historial de nombres. Es una empresa sueca: la palanca práctica es su propia baja; la queja ante la SIC aplica en la medida en que trate datos en Colombia.",
+  "lastVerified": "2026-07-04",
+  "attribution": "Independently authored from the service's own removal/claims flow (not BADBOL-derived)."
+}

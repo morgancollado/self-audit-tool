@@ -10,7 +10,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { BROKERS } from './brokers.ts';
+import { BROKERS } from './generated/en.ts';
 
 const CATEGORIES = new Set([
   'people-search',

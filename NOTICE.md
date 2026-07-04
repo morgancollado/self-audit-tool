@@ -35,6 +35,11 @@ Other content (`content/law/`, `content/platforms/`, `content/records/`, etc.)
 is original work contributed under CC BY-NC-SA 4.0 unless a file's `attribution`
 states otherwise.
 
+**Translations:** the `*.<locale>.json` overlay files (e.g. `spokeo.es.json`)
+are translations of their sibling base files and carry the base file's license —
+overlays under `content/brokers/**` are CC BY-NC-SA 4.0 derivatives of the same
+upstream, and overlays elsewhere are original work under CC BY-NC-SA 4.0.
+
 ## Fonts — SIL Open Font License 1.1
 
 The web fonts under **`public/fonts/`** are self-hosted (no font CDN, per the

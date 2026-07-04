@@ -1,0 +1,14 @@
+{
+  "title": "Colombian public sources",
+  "why": "Graduation and admission lists, official gazettes and bulletins, regional press, and sites that republish public records often keep a former name for years — and search engines index them.",
+  "instructions": [
+    "Use the search strings above adding “site:.co”, your university name, or your city.",
+    "Check admission and graduation lists, resolutions and minutes published as PDFs — search inside the document, not just the title.",
+    "Cédula-lookup sites (aggregators republishing public-registry data) rarely offer removal: note them as monitor-only; if they publish a contact, the deletion claim from the correction phase applies, and the SIC complaint if they don't respond.",
+    "Add every finding that shows your former name to your ledger, marking the ones that can only be monitored."
+  ],
+  "deadnamePrompts": [
+    "Do you appear on your university's graduation or admission list under the former name?",
+    "Does a resolution, minutes document, or gazette PDF mention your former name?"
+  ]
+}

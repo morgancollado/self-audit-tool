@@ -1,0 +1,13 @@
+{
+  "optOut": {
+    "steps": [
+      "Encuentra tu listado con la URL de búsqueda.",
+      "Copia la URL del perfil.",
+      "Envíala en la página de exclusión junto con tu correo.",
+      "Confirma con el correo de verificación.",
+      "Si el formulario falla o no puedes confirmar un listado, envía la solicitud preparada a privacy@spokeo.com."
+    ],
+    "leaveItGuidance": "Listado de poco alcance. Si el vínculo entre tu nombre actual y tu nombre anterior no está ya aquí, enviarlo le revela la conexión a Spokeo. Considera dejarlo y vigilarlo."
+  },
+  "notes": "Vuelve a verificar en ~6 meses; los brokers suelen volver a listar."
+}

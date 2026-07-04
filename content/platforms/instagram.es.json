@@ -1,0 +1,20 @@
+{
+  "deadnameRemoval": {
+    "tool": "Cambio de nombre de perfil y usuario; quitar etiquetas",
+    "steps": [
+      "Editar perfil → cambia el Nombre y el Nombre de usuario a tu nombre actual (el nombre de usuario puede cambiarse cada 14 días).",
+      "Perfil → Etiquetas: quítate de las publicaciones que muestran tu nombre anterior.",
+      "Para publicaciones de otras personas que te nombran, escribe a quien publicó para pedir una edición, o reporta el contenido que te señala.",
+      "Si tu Facebook está vinculado, repite en Facebook: Configuración → Nombre."
+    ],
+    "limits": "Controlas tu propio perfil y tus etiquetas, no los pies de foto de otras personas. Un nombre de usuario viejo puede seguir apareciendo en capturas ajenas o páginas en caché.",
+    "escalation": "Reporta el acoso o la suplantación a través del flujo de denuncias de Meta si alguien insiste en usar tu nombre anterior."
+  },
+  "hardening": {
+    "steps": [
+      "Configuración → Privacidad: pon la cuenta en privado si quieres limitar quién ve tus publicaciones.",
+      "Revisa la actividad de inicio de sesión y elimina dispositivos y sesiones antiguos.",
+      "Busca tu nombre anterior y tus alias viejos para encontrar contenido vinculado o etiquetado que olvidaste."
+    ]
+  }
+}

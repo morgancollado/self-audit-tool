@@ -66,8 +66,13 @@ const server = http.createServer((req, res) => {
   let p = decodeURIComponent(req.url.split('?')[0]);
   if (p === '/') p = '/index.html';
   let fp = join(OUT, p);
-  if (existsSync(fp) && statSync(fp).isDirectory()) fp = join(fp, 'index.html');
-  // Clean-URL fallback (/discover -> discover.html), as static hosts serve.
+  if (existsSync(fp) && statSync(fp).isDirectory()) {
+    // A locale root like /en is BOTH a directory (out/en/...) and a page
+    // (out/en.html) — prefer the directory index, fall back to the sibling file.
+    const idx = join(fp, 'index.html');
+    fp = existsSync(idx) ? idx : fp + '.html';
+  }
+  // Clean-URL fallback (/en/discover -> en/discover.html), as static hosts serve.
   if (!existsSync(fp) && existsSync(fp + '.html')) fp = fp + '.html';
   if (!existsSync(fp)) { res.statusCode = 404; res.end('not found'); return; }
   res.setHeader('Content-Type', TYPES[extname(fp)] || 'application/octet-stream');
@@ -96,7 +101,15 @@ try {
     });
   });
 
+  // '/' is the client-side language chooser (no middleware in the static
+  // export); with no stored preference and an English browser it must forward
+  // to /en. This exercises the chooser's own script under the CSP.
   await page.goto(base, { waitUntil: 'networkidle' });
+  try {
+    await page.waitForURL('**/en', { timeout: 8000 });
+  } catch {
+    fail("the '/' language chooser did not forward to /en under the CSP.");
+  }
   // Hydration: the SSR shell renders "Loading…"; it only becomes real content
   // once the client scripts run. Give it a bounded window to get there.
   let hydrated = true;
@@ -141,6 +154,16 @@ try {
   // route instead of leaving the front door unchecked.
   await axeFailures(page, '/ (landing)');
 
+  // Legacy pre-i18n URLs: /discover (bookmarked before routes moved under
+  // /en|/es) must forward to the locale route, not 404 on a returning user.
+  await page.goto(base + 'discover', { waitUntil: 'networkidle' });
+  try {
+    await page.waitForURL('**/en/discover', { timeout: 8000 });
+    console.log('[csp-smoke] legacy /discover forwarded to /en/discover.');
+  } catch {
+    fail('the legacy /discover route did not forward to /en/discover under the CSP.');
+  }
+
   // ---- /discover: safety gate + deadname-query routing (M1 hardening) ----
   const dctx = await browser.newContext();
   const dpage = await dctx.newPage();
@@ -149,7 +172,7 @@ try {
     document.addEventListener('securitypolicyviolation', (e) =>
       window.__csp.push(`${e.effectiveDirective || e.violatedDirective} ${e.blockedURI || 'inline'}`));
   });
-  await dpage.goto(base + 'discover', { waitUntil: 'networkidle' });
+  await dpage.goto(base + 'en/discover', { waitUntil: 'networkidle' });
 
   // A fresh visitor deep-linking to /discover must hit the safety intro, NOT the
   // deadname inputs.
@@ -188,7 +211,7 @@ try {
     document.addEventListener('securitypolicyviolation', (e) =>
       window.__csp.push(`${e.effectiveDirective || e.violatedDirective} ${e.blockedURI || 'inline'}`));
   });
-  await rpage.goto(base + 'remediate', { waitUntil: 'networkidle' });
+  await rpage.goto(base + 'en/remediate', { waitUntil: 'networkidle' });
 
   // Same deep-link rule as /discover: a fresh visitor meets the safety intro, not
   // the former-name input.
@@ -330,7 +353,7 @@ try {
     document.addEventListener('securitypolicyviolation', (e) =>
       window.__csp.push(`${e.effectiveDirective || e.violatedDirective} ${e.blockedURI || 'inline'}`));
   });
-  await hpage.goto(base + 'harden', { waitUntil: 'networkidle' });
+  await hpage.goto(base + 'en/harden', { waitUntil: 'networkidle' });
 
   let hIntroGate = false;
   try {
@@ -361,7 +384,7 @@ try {
     document.addEventListener('securitypolicyviolation', (e) =>
       window.__csp.push(`${e.effectiveDirective || e.violatedDirective} ${e.blockedURI || 'inline'}`));
   });
-  await recpage.goto(base + 'records', { waitUntil: 'networkidle' });
+  await recpage.goto(base + 'en/records', { waitUntil: 'networkidle' });
 
   let recIntroGate = false;
   try {
@@ -403,7 +426,7 @@ try {
     document.addEventListener('securitypolicyviolation', (e) =>
       window.__csp.push(`${e.effectiveDirective || e.violatedDirective} ${e.blockedURI || 'inline'}`));
   });
-  await pbpage.goto(base + 'playbook', { waitUntil: 'networkidle' });
+  await pbpage.goto(base + 'en/playbook', { waitUntil: 'networkidle' });
 
   let pbIntroGate = false;
   try {
@@ -430,7 +453,7 @@ try {
     document.addEventListener('securitypolicyviolation', (e) =>
       window.__csp.push(`${e.effectiveDirective || e.violatedDirective} ${e.blockedURI || 'inline'}`));
   });
-  await setpage.goto(base + 'settings', { waitUntil: 'networkidle' });
+  await setpage.goto(base + 'en/settings', { waitUntil: 'networkidle' });
 
   let setIntroGate = false;
   try {
@@ -455,6 +478,68 @@ try {
   if (!/^errata-backup-.*\.json$/.test(fname)) fail(`unexpected backup filename: ${fname}`);
   await axeFailures(setpage, '/settings');
   await setctx.close();
+
+  // ---- Colombia jurisdiction: no cross-country leakage, CO set renders (M3) ----
+  const coctx = await browser.newContext();
+  const copage = await coctx.newPage();
+  await copage.goto(base + 'en/remediate', { waitUntil: 'networkidle' });
+  await copage.getByText('Before you start').waitFor({ timeout: 8000 });
+  await copage.getByRole('button', { name: /session-only/i }).click();
+  await copage.getByLabel('Country').waitFor({ timeout: 8000 });
+  await copage.getByLabel('Country').selectOption('co');
+  await copage.waitForTimeout(400);
+  const coRights = await copage.locator('section.rights').innerText();
+  const coBrokers = await copage.locator('section.optout h3').allInnerTexts();
+  console.log(`[csp-smoke] CO jurisdiction: rights show habeas data=${coRights.includes('habeas data')}, brokers=${JSON.stringify(coBrokers)}`);
+  if (!coRights.includes('habeas data')) fail('a Colombia user did not get the habeas-data rights card.');
+  if (coRights.toUpperCase().includes('CCPA') || coRights.includes('DROP')) {
+    fail('a Colombia user was shown US-law framing (cross-country leakage).');
+  }
+  if (!coBrokers.some((h) => h.includes('Truecaller'))) fail('the Colombian broker set did not render Truecaller.');
+  // M5 gate (Risk R11): until local expert review happens, selecting Colombia
+  // must surface the explicit unreviewed-region note — this is the condition
+  // the CO dataset ships under.
+  const coNote = await copage.locator('.state-select .optout-disclaimer').innerText().catch(() => '');
+  if (!coNote.includes('not yet had local expert review')) {
+    fail('the Colombia unreviewed-region note (M5 gate) is missing.');
+  }
+  if (coBrokers.some((h) => h.includes('Spokeo'))) fail('a US broker (Spokeo) leaked into the Colombian view.');
+  // The state selector must be gone in CO mode (no region axis there).
+  const coStateSelects = await copage.getByLabel('Your state').count();
+  if (coStateSelects > 0) fail('the US state selector is still shown to a Colombia user.');
+  // The credit-bureau card prepares the Spanish rectification letter (recipient language).
+  const dcCard = copage.locator('section.optout', { hasText: 'DataCrédito' }).first();
+  const dcBody = await dcCard.locator('pre.optout-body').innerText().catch(() => '');
+  if (!dcBody.includes('Ley 1581 de 2012')) {
+    fail('the DataCrédito card did not prepare the Spanish habeas-data letter.');
+  }
+  await axeFailures(copage, '/en/remediate (Colombia)');
+  await coctx.close();
+
+  // ---- /es: the Spanish locale renders, hydrates, and is axe-clean (i18n) ----
+  const esctx = await browser.newContext();
+  const espage = await esctx.newPage();
+  await espage.addInitScript(() => {
+    window.__csp = [];
+    document.addEventListener('securitypolicyviolation', (e) =>
+      window.__csp.push(`${e.effectiveDirective || e.violatedDirective} ${e.blockedURI || 'inline'}`));
+  });
+  await espage.goto(base + 'es', { waitUntil: 'networkidle' });
+  const esLang = await espage.evaluate(() => document.documentElement.lang);
+  let esHydrated = true;
+  try {
+    // A phrase from the Spanish hero support copy — present only after hydration.
+    await espage.getByText('error de publicación', { exact: false }).waitFor({ timeout: 8000 });
+  } catch {
+    esHydrated = false;
+  }
+  const esviol = await espage.evaluate(() => window.__csp || []);
+  console.log(`[csp-smoke] /es: lang=${JSON.stringify(esLang)}, hydrated=${esHydrated}`);
+  if (esviol.length) fail('/es violated its CSP.');
+  if (esLang !== 'es') fail(`/es rendered <html lang="${esLang}">, expected "es".`);
+  if (!esHydrated) fail('/es did not hydrate to the Spanish landing.');
+  await axeFailures(espage, '/es (landing)');
+  await esctx.close();
 
   if (!process.exitCode) {
     console.log('[csp-smoke] OK — static export runs under its CSP, leaves no pre-consent trace,');

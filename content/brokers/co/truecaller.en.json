@@ -1,0 +1,12 @@
+{
+  "optOut": {
+    "steps": [
+      "If you use the Truecaller app, deactivate your account in the app first (Settings → Privacy → Deactivate account) — unlisting doesn't work while the account is active.",
+      "Open truecaller.com/unlisting in your browser.",
+      "Enter your full number with the country code (+57 for Colombia) and confirm the unlisting.",
+      "Unlisting takes up to 24 hours to apply across the global database.",
+      "Afterwards, check from a trusted person's phone that your number no longer shows a name."
+    ]
+  },
+  "notes": "Truecaller builds its directory from other users' address books: your number can surface under whatever name someone saved you as years ago — often the former name. Unlisting is done with the number alone, so it doesn't disclose your name history. It is a Swedish company: the practical lever is its own unlisting flow; an SIC complaint applies to the extent it processes data in Colombia."
+}

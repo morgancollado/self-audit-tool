@@ -3,7 +3,7 @@
 
 import { KeyValueBackend } from './backend';
 
-const PREFIX = 'errata:';
+export const PREFIX = 'errata:';
 
 export function isLocalStorageAvailable(): boolean {
   try {

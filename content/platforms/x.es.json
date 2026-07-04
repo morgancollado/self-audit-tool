@@ -1,0 +1,20 @@
+{
+  "deadnameRemoval": {
+    "tool": "Cambio de nombre visible y de usuario (@)",
+    "steps": [
+      "Configuración → Tu cuenta → Información de la cuenta: cambia tu nombre de usuario (@) y tu nombre visible a tu nombre actual.",
+      "Edita tu biografía y cualquier publicación fijada que mencione tu nombre anterior.",
+      "Borra o archiva las publicaciones viejas que muestran tu nombre anterior (una herramienta de borrado masivo que ejecutes tú misma/o puede ayudar).",
+      "Desactiva cuentas viejas abandonadas que todavía lleven tu nombre anterior."
+    ],
+    "limits": "Cambiar tu @ libera el viejo para que otra persona lo tome, y los enlaces o capturas antiguos pueden seguir mostrándolo.",
+    "escalation": "Reporta el misgendering dirigido o el acoso bajo las políticas de X; los resultados varían."
+  },
+  "hardening": {
+    "steps": [
+      "Configuración → Privacidad y seguridad: protege tus publicaciones si quieres que solo las vean seguidores aprobados.",
+      "Desactiva «permitir que te encuentren por tu correo o número de teléfono».",
+      "Revisa las aplicaciones conectadas y elimina las que no uses."
+    ]
+  }
+}

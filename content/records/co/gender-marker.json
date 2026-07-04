@@ -1,0 +1,19 @@
+{
+  "baseLocale": "es",
+  "slug": "gender-marker-co",
+  "jurisdiction": {
+    "country": "co"
+  },
+  "class": "other",
+  "exposesDeadnameRisk": "medium",
+  "permanence": "high",
+  "whatItIs": "El componente sexo del registro civil se puede corregir por vía notarial gracias al Decreto 1227 de 2015: una persona mayor de edad presenta una declaración de voluntad ante notaría y se corrige el registro por escritura pública, sin juicio ni peritajes médicos. Una nueva corrección solo procede pasados diez años, y máximo dos veces. El registro corregido reemplaza al anterior para trámites — pero las copias viejas del dato pueden persistir en bases de terceros.",
+  "actions": [
+    "Reúne: copia simple del registro civil de nacimiento, copia de la cédula y la declaración de corrección del componente sexo (la notaría tiene el formato).",
+    "Presenta la solicitud ante notaría; la escritura pública corrige el registro civil y con él tramitas la nueva cédula en la Registraduría.",
+    "Después actualiza las bases derivadas (EPS, banco, centrales de riesgo, universidad, empleador) con los reclamos de rectificación de arriba."
+  ],
+  "sealedPetitionAvailable": false,
+  "disclaimer": "Solo informativo — no es asesoría legal y aún no ha sido revisado por un abogado. El Decreto 1227 de 2015 fija requisitos y plazos precisos; verifica con la notaría o una organización de ayuda legal antes de actuar.",
+  "lastVerified": "2026-07-04"
+}

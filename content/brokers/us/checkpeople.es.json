@@ -1,0 +1,12 @@
+{
+  "optOut": {
+    "steps": [
+      "Abre el Centro de Supresión en la URL de exclusión.",
+      "Escribe tu correo electrónico y acepta los términos.",
+      "Haz clic en Continuar.",
+      "Abre el correo de verificación y haz clic en el enlace para confirmar la supresión.",
+      "Si el formulario falla o no puedes confirmar un listado, envía la solicitud preparada a support@checkpeople.com."
+    ]
+  },
+  "notes": "Supresión por correo: solo envías un correo electrónico, así que la exclusión en sí no obliga a revelar tu historial de nombres. Soporte: support@checkpeople.com / 1-800-267-2122. Vuelve a verificar periódicamente; los sitios de búsqueda de personas vuelven a listar."
+}

@@ -5,6 +5,7 @@
   "description": "A guided, resumable step for finding your exposure the way a hostile actor would. Jurisdiction is optional: omit for global steps (search/platform), set it for jurisdiction-scoped steps (brokers).",
   "type": "object",
   "properties": {
+    "baseLocale": { "enum": ["en", "es"], "description": "Language this file is authored in (default en). Translations live in sibling <name>.<locale>.json overlay files." },
     "slug": { "type": "string", "pattern": "^[a-z0-9-]+$" },
     "jurisdiction": { "$ref": "common.schema.json#/$defs/jurisdiction" },
     "category": { "enum": ["broker", "search", "platform", "records"] },

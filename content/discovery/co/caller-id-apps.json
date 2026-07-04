@@ -1,0 +1,26 @@
+{
+  "baseLocale": "es",
+  "slug": "co-caller-id-apps",
+  "jurisdiction": {
+    "country": "co"
+  },
+  "category": "broker",
+  "title": "Apps de identificación de llamadas (Truecaller, Getcontact)",
+  "why": "En Colombia la mayor filtración del nombre anterior no son los sitios de búsqueda de personas al estilo estadounidense: son las apps de identificación de llamadas, que muestran tu número con el nombre con que otras personas te guardaron en sus agendas — a menudo el nombre de hace años.",
+  "instructions": [
+    "Pide a una persona de confianza que busque tu número en Truecaller y Getcontact desde su teléfono, y anota qué nombre aparece.",
+    "En Getcontact puedes verlo tú: verifica tu número en getcontact.com/manage y revisa las «etiquetas» — son los nombres con que otros te guardaron.",
+    "Si aparece tu nombre anterior, añádelo a tu registro; la baja se prepara en la fase de corrección."
+  ],
+  "deadnameAware": true,
+  "deadnamePrompts": [
+    "¿El nombre que muestra tu número es tu nombre anterior?",
+    "¿Las etiquetas de Getcontact incluyen variantes viejas de tu nombre?"
+  ],
+  "refIds": [
+    "truecaller",
+    "getcontact"
+  ],
+  "priority": "high",
+  "lastVerified": "2026-07-04"
+}

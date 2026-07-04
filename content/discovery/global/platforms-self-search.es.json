@@ -1,0 +1,13 @@
+{
+  "title": "Búscate en las plataformas que has usado",
+  "why": "Cuentas viejas, etiquetas y publicaciones pueden llevar un nombre anterior mucho después de que seguiste adelante — en perfiles que olvidaste que tenías, o en publicaciones de otras personas sobre ti.",
+  "instructions": [
+    "En cada plataforma que hayas usado (vigente o abandonada), busca tu nombre, tu nombre anterior y tus alias viejos.",
+    "Revisa nombres de usuario y direcciones de correo que ya no uses — las cuentas ligadas a ellos pueden seguir siendo públicas.",
+    "Anota cualquier perfil, etiqueta o publicación que muestre tu nombre anterior. El blindaje y la eliminación vienen en la Fase 2."
+  ],
+  "deadnamePrompts": [
+    "¿Algún nombre de usuario viejo contiene tu nombre anterior?",
+    "¿Estás etiquetada/o con un nombre anterior en fotos o publicaciones de otras personas?"
+  ]
+}

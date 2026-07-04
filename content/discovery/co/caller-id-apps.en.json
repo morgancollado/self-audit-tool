@@ -1,0 +1,13 @@
+{
+  "title": "Caller-ID apps (Truecaller, Getcontact)",
+  "why": "In Colombia the biggest former-name leak isn't US-style people-search sites: it's caller-ID apps, which show your number under whatever name other people saved you as in their address books — often the name from years ago.",
+  "instructions": [
+    "Ask a trusted person to look your number up in Truecaller and Getcontact from their phone, and note which name appears.",
+    "On Getcontact you can see it yourself: verify your number at getcontact.com/manage and review the “tags” — they are the names others saved you under.",
+    "If your former name appears, add it to your ledger; the unlisting is prepared in the correction phase."
+  ],
+  "deadnamePrompts": [
+    "Is the name your number shows your former name?",
+    "Do Getcontact's tags include old variants of your name?"
+  ]
+}

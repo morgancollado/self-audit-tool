@@ -1,0 +1,19 @@
+{
+  "deadnameRemoval": {
+    "tool": "Cambio de nombre de usuario y apodo",
+    "steps": [
+      "Perfil → Editar perfil: cambia el Nombre (apodo) y el Nombre de usuario a tu nombre actual (el nombre de usuario puede cambiarse cada 30 días).",
+      "Borra, o pon en privado, los videos viejos que muestran tu nombre anterior.",
+      "Revisa tu biografía y cualquier cuenta vinculada en busca del nombre anterior."
+    ],
+    "limits": "El nombre de usuario solo puede cambiarse cada 30 días, y un @usuario viejo puede ser reutilizado por otra persona.",
+    "escalation": "Usa el flujo de denuncias para acoso, o para contenido que otras personas publicaron sobre ti."
+  },
+  "hardening": {
+    "steps": [
+      "Configuración → Privacidad: pon la cuenta en privado si quieres.",
+      "Limita quién puede comentar, hacer duetos o descargar tus videos.",
+      "Desactiva «Sugerir tu cuenta a otros»."
+    ]
+  }
+}

@@ -5,11 +5,16 @@
 // belongs to the landing's louder register and appears nowhere else, so it is
 // gated on the route. Deniable by design — nothing here names what the tool does.
 
-import { usePathname } from 'next/navigation';
+import { useTranslations } from 'next-intl';
+import { usePathname } from '@/i18n/navigation';
 import { PanicButton } from './PanicButton';
+import { LanguageSwitcher } from './LanguageSwitcher';
 import { Caret } from './Caret';
 
 export function AppBar() {
+  const t = useTranslations('appBar');
+  // i18n-aware usePathname strips the locale prefix, so '/' is the landing in
+  // either language.
   const onLanding = usePathname() === '/';
   return (
     <header className="app-bar">
@@ -19,11 +24,8 @@ export function AppBar() {
       {/* "no trace" would overclaim — the panic wipe can't erase browser history
           (the landing footnote scopes this honestly), so the tagline doesn't
           promise it either. */}
-      {onLanding && (
-        <p className="app-tagline">
-          a published list of corrections · no account · no server
-        </p>
-      )}
+      {onLanding && <p className="app-tagline">{t('tagline')}</p>}
+      <LanguageSwitcher />
       {/* Always reachable, every screen. */}
       <PanicButton />
     </header>

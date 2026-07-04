@@ -12,17 +12,19 @@
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
     "generate:content": "node scripts/generate-content-manifest.mjs",
-    "check:content-manifest": "node scripts/generate-content-manifest.mjs && git diff --exit-code lib/content/brokers.ts",
+    "check:content-manifest": "node scripts/generate-content-manifest.mjs && git diff --exit-code lib/content/generated",
     "validate:content": "node lib/content/validate.mjs",
     "report:staleness": "node scripts/staleness-report.mjs",
     "audit:no-tracker": "node scripts/no-tracker-audit.mjs",
     "capture:brokers": "node tools/broker-capture/capture.mjs",
     "test": "tsx --test \"lib/**/*.test.ts\"",
     "test:report-url": "tsx --test lib/report/issue-url.test.ts",
-    "test:csp": "npm run build:static && node scripts/csp-smoke.mjs"
+    "test:csp": "npm run build:static && node scripts/csp-smoke.mjs",
+    "test:csp-dynamic": "node scripts/dynamic-csp-check.mjs"
   },
   "dependencies": {
     "next": "^15.0.0",
+    "next-intl": "^4.13.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },

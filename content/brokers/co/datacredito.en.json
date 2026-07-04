@@ -1,0 +1,13 @@
+{
+  "optOut": {
+    "steps": [
+      "This is a RECTIFICATION, not an erasure: your credit history is not deleted when you change your name, but you have the right to have it carry your current legal name (Ley 1266 de 2008 and Ley 1581 de 2012).",
+      "First update your cédula with the Registraduría — the bureau verifies against the document.",
+      "Go to datacredito.com.co → “Habeas Data” → “Módulo de Reclamos” (free) and file a name update/rectification claim, attaching your current cédula.",
+      "You can also file it in writing (signature authenticated before a notary + a copy of your cédula) to the Bogotá address, or to the citizen-service email.",
+      "They must respond within 15 business days; while it is processed, the claim shows as pending on your history.",
+      "If they do not respond, or the response does not fix the name, file a complaint with the SIC (sic.gov.co) — it only proceeds after the direct claim is exhausted."
+    ]
+  },
+  "notes": "The bureau keys records on the document number, so the link between your names already exists in its database — rectifying discloses nothing new. When you send, include your cédula number yourself: Errata never asks for or stores it."
+}

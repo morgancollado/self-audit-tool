@@ -1,0 +1,13 @@
+{
+  "title": "California: derechos de eliminación y exclusión CCPA / CPRA",
+  "summary": "Los residentes de California pueden exigir a las empresas que eliminen la información personal que poseen y que dejen de venderla o compartirla, y pueden designar un agente autorizado para hacer esas solicitudes. Los brokers de búsqueda de personas que operan en California generalmente están cubiertos.",
+  "disclaimer": "Información general, no asesoría legal, y aún sin revisión independiente — verifica el proceso vigente y tu elegibilidad antes de confiar en él. DROP lo opera la Agencia de Protección de la Privacidad de California (CPPA); consulta el sitio de la CPPA para el flujo de solicitud vigente y las fechas actuales.",
+  "specialMechanisms": [
+    {
+      "key": "ca-drop",
+      "title": "DROP — elimínate de todos los data brokers registrados con una sola solicitud",
+      "summary": "La DELETE Act de California creó DROP, la Delete Request and Opt-out Platform: una sola solicitud verificada que todo data broker registrado en el estado debe respetar. Es lo más cercano a una eliminación con un solo botón — y la opera el estado, no Errata, así que nosotros no retenemos nada.",
+      "status": "Los brokers registrados están obligados a comenzar a procesar solicitudes de eliminación de DROP el 1 de agosto de 2026. Hasta entonces la plataforma puede no eliminar aún tus datos — consulta el sitio de la CPPA para el flujo vigente y las fechas actuales antes de confiar en ella."
+    }
+  ]
+}

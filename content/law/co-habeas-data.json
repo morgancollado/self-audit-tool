@@ -1,0 +1,26 @@
+{
+  "baseLocale": "es",
+  "jurisdiction": {
+    "country": "co"
+  },
+  "appliesNationally": true,
+  "key": "co-habeas-data",
+  "title": "Colombia: habeas data — Ley 1581 de 2012 (y Ley 1266 de 2008 para datos financieros)",
+  "summary": "En Colombia el habeas data es un derecho constitucional (art. 15). La Ley 1581 de 2012 y el Decreto 1377 de 2013 te dan derecho a conocer, actualizar, rectificar y suprimir tus datos personales ante cualquier responsable que los trate. El camino tiene dos pasos: primero el reclamo directo al responsable, que debe resolverse en máximo 15 días hábiles (prorrogables 8 días hábiles más si te lo informan); si no responden o la respuesta no te satisface, la queja ante la Superintendencia de Industria y Comercio (SIC). La supresión no procede cuando existe un deber legal o contractual de conservar los datos — por ejemplo, la historia de crédito, que se rige por la Ley 1266 de 2008 y se corrige (rectificación), no se borra.",
+  "authorizedAgent": true,
+  "specialMechanisms": [
+    {
+      "key": "co-reclamo",
+      "title": "Reclamo directo al responsable de los datos",
+      "summary": "Cualquier entidad que trate tus datos en Colombia debe recibir tu reclamo de supresión o rectificación, marcarlo como «reclamo en trámite» en máximo 2 días hábiles y resolverlo en máximo 15 días hábiles. Errata te prepara la carta arriba — tú la envías."
+    },
+    {
+      "key": "co-sic-queja",
+      "title": "Queja ante la SIC (Superintendencia de Industria y Comercio)",
+      "summary": "La SIC es la autoridad de protección de datos: puede ordenar la supresión o corrección e imponer sanciones. La queja solo procede después de agotar el reclamo directo ante el responsable — guarda tu reclamo y la respuesta (o el silencio) como prueba.",
+      "url": "https://www.sic.gov.co/tema/proteccion-de-datos-personales"
+    }
+  ],
+  "disclaimer": "Información general, no asesoría legal, y aún sin revisión independiente. La autoridad es la SIC, no Errata — verifica el proceso vigente en sic.gov.co antes de confiar en esto.",
+  "lastVerified": "2026-07-04"
+}

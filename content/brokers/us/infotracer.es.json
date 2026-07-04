@@ -1,0 +1,12 @@
+{
+  "optOut": {
+    "steps": [
+      "Abre la página de exclusión en la URL de búsqueda de abajo.",
+      "Escribe el nombre, el apellido, el estado y la ciudad del listado que quieres eliminar.",
+      "Envía la solicitud de eliminación.",
+      "Si vives en un estado con derechos de eliminación, puedes usar en su lugar el formulario de privacidad en https://members.infotracer.com/privacyform.",
+      "Las personas protegidas (jueces, fiscales, fuerzas del orden y su familia inmediata según la Ley Daniel Anderl) pueden escribir a privacy@infotracer.com con el asunto 'Attention Covered Person Removal Request'."
+    ]
+  },
+  "notes": "La eliminación general se basa en un solo nombre más ciudad/estado, así que eliminar un listado con tu nombre anterior no lo vincula por sí solo con tu nombre actual. También existen un formulario de privacidad por derechos estatales y una ruta por correo para personas protegidas. Vuelve a verificar periódicamente."
+}

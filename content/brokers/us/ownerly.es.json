@@ -1,0 +1,15 @@
+{
+  "optOut": {
+    "steps": [
+      "Abre la página de búsqueda para exclusión (enlace abajo) y busca tu nombre.",
+      "Selecciona tu registro en los resultados.",
+      "Escribe un correo para recibir el enlace de verificación.",
+      "Haz clic en el enlace del correo de verificación para confirmar la eliminación.",
+      "El formulario elimina un registro a la vez; para eliminar más de uno, escribe a privacy@ownerly.com."
+    ]
+  },
+  "notes": "Familia BeenVerified; principalmente valor de propiedades, pero su listado de búsqueda de personas puede mostrar tu nombre. Existe una exclusión separada para la búsqueda de propiedades. Las personas protegidas (Daniel's Law) pueden escribir a privacy@ownerly.com. Vuelve a verificar periódicamente.",
+  "network": {
+    "note": "Estos sitios comparten un mismo motor de búsqueda y un contacto de privacidad en The Lifetime Value Co."
+  }
+}

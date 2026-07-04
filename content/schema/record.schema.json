@@ -5,6 +5,7 @@
   "description": "Enforces the no-dead-end rule: a record must carry at least one action, OR be high-permanence and explicitly monitor-only.",
   "type": "object",
   "properties": {
+    "baseLocale": { "enum": ["en", "es"], "description": "Language this file is authored in (default en). Translations live in sibling <name>.<locale>.json overlay files." },
     "slug": { "type": "string", "pattern": "^[a-z0-9-]+$" },
     "jurisdiction": { "$ref": "common.schema.json#/$defs/jurisdiction" },
     "class": {

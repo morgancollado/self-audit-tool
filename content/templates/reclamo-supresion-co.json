@@ -1,0 +1,19 @@
+{
+  "baseLocale": "es",
+  "key": "reclamo-supresion-co",
+  "formats": [
+    "text",
+    "mailto",
+    "letter"
+  ],
+  "subject": "Reclamo de supresión de datos personales — {{brokerName}} (Ley 1581 de 2012)",
+  "body": "Señores {{brokerName}}:\n\nEn ejercicio del derecho de habeas data reconocido por el artículo 15 de la Constitución Política y regulado por la Ley 1581 de 2012 (artículos 8, 15 y 16) y el Decreto 1377 de 2013, presento RECLAMO para que supriman de sus bases de datos toda la información personal que tengan sobre mí, y para que cesen su tratamiento, circulación y venta.\n\nNombre: {{name}}\nTambién puedo figurar como: {{aliases}}\nUbicación: {{location}}\nCorreo de notificación: {{email}}\n\nLes recuerdo que, conforme al artículo 15 de la Ley 1581 de 2012, deben atender este reclamo en un término máximo de quince (15) días hábiles. Solicito confirmación escrita de la supresión, que no vuelvan a incorporar esta información, y que no me exijan más identificación de la estrictamente necesaria para tramitar este reclamo.\n\nDe no recibir respuesta satisfactoria, acudiré en queja ante la Superintendencia de Industria y Comercio.\n\nAtentamente,\n{{name}}",
+  "placeholders": [
+    "name",
+    "aliases",
+    "location",
+    "email",
+    "brokerName"
+  ],
+  "disclaimer": "Información general, no asesoría legal. La supresión no procede cuando hay un deber legal o contractual de conservar los datos. Verifica el canal vigente del responsable antes de enviar, y nunca incluyas más información identificatoria de la estrictamente necesaria."
+}

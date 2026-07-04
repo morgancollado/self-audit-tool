@@ -6,9 +6,13 @@
 // visitor on a shared or monitored device leaves no trace just by opening it.
 // Calm, no fear-mongering (scope/docs/03, /11).
 
+import { useTranslations } from 'next-intl';
 import { useStorage } from '@/lib/storage/StorageProvider';
 
+const strong = (chunks: React.ReactNode) => <strong>{chunks}</strong>;
+
 export function SafetyIntro() {
+  const t = useTranslations('safetyIntro');
   const { preferences, durable, acknowledgeSafetyIntro, setMode } = useStorage();
 
   if (preferences.safetyIntroAcknowledged) return null;
@@ -25,42 +29,24 @@ export function SafetyIntro() {
 
   return (
     <section className="safety-intro" aria-labelledby="safety-intro-title">
-      <h2 id="safety-intro-title">Before you start</h2>
-      <p>
-        Errata keeps everything on this device — no account, no servers, nothing sent about you.
-        Right now nothing is being saved: you’re in <strong>session-only mode</strong>, and it all
-        disappears when you close the tab.
-      </p>
+      <h2 id="safety-intro-title">{t('title')}</h2>
+      <p>{t.rich('intro', { strong })}</p>
       <ul>
-        <li>
-          On a <strong>shared or monitored device</strong>, stay in session-only mode — nothing is
-          written to this device, so there’s nothing for anyone else to find.
-        </li>
-        <li>
-          On your <strong>own private device</strong>, you can save your progress so it’s here when
-          you come back.
-        </li>
-        <li>
-          <strong>Clear the desk</strong> is always in the top corner. It wipes Errata from this
-          device instantly. (It can’t erase your browser history or anything you’ve downloaded.)
-        </li>
-        <li>You set the pace. You can stop and come back any time.</li>
+        <li>{t.rich('li1', { strong })}</li>
+        <li>{t.rich('li2', { strong })}</li>
+        <li>{t.rich('li3', { strong })}</li>
+        <li>{t('li4')}</li>
       </ul>
 
-      {!durable && (
-        <p className="safety-intro-note">
-          This browser isn’t saving data anyway (private mode or storage is blocked), so you’re
-          already in session-only mode.
-        </p>
-      )}
+      {!durable && <p className="safety-intro-note">{t('notDurable')}</p>}
 
       <div className="safety-intro-actions">
         <button type="button" className="safety-intro-primary" onClick={continueSessionOnly}>
-          Continue — don’t save (session-only)
+          {t('continueSessionOnly')}
         </button>
         {durable && (
           <button type="button" onClick={() => void saveOnThisDevice()}>
-            Save my progress on this device
+            {t('save')}
           </button>
         )}
       </div>

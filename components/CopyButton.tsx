@@ -1,12 +1,13 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 
 type CopyState = 'idle' | 'copied' | 'failed';
 
 export function CopyButton({
   text,
-  label = 'Copy',
+  label,
   variant = 'default',
 }: {
   text: string;
@@ -14,6 +15,7 @@ export function CopyButton({
   /** 'primary' = the one emphasized action; 'quiet' = an underlined text button. */
   variant?: 'default' | 'primary' | 'quiet';
 }) {
+  const t = useTranslations('copy');
   const [status, setStatus] = useState<CopyState>('idle');
 
   const onClick = async () => {
@@ -30,7 +32,7 @@ export function CopyButton({
   };
 
   const buttonLabel =
-    status === 'copied' ? 'Copied ✓' : status === 'failed' ? 'Select the text to copy' : label;
+    status === 'copied' ? t('copied') : status === 'failed' ? t('failed') : (label ?? t('copy'));
 
   const cls =
     variant === 'primary' ? 'copy-button copy-primary'
@@ -44,11 +46,7 @@ export function CopyButton({
       </button>
       {/* Announce the result to assistive tech without depending on the label swap. */}
       <span className="visually-hidden" role="status" aria-live="polite">
-        {status === 'copied'
-          ? 'Copied to clipboard.'
-          : status === 'failed'
-            ? 'Copying is blocked here. Select the text above and copy it manually.'
-            : ''}
+        {status === 'copied' ? t('announceCopied') : status === 'failed' ? t('announceFailed') : ''}
       </span>
     </>
   );

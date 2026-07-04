@@ -1,0 +1,30 @@
+{
+  "baseLocale": "es",
+  "slug": "getcontact",
+  "jurisdiction": {
+    "country": "co"
+  },
+  "name": "Getcontact",
+  "category": "other",
+  "exposesDeadnameRisk": "high",
+  "optOut": {
+    "methods": [
+      "web-form"
+    ],
+    "webFormUrl": "https://getcontact.com/manage",
+    "email": null,
+    "mailingAddress": null,
+    "requiresId": false,
+    "optOutExposesLinkage": false,
+    "steps": [
+      "Abre getcontact.com/manage en el navegador.",
+      "Escribe tu número con el código de país (+57) y continúa.",
+      "Verifica el número escaneando el código QR con WhatsApp desde tu teléfono.",
+      "En «Visibility Settings», apaga la visibilidad de búsqueda («Search Visibility») y confirma.",
+      "Revisa también las «etiquetas» (tags): son los nombres con que otras personas te guardaron — ahí es donde suele vivir un nombre anterior. Puedes pedir la eliminación de etiquetas desde el mismo panel."
+    ]
+  },
+  "notes": "Getcontact muestra las «etiquetas» con que otros usuarios te tienen guardada/o en sus agendas — una filtración directa del nombre anterior si tus contactos viejos nunca te actualizaron. La gestión se hace con el número verificado por WhatsApp, sin revelar tu historial de nombres. Empresa extranjera: la palanca práctica es su propio panel; la queja ante la SIC aplica en la medida en que trate datos en Colombia.",
+  "lastVerified": "2026-07-04",
+  "attribution": "Independently authored from the service's own removal/claims flow (not BADBOL-derived)."
+}

@@ -1,0 +1,15 @@
+{
+  "optOut": {
+    "steps": [
+      "Abre el Centro de Supresión de PeopleConnect (la página de exclusión de esta marca redirige allí).",
+      "Escribe tu correo electrónico, acepta los términos y envía.",
+      "Abre el correo de verificación y haz clic en el enlace para continuar.",
+      "Busca tu listado, selecciónalo y confirma la supresión.",
+      "Si el formulario falla o no puedes confirmar un listado, envía la solicitud preparada a privacy@peopleconnect.us."
+    ]
+  },
+  "notes": "Addresses.com es una marca de PeopleConnect: una sola supresión en suppression.peopleconnect.us cubre todos los sitios de búsqueda de personas de PeopleConnect (Intelius, TruthFinder, Instant Checkmate, US Search, ZabaSearch, Addresses.com). Solo se ingresa un correo, así que la exclusión en sí no revela tu historial de nombres. Vuelve a verificar periódicamente.",
+  "network": {
+    "note": "Una sola solicitud en el Centro de Supresión cubre todos los sitios de PeopleConnect listados aquí."
+  }
+}

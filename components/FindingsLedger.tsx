@@ -4,17 +4,19 @@
 // Phase 2 will act on. Deadname-exposing findings sort first — the differentiator
 // leads the view (scope/docs/04-data-model.md).
 
+import { useTranslations } from 'next-intl';
 import { useStorage } from '@/lib/storage/StorageProvider';
 import { Finding, FindingStatus, Priority } from '@/lib/model/types';
 
 const PRIORITY_ORDER: Record<Priority, number> = { high: 0, medium: 1, low: 2 };
 
-// Map a finding's status onto a stamp style + plain-word label (scope/docs/11).
-const STATUS_STAMP: Record<FindingStatus, { cls: string; label: string }> = {
-  found: { cls: 'state-todo', label: 'to do' },
-  in_progress: { cls: 'state-blocked', label: 'in progress' },
-  resolved: { cls: 'state-confirmed', label: 'corrected' },
-  wont_fix: { cls: 'state-mixed', label: 'monitor' },
+// Map a finding's status onto a stamp style (plain-word labels live in the
+// message catalog under ledger.stamp — scope/docs/11).
+const STATUS_CLS: Record<FindingStatus, string> = {
+  found: 'state-todo',
+  in_progress: 'state-blocked',
+  resolved: 'state-confirmed',
+  wont_fix: 'state-mixed',
 };
 
 function sortFindings(a: Finding, b: Finding): number {
@@ -23,6 +25,8 @@ function sortFindings(a: Finding, b: Finding): number {
 }
 
 export function FindingsLedger() {
+  const t = useTranslations('ledger');
+  const tc = useTranslations('common');
   const { state, updateFinding, removeFinding } = useStorage();
   const findings = [...(state?.findings ?? [])].sort(sortFindings);
   const deadnameCount = findings.filter((f) => f.exposesDeadname).length;
@@ -30,30 +34,24 @@ export function FindingsLedger() {
   if (findings.length === 0) {
     return (
       <section className="ledger" aria-labelledby="ledger-title">
-        <h2 id="ledger-title">Your ledger</h2>
-        <p className="name-inputs-note">
-          Nothing here yet. As you work through the steps, add what you find.
-        </p>
+        <h2 id="ledger-title">{t('title')}</h2>
+        <p className="name-inputs-note">{t('empty')}</p>
       </section>
     );
   }
 
   return (
     <section className="ledger" aria-labelledby="ledger-title">
-      <h2 id="ledger-title">Your ledger</h2>
+      <h2 id="ledger-title">{t('title')}</h2>
       <p className="ledger-headline">
-        <span className="count">
-          {findings.length} finding{findings.length === 1 ? '' : 's'}.
-        </span>{' '}
+        <span className="count">{t('findingsCount', { count: findings.length })}</span>{' '}
         {deadnameCount > 0 ? (
-          <>
-            <span className="hl">
-              {deadnameCount} expose your former name
-            </span>{' '}
-            — those lead the list.
-          </>
+          t.rich('deadnameLead', {
+            count: deadnameCount,
+            hl: (chunks) => <span className="hl">{chunks}</span>,
+          })
         ) : (
-          <>None expose your former name.</>
+          <>{t('noneDeadname')}</>
         )}
       </p>
       <ul className="ledger-list">
@@ -61,37 +59,37 @@ export function FindingsLedger() {
           <li key={f.id} className="finding">
             <div className="finding-head">
               <strong>{f.label}</strong>
-              {f.exposesDeadname && <span className="stamp badge-deadname">former name</span>}
-              <span className={`stamp ${STATUS_STAMP[f.status].cls}`}>{STATUS_STAMP[f.status].label}</span>
-              <span className={`stamp priority-${f.priority}`}>{f.priority}</span>
+              {f.exposesDeadname && <span className="stamp badge-deadname">{t('formerNameBadge')}</span>}
+              <span className={`stamp ${STATUS_CLS[f.status]}`}>{t(`stamp.${f.status}`)}</span>
+              <span className={`stamp priority-${f.priority}`}>{tc(`priority.${f.priority}`)}</span>
             </div>
             {f.whatFound && <p className="finding-what">{f.whatFound}</p>}
             <div className="finding-controls">
               <label>
-                Status
+                {t('status')}
                 <select
                   value={f.status}
                   onChange={(e) => updateFinding(f.id, { status: e.target.value as FindingStatus })}
                 >
-                  <option value="found">Found</option>
-                  <option value="in_progress">In progress</option>
-                  <option value="resolved">Resolved</option>
-                  <option value="wont_fix">Leaving it</option>
+                  <option value="found">{t('statusFound')}</option>
+                  <option value="in_progress">{t('statusInProgress')}</option>
+                  <option value="resolved">{t('statusResolved')}</option>
+                  <option value="wont_fix">{t('statusWontFix')}</option>
                 </select>
               </label>
               <label>
-                Priority
+                {t('priority')}
                 <select
                   value={f.priority}
                   onChange={(e) => updateFinding(f.id, { priority: e.target.value as Priority })}
                 >
-                  <option value="high">High</option>
-                  <option value="medium">Medium</option>
-                  <option value="low">Low</option>
+                  <option value="high">{tc('priorityOption.high')}</option>
+                  <option value="medium">{tc('priorityOption.medium')}</option>
+                  <option value="low">{tc('priorityOption.low')}</option>
                 </select>
               </label>
               <button type="button" className="report-broken-link" onClick={() => removeFinding(f.id)}>
-                Remove
+                {t('remove')}
               </button>
             </div>
           </li>

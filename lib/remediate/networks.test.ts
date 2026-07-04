@@ -5,7 +5,7 @@ import assert from 'node:assert/strict';
 
 import { Broker, BrokerNetwork } from '../content/types';
 import { groupBrokers, groupTrackInputs } from './networks.ts';
-import { BROKERS } from '../content/brokers.ts';
+import { BROKERS } from '../content/generated/en.ts';
 
 function makeBroker(slug: string, network?: BrokerNetwork): Broker {
   return {

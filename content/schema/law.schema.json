@@ -4,6 +4,7 @@
   "title": "Law framing (jurisdiction-scoped, informational only)",
   "type": "object",
   "properties": {
+    "baseLocale": { "enum": ["en", "es"], "description": "Language this file is authored in (default en). Translations live in sibling <name>.<locale>.json overlay files." },
     "jurisdiction": { "$ref": "common.schema.json#/$defs/jurisdiction" },
     "appliesNationally": {
       "type": "boolean",

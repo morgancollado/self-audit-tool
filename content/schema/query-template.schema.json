@@ -5,6 +5,7 @@
   "description": "A search string with {{placeholders}} filled in-memory from the user's transient input. No personal data is stored unless the user opts in.",
   "type": "object",
   "properties": {
+    "baseLocale": { "enum": ["en", "es"], "description": "Language this file is authored in (default en). Translations live in sibling <name>.<locale>.json overlay files." },
     "key": { "type": "string", "pattern": "^[a-z0-9-]+$" },
     "label": { "type": "string", "minLength": 1 },
     "engine": { "enum": ["google", "bing", "duckduckgo", "any"] },
