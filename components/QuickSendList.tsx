@@ -10,7 +10,7 @@
 // below, where that disclosure is an explicit choice. The send is still always
 // the user's keystroke (the 95% rule).
 
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { useStorage } from '@/lib/storage/StorageProvider';
 import { getOptOutTemplate } from '@/lib/content/data';
 import { BrokerGroup, groupTrackInputs } from '@/lib/remediate/networks';
@@ -27,6 +27,7 @@ export function QuickSendList({
   findingBySlug: Map<string, string>;
 }) {
   const t = useTranslations('quicksend');
+  const locale = useLocale();
   const { state, addRemediations } = useStorage();
   const remediations = state?.remediations ?? [];
   const isTracked = (g: BrokerGroup) =>
@@ -34,7 +35,7 @@ export function QuickSendList({
 
   const rows = groups.map((group) => {
     const rep = group.representative;
-    const template = rep.optOut.templateKey ? getOptOutTemplate(rep.optOut.templateKey) : undefined;
+    const template = rep.optOut.templateKey ? getOptOutTemplate(rep.optOut.templateKey, locale) : undefined;
     const gen = template
       ? generateOptOut(rep, template, vars, { listedUnder: 'current', includeOtherName: false })
       : undefined;

@@ -32,7 +32,8 @@
       "low": "Baja"
     },
     "riskStamp": "{risk, select, high {riesgo alto} medium {riesgo medio} low {riesgo bajo} other {riesgo {risk}}}",
-    "lastVerified": "Verificado por última vez el {date}."
+    "lastVerified": "Verificado por última vez el {date}.",
+    "untranslated": "Aún no disponible en este idioma — se muestra en su idioma original."
   },
   "appBar": {
     "tagline": "una fe de erratas publicada · sin cuenta · sin servidor",

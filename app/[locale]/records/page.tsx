@@ -7,7 +7,7 @@
 // carries the standing not-yet-reviewed / verify-locally banner — name-change and
 // sealing content is gated on legal review (R4/R11).
 
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import { useStorage } from '@/lib/storage/StorageProvider';
 import { getRecords } from '@/lib/content/data';
@@ -20,6 +20,7 @@ import { RemediationTracker } from '@/components/RemediationTracker';
 export default function RecordsPage() {
   const t = useTranslations('records');
   const tc = useTranslations('common');
+  const locale = useLocale();
   const { ready, preferences } = useStorage();
 
   if (!ready) return <p>{tc('loading')}</p>;
@@ -36,7 +37,7 @@ export default function RecordsPage() {
   }
 
   const jurisdiction = preferences.jurisdiction ?? { country: 'us' as const };
-  const records = getRecords(jurisdiction);
+  const records = getRecords(jurisdiction, locale);
 
   return (
     <>

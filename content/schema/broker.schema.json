@@ -4,6 +4,7 @@
   "title": "Data broker (jurisdiction-scoped)",
   "type": "object",
   "properties": {
+    "baseLocale": { "enum": ["en", "es"], "description": "Language this file is authored in (default en). Translations live in sibling <name>.<locale>.json overlay files." },
     "slug": { "type": "string", "pattern": "^[a-z0-9-]+$" },
     "jurisdiction": { "$ref": "common.schema.json#/$defs/jurisdiction" },
     "name": { "type": "string", "minLength": 1 },

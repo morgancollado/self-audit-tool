@@ -31,11 +31,11 @@ interface TrackerGroup {
 }
 
 /** Fold optout rows whose brokers share a network; everything else stays its own row. */
-function groupRows(remediations: Remediation[]): TrackerGroup[] {
+function groupRows(remediations: Remediation[], locale: string): TrackerGroup[] {
   const groups: TrackerGroup[] = [];
   const byNetwork = new Map<string, TrackerGroup>();
   for (const r of remediations) {
-    const network = r.pillar === 'optout' && r.refId ? getBroker(r.refId)?.network : undefined;
+    const network = r.pillar === 'optout' && r.refId ? getBroker(r.refId, locale)?.network : undefined;
     if (!network) {
       groups.push({ key: r.id, rows: [r] });
       continue;
@@ -117,7 +117,7 @@ export function RemediationTracker() {
   }
 
   const today = TODAY();
-  const groups = groupRows(remediations);
+  const groups = groupRows(remediations, locale);
   const buckets = new Map(groups.map((g) => [g.key, bucketOf(g, today)]));
   const count = (f: Filter) =>
     f === 'all' ? groups.length : groups.filter((g) => buckets.get(g.key) === f).length;
@@ -204,7 +204,7 @@ export function RemediationTracker() {
                     {t('covers', {
                       list: g.rows
                         .map((r) => {
-                          const name = (r.refId && getBroker(r.refId)?.name) || r.refId;
+                          const name = (r.refId && getBroker(r.refId, locale)?.name) || r.refId;
                           return uniform ? name : `${name} (${tc(`state.${r.state}`).toLowerCase()})`;
                         })
                         .join(', '),

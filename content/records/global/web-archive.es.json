@@ -1,0 +1,9 @@
+{
+  "whatItIs": "La Wayback Machine del Internet Archive y servicios similares guardan instantáneas de páginas viejas — perfiles, firmas de autoría, listados de directorios con tu nombre anterior — mucho después de que la página viva desapareció o cambió.",
+  "actions": [
+    "Cuando la página viva esté eliminada o actualizada, solicita la exclusión de las instantáneas archivadas: escribe a info@archive.org desde una dirección vinculada a la página o a su dominio, listando las URL archivadas exactas y por qué deberían retirarse.",
+    "Para páginas que controlas, una regla en robots.txt o una solicitud de eliminación puede evitar que se vuelvan a archivar.",
+    "Para las instantáneas que no puedan excluirse, guarda una lista y vuelve a revisar periódicamente — los archivos a veces atienden solicitudes más tarde."
+  ],
+  "disclaimer": "Solo informativo. Los archivos web son independientes y pueden negarse; no hay eliminación garantizada."
+}

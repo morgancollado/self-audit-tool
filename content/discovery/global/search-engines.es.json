@@ -1,0 +1,13 @@
+{
+  "title": "Buscadores, como lo haría alguien que te tiene en la mira",
+  "why": "Un actor hostil empieza por un buscador. Ver exactamente lo que vería — incluido dónde aparece tu nombre anterior — te dice qué priorizar.",
+  "instructions": [
+    "Rellena los campos de nombre y datos de arriba; construiremos las cadenas de búsqueda por ti (nada se envía ni se guarda).",
+    "Copia cada búsqueda y ejecútala en un buscador. Prueba más de un buscador — los resultados difieren.",
+    "Añade a tu registro cualquier cosa que exponga tu nombre anterior o que conecte tus nombres."
+  ],
+  "deadnamePrompts": [
+    "Revisa más allá de la primera página — los resultados viejos se hunden pero no desaparecen.",
+    "Prueba la búsqueda de imágenes con tu nombre anterior; las fotos se indexan aparte del texto."
+  ]
+}

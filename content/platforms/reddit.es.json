@@ -1,0 +1,19 @@
+{
+  "deadnameRemoval": {
+    "tool": "Cuenta nueva (los nombres de usuario no se pueden cambiar)",
+    "steps": [
+      "Los nombres de usuario de Reddit no se pueden cambiar. Si tu nombre de usuario es o contiene tu nombre anterior, la única solución es crear una cuenta nueva y dejar de usar la vieja.",
+      "En la cuenta vieja, edita el texto de las publicaciones y comentarios que revelan tu nombre anterior ANTES de borrarlos — borrar sin más puede dejar el texto atrás.",
+      "Luego considera eliminar la cuenta vieja (Configuración → Eliminar cuenta)."
+    ],
+    "limits": "El contenido editado o borrado suele quedar preservado en archivos y cachés de terceros fuera del control de Reddit.",
+    "escalation": "Reporta el contenido de otras personas que te señale con tu nombre anterior bajo la política de acoso de Reddit."
+  },
+  "hardening": {
+    "steps": [
+      "Edita los comentarios viejos sensibles antes de borrarlos (borrar sin más puede dejar el texto).",
+      "Configuración → Privacidad: limita quién puede ver tu perfil y desactiva la personalización.",
+      "De aquí en adelante, elige un nombre de usuario que no revele tu identidad."
+    ]
+  }
+}

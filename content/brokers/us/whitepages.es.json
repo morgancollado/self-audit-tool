@@ -1,0 +1,13 @@
+{
+  "optOut": {
+    "steps": [
+      "Encuentra tu listado con la URL de búsqueda.",
+      "Copia la URL del listado.",
+      "Envíala en la página de solicitudes de supresión.",
+      "Completa el paso de verificación por teléfono o correo.",
+      "Si el formulario falla o no puedes confirmar un listado, envía la solicitud preparada a privacyrequest@whitepages.com."
+    ],
+    "leaveItGuidance": "Whitepages muestra el historial de nombres de forma prominente. Si tu nombre anterior no está ya listado, enviar una solicitud de supresión revela el vínculo — sopésalo frente a qué tan visible es ya el listado."
+  },
+  "notes": "Vuelve a verificar periódicamente; Whitepages vuelve a listar desde fuentes nuevas."
+}

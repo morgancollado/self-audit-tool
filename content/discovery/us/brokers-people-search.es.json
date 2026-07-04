@@ -1,0 +1,15 @@
+{
+  "title": "Revisa los grandes brokers de búsqueda de personas",
+  "why": "Los sitios de búsqueda de personas reúnen historial de nombres, direcciones, familiares y teléfonos — y a menudo muestran nombres anteriores. Aquí es donde es más probable que un nombre anterior esté a plena vista, y es la exposición que más directamente podrás eliminar después.",
+  "instructions": [
+    "Abre la página de búsqueda de cada broker (enlaces abajo) y búscate.",
+    "Busca tu nombre actual y — cuando estés lista/o — tu nombre anterior.",
+    "Muchos de estos sitios esconden el informe real detrás de un muro de pago o un registro con correo. No necesitas ver el informe: si la vista previa muestra un listado que podrías ser tú, añádelo a tu registro como no confirmado y sigue — no pagues ni crees cuentas.",
+    "Para cualquier cosa que muestre tu nombre anterior o lo conecte con el actual, añádela a tu registro y marca si expone tu nombre anterior.",
+    "No envíes todavía una exclusión — eso es la Fase 2. Ahora solo estás mapeando lo que hay."
+  ],
+  "deadnamePrompts": [
+    "¿El listado muestra un campo de «conocido/a anteriormente como» / AKA / historial de nombres?",
+    "¿Aparecen familiares o direcciones viejas que ayudarían a alguien a conectar tus nombres?"
+  ]
+}

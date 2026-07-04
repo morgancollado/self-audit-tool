@@ -1,0 +1,9 @@
+{
+  "whatItIs": "Los buscadores guardan copias en caché y resultados desactualizados que pueden seguir mostrando tu nombre anterior después de que la página original cambió o desapareció.",
+  "actions": [
+    "Cuando la página de origen esté actualizada o eliminada, usa la herramienta «Eliminar contenido obsoleto» de Google para refrescar o quitar el resultado en caché.",
+    "Usa la herramienta «Resultados sobre ti» de Google para resultados que exponen información personal de contacto.",
+    "Repite con la herramienta de eliminación de contenido de Bing, y vuelve a revisar en unas semanas — los cachés se refrescan según su propio calendario."
+  ],
+  "disclaimer": "Solo informativo. Eliminar una copia en caché no elimina la página de origen — haz también la exclusión o corrección en la fuente."
+}

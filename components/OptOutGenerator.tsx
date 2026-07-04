@@ -10,7 +10,7 @@
 // independent requests — never one request carrying both names.
 
 import { useState } from 'react';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { useStorage } from '@/lib/storage/StorageProvider';
 import { getOptOutTemplate } from '@/lib/content/data';
 import { Broker } from '@/lib/content/types';
@@ -23,6 +23,7 @@ import {
   pairSharesContact,
 } from '@/lib/remediate/optout';
 import { CopyButton } from './CopyButton';
+import { UntranslatedNote } from './UntranslatedNote';
 
 type ListedUnderChoice = ListedUnder | 'both';
 
@@ -137,6 +138,7 @@ export function OptOutGenerator({
 }) {
   const t = useTranslations('optout');
   const tc = useTranslations('common');
+  const locale = useLocale();
   const { state, addRemediations } = useStorage();
   const exposesLinkage = broker.optOut.optOutExposesLinkage ?? false;
   const [listedUnder, setListedUnder] = useState<ListedUnderChoice>('current');
@@ -172,7 +174,9 @@ export function OptOutGenerator({
       ? trackedRows[0].state
       : 'mixed';
 
-  const template = broker.optOut.templateKey ? getOptOutTemplate(broker.optOut.templateKey) : undefined;
+  const template = broker.optOut.templateKey
+    ? getOptOutTemplate(broker.optOut.templateKey, locale)
+    : undefined;
   const both = listedUnder === 'both';
   // "Both names" is two INDEPENDENT artifacts — one keyed per name, the other
   // name omitted from each — never a single request linking the two (R13).
@@ -217,6 +221,7 @@ export function OptOutGenerator({
         </span>
       </div>
       {intro}
+      <UntranslatedNote item={broker} />
 
       {/* The opt-out paradox, stated plainly with a real "leave it" path. */}
       {exposesLinkage && (

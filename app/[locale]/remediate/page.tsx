@@ -12,7 +12,7 @@
 // first, and a filter so the list stays usable as the dataset grows.
 
 import { useMemo, useState } from 'react';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import { useStorage } from '@/lib/storage/StorageProvider';
 import { getBrokers } from '@/lib/content/data';
@@ -31,12 +31,13 @@ import { countGroupsTracked } from '@/lib/remediate/progress';
 export default function RemediatePage() {
   const t = useTranslations('remediate');
   const tc = useTranslations('common');
+  const locale = useLocale();
   const { ready, preferences, state, mode, durable } = useStorage();
   const [vars, setVars] = useState<OptOutVars>({});
   const [onlyFlagged, setOnlyFlagged] = useState(true);
   const [query, setQuery] = useState('');
 
-  const allBrokers = useMemo(() => getBrokers('us'), []);
+  const allBrokers = useMemo(() => getBrokers('us', locale), [locale]);
 
   // Map broker slug -> the discovery finding that flagged it, so we can lead with
   // (and tie remediations back to) where the user was actually found.

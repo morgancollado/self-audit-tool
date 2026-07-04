@@ -1,0 +1,20 @@
+{
+  "deadnameRemoval": {
+    "tool": "Cambio de nombre y de URL de perfil público",
+    "steps": [
+      "PRIMERO desactiva los avisos de actividad (Configuración → Visibilidad → «Compartir cambios de perfil con tu red») para que el cambio no se anuncie a tus contactos.",
+      "Edita el Nombre de tu perfil a tu nombre actual.",
+      "Cambia la URL de tu perfil público — a menudo todavía contiene el nombre viejo: Editar perfil público y URL → edita la URL personalizada.",
+      "Actualiza cargos anteriores, tu titular y las descripciones que incluyan el nombre anterior."
+    ],
+    "limits": "Los buscadores pueden mantener en caché tu URL de perfil vieja por un tiempo; pide una actualización a Google después de cambiarla.",
+    "escalation": "Contacta al soporte de LinkedIn para limpiar un perfil viejo en caché si persiste."
+  },
+  "hardening": {
+    "steps": [
+      "Configura quién puede ver tus contactos y tu foto de perfil.",
+      "Desactiva que te encuentren por tu correo o número de teléfono si lo prefieres.",
+      "Revisa las aplicaciones de terceros con acceso y revoca las que no uses."
+    ]
+  }
+}

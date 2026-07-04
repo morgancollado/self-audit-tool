@@ -1,0 +1,20 @@
+{
+  "deadnameRemoval": {
+    "tool": "«Resultados sobre ti» / eliminación de contenido",
+    "steps": [
+      "Inicia sesión y abre la herramienta «Resultados sobre ti» de Google.",
+      "Envía las URL de los resultados de búsqueda que muestran tu nombre anterior.",
+      "Elige el motivo — usa la opción de información personal/doxxing para datos de contacto, o la herramienta de «contenido obsoleto» cuando la página de origen ya haya cambiado.",
+      "Sigue el estado de cada solicitud en la herramienta; Google te envía el resultado por correo."
+    ],
+    "limits": "Google puede quitar un resultado de su índice, pero la página sigue existiendo en el sitio original — haz también la exclusión o solicitud de eliminación en la fuente. Las páginas legítimas de noticias y de registros públicos suelen rechazarse.",
+    "escalation": "Si rechazan un resultado y te pone en riesgo, vuelve a enviarlo citando tu seguridad personal, y busca la eliminación directamente en el sitio de origen."
+  },
+  "hardening": {
+    "steps": [
+      "Abre el panel de «Resultados sobre ti» y activa las alertas para que los resultados nuevos con tu nombre y tu nombre anterior aparezcan pronto.",
+      "En tu Cuenta de Google → Datos y privacidad, desactiva la Actividad web y de aplicaciones si no quieres que se conserve.",
+      "Pon tu nombre actual en tu perfil de Google / Información personal."
+    ]
+  }
+}

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { useStorage } from '@/lib/storage/StorageProvider';
 import { getDiscoverySteps, getBroker, getQueryTemplate } from '@/lib/content/data';
 import { DiscoveryStep, DiscoveryCategory } from '@/lib/content/types';
@@ -9,6 +9,7 @@ import { FindingSource } from '@/lib/model/types';
 import { QueryVars, generateQueries, ENGINE_LABEL } from '@/lib/discover/queries';
 import { CopyButton } from './CopyButton';
 import { AddFindingForm } from './AddFindingForm';
+import { UntranslatedNote } from './UntranslatedNote';
 
 const SOURCE_BY_CATEGORY: Record<DiscoveryCategory, FindingSource> = {
   broker: 'broker',
@@ -18,8 +19,9 @@ const SOURCE_BY_CATEGORY: Record<DiscoveryCategory, FindingSource> = {
 };
 
 export function DiscoveryChecklist({ vars }: { vars: QueryVars }) {
+  const locale = useLocale();
   const { state, setStepDone } = useStorage();
-  const steps = getDiscoverySteps('us');
+  const steps = getDiscoverySteps('us', locale);
   const completed = new Set(state?.progress.discoverCompletedSteps ?? []);
 
   return (
@@ -44,11 +46,13 @@ function StepCard({
 }) {
   const t = useTranslations('checklist');
   const tc = useTranslations('common');
+  const locale = useLocale();
   const [openAdd, setOpenAdd] = useState<string | null>(null);
-  const brokers = step.category === 'broker' ? (step.refIds ?? []).map(getBroker).filter(Boolean) : [];
-  const templates = (step.queryTemplateKeys ?? []).map(getQueryTemplate).filter(Boolean) as NonNullable<
-    ReturnType<typeof getQueryTemplate>
-  >[];
+  const brokers =
+    step.category === 'broker' ? (step.refIds ?? []).map((r) => getBroker(r, locale)).filter(Boolean) : [];
+  const templates = (step.queryTemplateKeys ?? [])
+    .map((k) => getQueryTemplate(k, locale))
+    .filter(Boolean) as NonNullable<ReturnType<typeof getQueryTemplate>>[];
   // The on-screen mask for the former name is user-visible — pass the localized
   // wording; the real string still lives only in the clipboard payload.
   const queries = templates.length
@@ -67,6 +71,7 @@ function StepCard({
           <span className={`stamp priority-${step.priority}`}>{tc(`priority.${step.priority}`)}</span>
         </span>
       </div>
+      <UntranslatedNote item={step} />
       <p className="step-why">{step.why}</p>
 
       <ol className="step-instructions">

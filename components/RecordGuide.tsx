@@ -9,6 +9,7 @@
 import { useTranslations } from 'next-intl';
 import { useStorage } from '@/lib/storage/StorageProvider';
 import { DeadnameRecord } from '@/lib/content/types';
+import { UntranslatedNote } from './UntranslatedNote';
 
 export function RecordGuide({ record }: { record: DeadnameRecord }) {
   const t = useTranslations('recordGuide');
@@ -43,6 +44,7 @@ export function RecordGuide({ record }: { record: DeadnameRecord }) {
         )}
       </div>
 
+      <UntranslatedNote item={record} />
       <p>{record.whatItIs}</p>
 
       {record.sealedPetitionAvailable && (

@@ -1,0 +1,12 @@
+{
+  "title": "Búsqueda inversa de imágenes (opcional)",
+  "why": "Las fotos pueden conectar una identidad anterior con la actual incluso cuando los nombres no coinciden. Este paso enlaza a herramientas de búsqueda de imágenes — Errata nunca sube nada por ti.",
+  "instructions": [
+    "Elige una foto tuya que esté públicamente en línea (una foto de perfil vieja, por ejemplo).",
+    "Usa una herramienta de búsqueda inversa de imágenes para ver dónde más aparece esa imagen.",
+    "Si una imagen aparece bajo tu nombre anterior, añádela a tu registro."
+  ],
+  "deadnamePrompts": [
+    "Atención: las herramientas de búsqueda de imágenes son de terceros. Lo que subas va a ellas, no pasa por Errata — usa solo una foto que te sientas cómoda/o compartiendo con esa herramienta."
+  ]
+}

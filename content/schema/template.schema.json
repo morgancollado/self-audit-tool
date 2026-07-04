@@ -4,6 +4,7 @@
   "title": "Opt-out output template (locale-translated). Placeholders filled in-memory; only persisted if the user opted in.",
   "type": "object",
   "properties": {
+    "baseLocale": { "enum": ["en", "es"], "description": "Language this file is authored in (default en). Translations live in sibling <name>.<locale>.json overlay files." },
     "key": { "type": "string", "pattern": "^[a-z0-9-]+$" },
     "formats": {
       "type": "array",

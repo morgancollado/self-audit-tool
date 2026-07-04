@@ -10,6 +10,7 @@
 import { useTranslations } from 'next-intl';
 import { useStorage } from '@/lib/storage/StorageProvider';
 import { Platform } from '@/lib/content/types';
+import { UntranslatedNote } from './UntranslatedNote';
 
 export function PlatformGuide({ platform }: { platform: Platform }) {
   const t = useTranslations('platformGuide');
@@ -38,6 +39,7 @@ export function PlatformGuide({ platform }: { platform: Platform }) {
           </span>
         )}
       </div>
+      <UntranslatedNote item={platform} />
 
       {dr && (
         <div className="platform-deadname">

@@ -5,7 +5,7 @@
 // Gated behind the shared-device safety intro like /discover and /remediate, and
 // shares the remediation tracker so platform actions land in the same record.
 
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import { useStorage } from '@/lib/storage/StorageProvider';
 import { getPlatforms } from '@/lib/content/data';
@@ -17,6 +17,7 @@ import { RemediationTracker } from '@/components/RemediationTracker';
 export default function HardenPage() {
   const t = useTranslations('harden');
   const tc = useTranslations('common');
+  const locale = useLocale();
   const { ready, preferences } = useStorage();
 
   if (!ready) return <p>{tc('loading')}</p>;
@@ -32,7 +33,7 @@ export default function HardenPage() {
     );
   }
 
-  const platforms = getPlatforms();
+  const platforms = getPlatforms(locale);
 
   return (
     <>

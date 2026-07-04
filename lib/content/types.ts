@@ -2,10 +2,24 @@
 
 import { Country, Jurisdiction, Priority } from '../model/types';
 
+/** UI/content language — a separate axis from jurisdiction (scope/docs/03). */
+export type ContentLocale = 'en' | 'es';
+
+/**
+ * Fields every content item gains from the localization pipeline
+ * (scripts/generate-content-manifest.mjs). `baseLocale` is authored in the base
+ * JSON (default 'en'); `untranslated` is stamped at build time on items served
+ * to a locale they have no translation for, so the UI can say so honestly.
+ */
+export interface Localized {
+  baseLocale?: ContentLocale;
+  untranslated?: boolean;
+}
+
 export type QueryVar = 'name' | 'deadname' | 'city' | 'employer' | 'aliases';
 export type SearchEngine = 'google' | 'bing' | 'duckduckgo' | 'any';
 
-export interface QueryTemplate {
+export interface QueryTemplate extends Localized {
   key: string;
   label: string;
   engine: SearchEngine;
@@ -17,7 +31,7 @@ export interface QueryTemplate {
 
 export type DiscoveryCategory = 'broker' | 'search' | 'platform' | 'records';
 
-export interface DiscoveryStep {
+export interface DiscoveryStep extends Localized {
   slug: string;
   jurisdiction?: Jurisdiction;
   category: DiscoveryCategory;
@@ -35,7 +49,7 @@ export interface DiscoveryStep {
 export type OptOutFormat = 'text' | 'mailto' | 'letter';
 export type TemplateVar = 'name' | 'aliases' | 'location' | 'email' | 'brokerName';
 
-export interface OptOutTemplate {
+export interface OptOutTemplate extends Localized {
   key: string;
   formats: OptOutFormat[];
   subject: string;
@@ -80,7 +94,7 @@ export interface BrokerNetwork {
   representative?: boolean;
 }
 
-export interface Broker {
+export interface Broker extends Localized {
   slug: string;
   jurisdiction: Jurisdiction;
   name: string;
@@ -115,7 +129,7 @@ export interface PlatformDeadnameRemoval {
   escalation?: string;
 }
 
-export interface Platform {
+export interface Platform extends Localized {
   slug: string;
   name: string;
   deadnameRemoval?: PlatformDeadnameRemoval;
@@ -141,7 +155,7 @@ export type RecordClass =
  * `actions` is non-empty, or it's an explicit high-permanence `monitorOnly` item
  * with `harmReduction` (enforced by record.schema.json + content validation).
  */
-export interface DeadnameRecord {
+export interface DeadnameRecord extends Localized {
   slug: string;
   jurisdiction?: Jurisdiction;
   class: RecordClass;
@@ -156,7 +170,7 @@ export interface DeadnameRecord {
   lastVerified: string;
 }
 
-export interface Law {
+export interface Law extends Localized {
   jurisdiction: Jurisdiction;
   /** If false, the right is region-specific and must NOT be shown to other regions. */
   appliesNationally: boolean;

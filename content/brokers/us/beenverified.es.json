@@ -1,0 +1,16 @@
+{
+  "optOut": {
+    "steps": [
+      "Busca tu registro en la página de exclusión.",
+      "Selecciona tu listado en los resultados.",
+      "Proporciona un correo para recibir el enlace de verificación.",
+      "Haz clic en el enlace de verificación para completar la eliminación.",
+      "Si el formulario falla o no puedes confirmar un listado, envía la solicitud preparada a privacy@beenverified.com."
+    ],
+    "leaveItGuidance": "BeenVerified agrega historial de nombres y familiares. Si el vínculo con tu nombre anterior no está ya presente, la propia búsqueda de exclusión lo revela."
+  },
+  "notes": "Comparte una base de datos con varios sitios hermanos de búsqueda de personas; vuelve a verificar también los brokers relacionados.",
+  "network": {
+    "note": "Estos sitios comparten un mismo motor de búsqueda y un contacto de privacidad en The Lifetime Value Co."
+  }
+}

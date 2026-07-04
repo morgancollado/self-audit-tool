@@ -6,21 +6,23 @@
 // the hero removal mechanism, gated on CA. Everything is informational and
 // carries the standing not-legal-advice / not-yet-reviewed banner (R4/R11).
 
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { useStorage } from '@/lib/storage/StorageProvider';
 import { getLaws } from '@/lib/content/data';
 import { US_STATES, stateName } from '@/lib/content/us-states';
 import { Law } from '@/lib/content/types';
+import { UntranslatedNote } from './UntranslatedNote';
 
 export function StateRights() {
   const t = useTranslations('rights');
+  const locale = useLocale();
   const { preferences, setJurisdiction } = useStorage();
   const jurisdiction = preferences.jurisdiction ?? { country: 'us' as const };
   const region = jurisdiction.region;
 
   // getLaws already gates region-specific rights to an exact region match, so a
   // non-empty `regional` list means we have authored guidance for this state.
-  const laws = getLaws(jurisdiction);
+  const laws = getLaws(jurisdiction, locale);
   const regional = laws.filter((l) => !l.appliesNationally);
   const national = laws.filter((l) => l.appliesNationally);
 
@@ -77,6 +79,7 @@ function LawCard({ law, hero }: { law: Law; hero: boolean }) {
   return (
     <article className="law-card">
       <h3>{law.title}</h3>
+      <UntranslatedNote item={law} />
       <p>{law.summary}</p>
 
       {law.authorizedAgent && <p className="law-agent">{t('agent')}</p>}

@@ -4,6 +4,7 @@
   "title": "Platform hardening + deadname-removal guide (locale-translated, jurisdiction-agnostic)",
   "type": "object",
   "properties": {
+    "baseLocale": { "enum": ["en", "es"], "description": "Language this file is authored in (default en). Translations live in sibling <name>.<locale>.json overlay files." },
     "slug": { "type": "string", "pattern": "^[a-z0-9-]+$" },
     "name": { "type": "string", "minLength": 1 },
     "deadnameRemoval": {

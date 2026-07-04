@@ -32,7 +32,8 @@
       "low": "Low"
     },
     "riskStamp": "{risk, select, high {high risk} medium {medium risk} low {low risk} other {{risk} risk}}",
-    "lastVerified": "Last verified {date}."
+    "lastVerified": "Last verified {date}.",
+    "untranslated": "Not yet available in this language — shown in its original language."
   },
   "appBar": {
     "tagline": "a published list of corrections · no account · no server",
