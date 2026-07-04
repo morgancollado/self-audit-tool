@@ -27,7 +27,10 @@ export function LanguageSwitcher() {
       className="lang-switch"
       href={pathname}
       locale={other}
-      aria-label={t('switchLanguage')}
+      // The accessible name must CONTAIN the visible autonym (WCAG 2.5.3 —
+      // voice-control users say what they see), so the label is
+      // "Español — Language", never a bare "Language" that hides it.
+      aria-label={`${AUTONYM[other]} — ${t('switchLanguage')}`}
       lang={other}
       onClick={() => void savePreferences({ ...preferences, locale: other })}
     >

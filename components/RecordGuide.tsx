@@ -6,14 +6,16 @@
 // harm-reduction (enforced in content). Acting is tracked locally under the
 // deadname pillar.
 
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { useStorage } from '@/lib/storage/StorageProvider';
 import { DeadnameRecord } from '@/lib/content/types';
 import { UntranslatedNote } from './UntranslatedNote';
+import { formatContentDate } from '@/lib/content/format-date';
 
 export function RecordGuide({ record }: { record: DeadnameRecord }) {
   const t = useTranslations('recordGuide');
   const tc = useTranslations('common');
+  const locale = useLocale();
   const { state, addRemediation } = useStorage();
   const monitorOnly = record.monitorOnly === true;
   const label = t(`className.${record.class}`);
@@ -72,7 +74,9 @@ export function RecordGuide({ record }: { record: DeadnameRecord }) {
       )}
 
       {record.disclaimer && <p className="optout-disclaimer">{record.disclaimer}</p>}
-      <p className="content-verified">{tc('lastVerified', { date: record.lastVerified })}</p>
+      <p className="content-verified">
+        {tc('lastVerified', { date: formatContentDate(record.lastVerified, locale) })}
+      </p>
 
       {!monitorOnly && (
         <div className="optout-track">

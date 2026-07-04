@@ -7,13 +7,15 @@
 // helps rather than a bare "can't". Acting is tracked locally via the shared
 // remediation tracker.
 
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { useStorage } from '@/lib/storage/StorageProvider';
 import { Platform } from '@/lib/content/types';
 import { UntranslatedNote } from './UntranslatedNote';
+import { formatContentDate } from '@/lib/content/format-date';
 
 export function PlatformGuide({ platform }: { platform: Platform }) {
   const t = useTranslations('platformGuide');
+  const locale = useLocale();
   const { state, addRemediation } = useStorage();
   const dr = platform.deadnameRemoval;
 
@@ -102,7 +104,9 @@ export function PlatformGuide({ platform }: { platform: Platform }) {
         )}
       </div>
 
-      <p className="content-verified">{t('verifiedNote', { date: platform.lastVerified })}</p>
+      <p className="content-verified">
+        {t('verifiedNote', { date: formatContentDate(platform.lastVerified, locale) })}
+      </p>
     </section>
   );
 }

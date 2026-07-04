@@ -15,6 +15,7 @@ import { stateName } from '@/lib/content/us-states';
 import { Law } from '@/lib/content/types';
 import { JurisdictionSelect } from './JurisdictionSelect';
 import { UntranslatedNote } from './UntranslatedNote';
+import { formatContentDate } from '@/lib/content/format-date';
 
 export function StateRights() {
   const t = useTranslations('rights');
@@ -69,6 +70,7 @@ export function StateRights() {
 function LawCard({ law, hero }: { law: Law; hero: boolean }) {
   const t = useTranslations('rights');
   const tc = useTranslations('common');
+  const locale = useLocale();
   return (
     <article className="law-card">
       <h3>{law.title}</h3>
@@ -95,7 +97,9 @@ function LawCard({ law, hero }: { law: Law; hero: boolean }) {
       ))}
 
       <p className="optout-disclaimer">{law.disclaimer}</p>
-      <p className="content-verified">{tc('lastVerified', { date: law.lastVerified })}</p>
+      <p className="content-verified">
+        {tc('lastVerified', { date: formatContentDate(law.lastVerified, locale) })}
+      </p>
     </article>
   );
 }

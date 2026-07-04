@@ -15,9 +15,10 @@
 //     for the target locale keeps its original language and gains
 //     `untranslated: true`, which the UI surfaces honestly.
 //
-// Merge semantics: objects merge recursively; arrays of objects merge by index
-// (so a law's specialMechanisms overlay carries only title/summary/status);
-// arrays of strings (steps, instructions) replace wholesale; scalars replace.
+// Merge semantics: objects merge recursively; arrays of objects merge by `key`
+// when the base items carry one, else by index (so a law's specialMechanisms
+// overlay carries key + title/summary/status); arrays of strings (steps,
+// instructions) replace wholesale; scalars replace.
 //
 // Run:   npm run generate:content
 // CI:    regenerates and fails if the committed manifests are stale (drift
@@ -60,8 +61,15 @@ const isPlainObject = (v) => v !== null && typeof v === 'object' && !Array.isArr
 function mergeOverlay(base, overlay) {
   if (Array.isArray(base) && Array.isArray(overlay)) {
     if (base.every(isPlainObject) && overlay.every(isPlainObject)) {
-      // Array of objects: merge item-by-item; the base's length wins.
-      return base.map((item, i) => (overlay[i] ? mergeOverlay(item, overlay[i]) : item));
+      // Array of objects: merge item-by-item; the base's length and order win.
+      // Keyed items pair by `key` — inserting or reordering base items must
+      // never silently shift a translation onto the wrong item (the validator
+      // requires overlay keys wherever the base has them).
+      return base.map((item, i) => {
+        const o =
+          typeof item.key === 'string' ? overlay.find((x) => x.key === item.key) : overlay[i];
+        return o ? mergeOverlay(item, o) : item;
+      });
     }
     return overlay; // array of strings (steps etc.): translated wholesale
   }

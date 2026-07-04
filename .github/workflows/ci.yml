@@ -34,6 +34,12 @@ jobs:
         run: npm run build
       - name: Typecheck
         run: npm run typecheck
+      # Prove the dynamic build serves per-request nonce'd scripts on EVERY
+      # route (including '/' and the legacy forwarders) — a prerendered route
+      # ships nonce-less HTML that strict-dynamic refuses wholesale. Must run
+      # before build:static, which overwrites .next.
+      - name: Dynamic CSP check (per-request nonce reaches every route)
+        run: npm run test:csp-dynamic
       - name: Build (static export + CSP hashes)
         run: npm run build:static
 

@@ -154,6 +154,16 @@ try {
   // route instead of leaving the front door unchecked.
   await axeFailures(page, '/ (landing)');
 
+  // Legacy pre-i18n URLs: /discover (bookmarked before routes moved under
+  // /en|/es) must forward to the locale route, not 404 on a returning user.
+  await page.goto(base + 'discover', { waitUntil: 'networkidle' });
+  try {
+    await page.waitForURL('**/en/discover', { timeout: 8000 });
+    console.log('[csp-smoke] legacy /discover forwarded to /en/discover.');
+  } catch {
+    fail('the legacy /discover route did not forward to /en/discover under the CSP.');
+  }
+
   // ---- /discover: safety gate + deadname-query routing (M1 hardening) ----
   const dctx = await browser.newContext();
   const dpage = await dctx.newPage();
@@ -486,6 +496,13 @@ try {
     fail('a Colombia user was shown US-law framing (cross-country leakage).');
   }
   if (!coBrokers.some((h) => h.includes('Truecaller'))) fail('the Colombian broker set did not render Truecaller.');
+  // M5 gate (Risk R11): until local expert review happens, selecting Colombia
+  // must surface the explicit unreviewed-region note — this is the condition
+  // the CO dataset ships under.
+  const coNote = await copage.locator('.state-select .optout-disclaimer').innerText().catch(() => '');
+  if (!coNote.includes('not yet had local expert review')) {
+    fail('the Colombia unreviewed-region note (M5 gate) is missing.');
+  }
   if (coBrokers.some((h) => h.includes('Spokeo'))) fail('a US broker (Spokeo) leaked into the Colombian view.');
   // The state selector must be gone in CO mode (no region axis there).
   const coStateSelects = await copage.getByLabel('Your state').count();

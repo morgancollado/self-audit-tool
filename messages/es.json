@@ -373,7 +373,8 @@
     "selectState": "Elige tu estado…",
     "showingState": "Mostrando guía para {state}.",
     "showingCo": "Mostrando guía para Colombia (nacional).",
-    "noneSelected": "Ningún estado seleccionado; se muestra solo la guía nacional y global."
+    "noneSelected": "Ningún estado seleccionado; se muestra solo la guía nacional y global.",
+    "coUnreviewed": "La guía para Colombia es reciente y aún no ha pasado por revisión de una persona experta local. Verifica cada paso contra la fuente oficial (sic.gov.co) antes de confiar en ella."
   },
   "recordGuide": {
     "className": {

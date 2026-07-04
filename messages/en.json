@@ -373,7 +373,8 @@
     "selectState": "Select your state…",
     "showingState": "Showing guidance for {state}.",
     "showingCo": "Showing guidance for Colombia (national).",
-    "noneSelected": "No state selected; showing national and global guidance only."
+    "noneSelected": "No state selected; showing national and global guidance only.",
+    "coUnreviewed": "The Colombia guidance is newly authored and has not yet had local expert review. Verify each step against the official source (sic.gov.co) before relying on it."
   },
   "recordGuide": {
     "className": {

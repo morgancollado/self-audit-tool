@@ -19,7 +19,8 @@
     "capture:brokers": "node tools/broker-capture/capture.mjs",
     "test": "tsx --test \"lib/**/*.test.ts\"",
     "test:report-url": "tsx --test lib/report/issue-url.test.ts",
-    "test:csp": "npm run build:static && node scripts/csp-smoke.mjs"
+    "test:csp": "npm run build:static && node scripts/csp-smoke.mjs",
+    "test:csp-dynamic": "node scripts/dynamic-csp-check.mjs"
   },
   "dependencies": {
     "next": "^15.0.0",

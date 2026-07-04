@@ -24,6 +24,7 @@ import {
 } from '@/lib/remediate/optout';
 import { CopyButton } from './CopyButton';
 import { UntranslatedNote } from './UntranslatedNote';
+import { formatContentDate } from '@/lib/content/format-date';
 
 type ListedUnderChoice = ListedUnder | 'both';
 
@@ -352,7 +353,9 @@ export function OptOutGenerator({
           )}
 
           <p className="optout-disclaimer">{(gen ?? genPair!.current).disclaimer}</p>
-          <p className="content-verified">{t('lastVerifiedBroker', { date: broker.lastVerified })}</p>
+          <p className="content-verified">
+            {t('lastVerifiedBroker', { date: formatContentDate(broker.lastVerified, locale) })}
+          </p>
 
           {/* Hairline-topped row: the send control on the left, the entry's
               current stamp on the right (Screen C). */}

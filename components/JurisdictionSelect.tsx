@@ -47,6 +47,15 @@ export function JurisdictionSelect({ note }: { note?: string }) {
           </select>
         </label>
       )}
+      {/* M5 gate (roadmap / Risk R11): the Colombia dataset is newly authored
+          and has NOT yet had local expert review. Until it does, every screen
+          where Colombia can be selected says so explicitly — a distinct region
+          label, not just the standard not-legal-advice disclaimer. */}
+      {country === 'co' && (
+        <p className="optout-disclaimer" role="note">
+          {t('coUnreviewed')}
+        </p>
+      )}
       {note && <p className="name-inputs-note">{note}</p>}
       <p className="visually-hidden" role="status" aria-live="polite">
         {country === 'co'
